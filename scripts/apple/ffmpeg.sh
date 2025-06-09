@@ -143,11 +143,11 @@ for library in {0..61}; do
       FFMPEG_LDFLAGS+=" $(pkg-config --libs --static gmp 2>>"${BASEDIR}"/build.log)"
       CONFIGURE_POSTFIX+=" --enable-gmp"
       ;;
-    gnutls)
-      FFMPEG_CFLAGS+=" $(pkg-config --cflags gnutls 2>>"${BASEDIR}"/build.log)"
-      FFMPEG_LDFLAGS+=" $(pkg-config --libs --static gnutls 2>>"${BASEDIR}"/build.log)"
-      CONFIGURE_POSTFIX+=" --enable-gnutls"
-      ;;
+#    gnutls)
+#      FFMPEG_CFLAGS+=" $(pkg-config --cflags gnutls 2>>"${BASEDIR}"/build.log)"
+#      FFMPEG_LDFLAGS+=" $(pkg-config --libs --static gnutls 2>>"${BASEDIR}"/build.log)"
+#      CONFIGURE_POSTFIX+=" --enable-gnutls"
+#      ;;
     kvazaar)
       FFMPEG_CFLAGS+=" $(pkg-config --cflags kvazaar 2>>"${BASEDIR}"/build.log)"
       FFMPEG_LDFLAGS+=" $(pkg-config --libs --static kvazaar 2>>"${BASEDIR}"/build.log)"
@@ -281,11 +281,11 @@ for library in {0..61}; do
       FFMPEG_LDFLAGS+=" $(pkg-config --libs --static x264 2>>"${BASEDIR}"/build.log)"
       CONFIGURE_POSTFIX+=" --enable-libx264"
       ;;
-    x265)
-      FFMPEG_CFLAGS+=" $(pkg-config --cflags x265 2>>"${BASEDIR}"/build.log)"
-      FFMPEG_LDFLAGS+=" $(pkg-config --libs --static x265 2>>"${BASEDIR}"/build.log)"
-      CONFIGURE_POSTFIX+=" --enable-libx265"
-      ;;
+#    x265)
+#      FFMPEG_CFLAGS+=" $(pkg-config --cflags x265 2>>"${BASEDIR}"/build.log)"
+#      FFMPEG_LDFLAGS+=" $(pkg-config --libs --static x265 2>>"${BASEDIR}"/build.log)"
+#      CONFIGURE_POSTFIX+=" --enable-libx265"
+#      ;;
     xvidcore)
       FFMPEG_CFLAGS+=" $(pkg-config --cflags xvidcore 2>>"${BASEDIR}"/build.log)"
       FFMPEG_LDFLAGS+=" $(pkg-config --libs --static xvidcore 2>>"${BASEDIR}"/build.log)"
@@ -461,7 +461,7 @@ echo -n -e "\n${LIB_NAME}: "
 
 if [[ -z ${NO_WORKSPACE_CLEANUP_ffmpeg} ]]; then
   echo -e "INFO: Cleaning workspace for ${LIB_NAME}\n" 1>>"${BASEDIR}"/build.log 2>&1
-  make distclean 2>/dev/null 1>/dev/null
+  sudo make distclean 2>/dev/null 1>/dev/null
 
   # WORKAROUND TO MANUALLY DELETE UNCLEANED FILES
   rm -f "${BASEDIR}"/src/"${LIB_NAME}"/libavfilter/opencl/*.o 1>>"${BASEDIR}"/build.log 2>&1

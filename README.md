@@ -1,5 +1,36 @@
 # FFmpegKit ![GitHub release](https://img.shields.io/badge/release-v6.0-blue.svg) ![Maven Central](https://img.shields.io/maven-central/v/com.arthenica/ffmpeg-kit-min) ![CocoaPods](https://img.shields.io/cocoapods/v/ffmpeg-kit-ios-min) ![pub](https://img.shields.io/pub/v/ffmpeg_kit_flutter.svg) ![npm](https://img.shields.io/npm/v/ffmpeg-kit-react-native.svg)
 
+
+
+
+## BUILDING SCRIPTS
+
+* Android: `export ANDROID_SDK_ROOT=/Users/me/Library/Android/sdk && export ANDROID_NDK_ROOT=/Users/me/Library/Android/sdk/ndk/29.0.13113456 && ./android.sh`
+  export ANDROID_SDK_ROOT=/Users/me/Library/Android/sdk && export ANDROID_NDK_ROOT=/Users/me/Library/Android/sdk/ndk/29.0.13113456 && ./android.sh --disable-arm-v7a --disable-arm-v7a-neon --disable-arm64-v8a --disable-x86
+* iOS: `./ios.sh`
+* MacOS: `./macos.sh`
+
+
+
+* BUILD LIBS:     ./configure && sudo make && sudo make install
+
+As usual for GNU packages:
+
+./configure --prefix=/usr/local && sudo make && make install
+
+
+
+MACOS:
+* BUILD MACOS FRAMEWORKS:     ./macos.sh -x --full --enable-gpl
+
+
+
+
+
+
+
+
+
 <img src="https://github.com/arthenica/ffmpeg-kit/blob/main/docs/assets/ffmpeg-kit-icon-v9.png" width="240">
 
 `FFmpegKit` is a collection of tools to use `FFmpeg` in `Android`, `iOS`, `Linux`, `macOS`, `tvOS`, `Flutter` and `React Native` applications.

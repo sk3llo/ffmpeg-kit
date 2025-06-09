@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ALWAYS CLEAN THE PREVIOUS BUILD
-make distclean 2>/dev/null 1>/dev/null
+sudo make distclean 2>/dev/null 1>/dev/null
 
 # WORKAROUND FOR "bad flag in substitute command"
 ${SED_INLINE} "s|in \"\$default_fonts\"|in \$default_fonts|g" "${BASEDIR}"/src/"${LIB_NAME}"/configure.ac 1>>"${BASEDIR}"/build.log 2>&1

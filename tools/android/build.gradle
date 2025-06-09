@@ -1,15 +1,17 @@
-apply plugin: 'com.android.library'
+plugins {
+    id 'com.android.library'
+}
 
 android {
     if (project.android.hasProperty("namespace")) {
         namespace 'com.arthenica.ffmpegkit'
     }
-    compileSdk 33
-    ndkVersion "22.1.7171670"
+    compileSdk 35
+    ndkVersion "29.0.13113456"
 
     defaultConfig {
         minSdk 24
-        targetSdk 33
+        targetSdk 35
         versionCode 240600
         versionName "6.0"
         project.archivesBaseName = "ffmpeg-kit"
@@ -24,8 +26,13 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    java {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     sourceSets {

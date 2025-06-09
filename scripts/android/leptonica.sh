@@ -19,7 +19,7 @@ export JPEG_CFLAGS="$(pkg-config --cflags libjpeg)"
 export JPEG_LIBS="$(pkg-config --libs --static libjpeg)"
 
 # ALWAYS CLEAN THE PREVIOUS BUILD
-make distclean 2>/dev/null 1>/dev/null
+sudo make distclean 2>/dev/null 1>/dev/null
 
 # REGENERATE BUILD FILES IF NECESSARY OR REQUESTED
 if [[ ! -f "${BASEDIR}"/src/"${LIB_NAME}"/configure ]] || [[ ${RECONF_leptonica} -eq 1 ]]; then

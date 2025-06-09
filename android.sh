@@ -353,7 +353,7 @@ if [[ -n ${ANDROID_ARCHITECTURES} ]]; then
     if [ $? -eq 0 ]; then
       echo "ok"
     else
-      echo "failed"
+      echo "ggg1 failed"
       exit 1
     fi
   else
@@ -371,7 +371,7 @@ if [[ -n ${ANDROID_ARCHITECTURES} ]]; then
     rm -f "${BASEDIR}"/android/ffmpeg-kit-android-lib/build/outputs/aar/ffmpeg-kit-release.aar 1>>"${BASEDIR}"/build.log 2>&1
     ./gradlew ffmpeg-kit-android-lib:clean ffmpeg-kit-android-lib:assembleRelease ffmpeg-kit-android-lib:testReleaseUnitTest 1>>"${BASEDIR}"/build.log 2>&1
     if [ $? -ne 0 ]; then
-      echo -e "failed\n"
+      echo -e "ggg2 failed\n"
       exit 1
     fi
 
@@ -381,7 +381,7 @@ if [[ -n ${ANDROID_ARCHITECTURES} ]]; then
     mkdir -p "${FFMPEG_KIT_AAR}" 1>>"${BASEDIR}"/build.log 2>&1
     cp "${BASEDIR}"/android/ffmpeg-kit-android-lib/build/outputs/aar/ffmpeg-kit-release.aar "${FFMPEG_KIT_AAR}"/ffmpeg-kit.aar 1>>"${BASEDIR}"/build.log 2>&1
     if [ $? -ne 0 ]; then
-      echo -e "failed\n"
+      echo -e "ggg3 failed\n"
       exit 1
     fi
 
