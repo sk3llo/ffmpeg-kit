@@ -5,8 +5,18 @@
 
 ## BUILDING SCRIPTS
 
-* Android: `export ANDROID_SDK_ROOT=/Users/me/Library/Android/sdk && export ANDROID_NDK_ROOT=/Users/me/Library/Android/sdk/ndk/29.0.13113456 && ./android.sh`
-  export ANDROID_SDK_ROOT=/Users/me/Library/Android/sdk && export ANDROID_NDK_ROOT=/Users/me/Library/Android/sdk/ndk/29.0.13113456 && ./android.sh --disable-arm-v7a --disable-arm-v7a-neon --disable-arm64-v8a --disable-x86
+* As usual for GNU packages:
+
+```
+./configure --prefix=/usr/local && sudo make && sudo make install
+```
+
+* Android:       
+
+```
+export ANDROID_SDK_ROOT=/Users/me/Library/Android/sdk && export ANDROID_NDK_ROOT=/Users/me/Library/Android/sdk/ndk/29.0.13113456 && ./android.sh --full --enable-gpl --disable-arm-v7a --disable-arm-v7a-neon --disable-x86 --disable-x86-64
+```
+
 * iOS: `./ios.sh`
 * MacOS: `./macos.sh`
 
@@ -14,9 +24,10 @@
 
 * BUILD LIBS:     ./configure && sudo make && sudo make install
 
-As usual for GNU packages:
+SOMETIMES:
 
-./configure --prefix=/usr/local && sudo make && make install
+autoreconf -f -i
+
 
 
 
@@ -257,3 +268,15 @@ See our [CONTRIBUTING](CONTRIBUTING.md) guide.
 - [FFmpeg API Documentation](https://ffmpeg.org/doxygen/4.0/index.html)
 - [FFmpeg Wiki](https://trac.ffmpeg.org/wiki/WikiStart)
 - [FFmpeg External Library Licenses](https://www.ffmpeg.org/doxygen/4.0/md_LICENSE.html)
+
+
+
+
+
+
+
+
+
+
+
+

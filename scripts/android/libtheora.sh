@@ -7,6 +7,12 @@ else
   ASM_OPTIONS="--disable-asm"
 fi
 
+if [[ ${ARCH} == "arm-v7a" ]] || [[ ${ARCH} == "arm-v7a-neon" ]]; then
+  ASM_OPTIONS="--disable-asm"
+  export CFLAGS="${CFLAGS} -mfloat-abi=softfp"
+  export LDFLAGS="${LDFLAGS} -mfloat-abi=softfp"
+fi
+
 # ALWAYS CLEAN THE PREVIOUS BUILD
 sudo make distclean 2>/dev/null 1>/dev/null
 
