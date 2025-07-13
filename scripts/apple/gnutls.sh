@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# sudo LDFLAGS="-L$(brew --prefix gmp)/lib" CPPFLAGS="-I$(brew --prefix gmp)/include" ./configure --with-included-unistring
+
 # INIT SUBMODULES
 ${SED_INLINE} 's|openssl/openssl|arthenica/openssl|g' "${BASEDIR}"/src/"${LIB_NAME}"/.gitmodules || return 1
 ${SED_INLINE} 's|tomato42|arthenica|g' "${BASEDIR}"/src/"${LIB_NAME}"/.gitmodules || return 1

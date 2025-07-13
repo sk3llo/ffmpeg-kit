@@ -20,6 +20,7 @@
 #include <pthread.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <string.h>
 
 #include "config.h"
 #include "libavcodec/jni.h"
@@ -45,7 +46,7 @@ extern void resetMessagesInTransmit(long sessionId);
  * @param stringArray reference to the object holding FFprobe command arguments
  * @return zero on successful execution, non-zero on error
  */
-JNIEXPORT jint JNICALL Java_com_arthenica_ffmpegkit_FFmpegKitConfig_nativeFFprobeExecute(JNIEnv *env, jclass object, jlong id, jobjectArray stringArray) {
+JNIEXPORT jint JNICALL Java_com_antonkarpenko_ffmpegkit_FFmpegKitConfig_nativeFFprobeExecute(JNIEnv *env, jclass object, jlong id, jobjectArray stringArray) {
     jstring *tempArray = NULL;
     int argumentCount = 1;
     char **argv = NULL;

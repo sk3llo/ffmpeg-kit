@@ -33,7 +33,7 @@ get_library_source() {
     ;;
   ffmpeg)
     SOURCE_REPO_URL="https://github.com/arthenica/FFmpeg"
-    SOURCE_ID="n6.0"
+    SOURCE_ID="n7.1.1"
     SOURCE_TYPE="TAG"
     ;;
   fontconfig)
@@ -63,7 +63,7 @@ get_library_source() {
     ;;
   gnutls)
     SOURCE_REPO_URL="https://github.com/arthenica/gnutls"
-    SOURCE_ID="3.7.9"
+    SOURCE_ID="3.8.9"
     SOURCE_TYPE="TAG"
     ;;
   harfbuzz)
@@ -88,7 +88,7 @@ get_library_source() {
     ;;
   leptonica)
     SOURCE_REPO_URL="https://github.com/arthenica/leptonica"
-    SOURCE_ID="1.83.1"
+    SOURCE_ID="1.85.0"
     SOURCE_TYPE="TAG"
     ;;
   libaom)
@@ -163,7 +163,7 @@ get_library_source() {
     ;;
   libxml2)
     SOURCE_REPO_URL="https://github.com/arthenica/libxml2"
-    SOURCE_ID="v2.11.4"
+    SOURCE_ID="v2.14.4"
     SOURCE_TYPE="TAG"
     ;;
   nettle)
@@ -223,7 +223,7 @@ get_library_source() {
     ;;
   srt)
     SOURCE_REPO_URL="https://github.com/arthenica/srt"
-    SOURCE_ID="v1.5.2"
+    SOURCE_ID="v1.5.4"
     SOURCE_TYPE="TAG"
     ;;
   tesseract)

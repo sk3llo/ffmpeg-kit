@@ -17,10 +17,10 @@
  * along with FFmpegKit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.arthenica.ffmpegkit.reactnative;
+package com.antonkarpenko.ffmpegkit.reactnative;
 
-import com.arthenica.ffmpegkit.FFmpegKitConfig;
-import com.arthenica.ffmpegkit.FFprobeSession;
+import com.antonkarpenko.ffmpegkit.FFmpegKitConfig;
+import com.antonkarpenko.ffmpegkit.FFprobeSession;
 import com.facebook.react.bridge.Promise;
 
 public class FFprobeSessionExecuteTask implements Runnable {

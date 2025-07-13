@@ -45,31 +45,31 @@
 #define ABI_UNKNOWN "unknown"
 
 /*
- * Class:     com_arthenica_ffmpegkit_AbiDetect
+ * Class:     com_antonkarpenko_ffmpegkit_AbiDetect
  * Method:    getNativeAbi
  * Signature: ()Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_com_arthenica_ffmpegkit_AbiDetect_getNativeAbi(JNIEnv *, jclass);
+JNIEXPORT jstring JNICALL Java_com_antonkarpenko_ffmpegkit_AbiDetect_getNativeAbi(JNIEnv *, jclass);
 
 /*
- * Class:     com_arthenica_ffmpegkit_AbiDetect
+ * Class:     com_antonkarpenko_ffmpegkit_AbiDetect
  * Method:    getNativeCpuAbi
  * Signature: ()Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_com_arthenica_ffmpegkit_AbiDetect_getNativeCpuAbi(JNIEnv *, jclass);
+JNIEXPORT jstring JNICALL Java_com_antonkarpenko_ffmpegkit_AbiDetect_getNativeCpuAbi(JNIEnv *, jclass);
 
 /**
- * Class:     com_arthenica_ffmpegkit_AbiDetect
+ * Class:     com_antonkarpenko_ffmpegkit_AbiDetect
  * Method:    isNativeLTSBuild
  * Signature: ()Z
  */
-JNIEXPORT jboolean JNICALL Java_com_arthenica_ffmpegkit_AbiDetect_isNativeLTSBuild(JNIEnv *, jclass);
+JNIEXPORT jboolean JNICALL Java_com_antonkarpenko_ffmpegkit_AbiDetect_isNativeLTSBuild(JNIEnv *, jclass);
 
 /*
- * Class:     com_arthenica_ffmpegkit_AbiDetect
+ * Class:     com_antonkarpenko_ffmpegkit_AbiDetect
  * Method:    getNativeBuildConf
  * Signature: ()Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_com_arthenica_ffmpegkit_AbiDetect_getNativeBuildConf(JNIEnv *, jclass);
+JNIEXPORT jstring JNICALL Java_com_antonkarpenko_ffmpegkit_AbiDetect_getNativeBuildConf(JNIEnv *, jclass);
 
 #endif /* FFMPEG_KIT_ABIDETECT_H */

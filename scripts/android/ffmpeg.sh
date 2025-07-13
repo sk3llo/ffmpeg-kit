@@ -8,6 +8,7 @@ fi
 
 LIB_NAME="ffmpeg"
 
+
 echo -e "----------------------------------------------------------------" 1>>"${BASEDIR}"/build.log 2>&1
 echo -e "\nINFO: Building ${LIB_NAME} for ${HOST} with the following environment variables\n" 1>>"${BASEDIR}"/build.log 2>&1
 env 1>>"${BASEDIR}"/build.log 2>&1
@@ -59,8 +60,8 @@ x86)
   ASM_OPTIONS=" --disable-neon --disable-asm --disable-inline-asm"
   ;;
 x86-64)
-  TARGET_CPU="x86_64"
-  TARGET_ARCH="x86_64"
+  TARGET_CPU="x86-64"
+  TARGET_ARCH="x86-64"
   ASM_OPTIONS=" --disable-neon --enable-asm --enable-inline-asm"
   ;;
 esac
@@ -390,7 +391,12 @@ ulimit -n 2048 1>>"${BASEDIR}"/build.log 2>&1
 
 ########################### CUSTOMIZATIONS #######################
 cd "${BASEDIR}" 1>>"${BASEDIR}"/build.log 2>&1 || return 1
-git checkout android/ffmpeg-kit-android-lib/src/main/cpp/ffmpegkit.c 1>>"${BASEDIR}"/build.log 2>&1
+
+# COMMENTED OUT redownload of `ffmpegkit.c` file
+
+#git checkout android/ffmpeg-kit-android-lib/src/main/cpp/ffmpegkit.c 1>>"${BASEDIR}"/build.log 2>&1
+
+
 cd "${BASEDIR}"/src/"${LIB_NAME}" 1>>"${BASEDIR}"/build.log 2>&1 || return 1
 git checkout libavformat/file.c 1>>"${BASEDIR}"/build.log 2>&1
 git checkout libavformat/protocols.c 1>>"${BASEDIR}"/build.log 2>&1

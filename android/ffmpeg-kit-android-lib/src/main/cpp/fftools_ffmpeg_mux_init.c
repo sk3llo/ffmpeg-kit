@@ -1,6 +1,5 @@
 /*
  * Muxer/output file setup.
- * Copyright (c) 2023 ARTHENICA LTD
  *
  * This file is part of FFmpeg.
  *
@@ -24,7 +23,6 @@
  * manually update it each time we depend on a new ffmpeg version. Below you can see the list of changes applied
  * by us to develop ffmpeg-kit library.
  *
- * ffmpeg-kit changes by ARTHENICA LTD
  *
  * 07.2023
  * --------------------------------------------------------

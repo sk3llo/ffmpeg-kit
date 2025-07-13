@@ -17,7 +17,7 @@
  *  along with FFmpegKit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.arthenica.ffmpegkit.reactnative;
+package com.antonkarpenko.ffmpegkit.reactnative;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -27,24 +27,24 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.arthenica.ffmpegkit.AbiDetect;
-import com.arthenica.ffmpegkit.AbstractSession;
-import com.arthenica.ffmpegkit.FFmpegKit;
-import com.arthenica.ffmpegkit.FFmpegKitConfig;
-import com.arthenica.ffmpegkit.FFmpegSession;
-import com.arthenica.ffmpegkit.FFprobeKit;
-import com.arthenica.ffmpegkit.FFprobeSession;
-import com.arthenica.ffmpegkit.Level;
-import com.arthenica.ffmpegkit.LogRedirectionStrategy;
-import com.arthenica.ffmpegkit.MediaInformation;
-import com.arthenica.ffmpegkit.MediaInformationJsonParser;
-import com.arthenica.ffmpegkit.MediaInformationSession;
-import com.arthenica.ffmpegkit.Packages;
-import com.arthenica.ffmpegkit.ReturnCode;
-import com.arthenica.ffmpegkit.Session;
-import com.arthenica.ffmpegkit.SessionState;
-import com.arthenica.ffmpegkit.Signal;
-import com.arthenica.ffmpegkit.Statistics;
+import com.antonkarpenko.ffmpegkit.AbiDetect;
+import com.antonkarpenko.ffmpegkit.AbstractSession;
+import com.antonkarpenko.ffmpegkit.FFmpegKit;
+import com.antonkarpenko.ffmpegkit.FFmpegKitConfig;
+import com.antonkarpenko.ffmpegkit.FFmpegSession;
+import com.antonkarpenko.ffmpegkit.FFprobeKit;
+import com.antonkarpenko.ffmpegkit.FFprobeSession;
+import com.antonkarpenko.ffmpegkit.Level;
+import com.antonkarpenko.ffmpegkit.LogRedirectionStrategy;
+import com.antonkarpenko.ffmpegkit.MediaInformation;
+import com.antonkarpenko.ffmpegkit.MediaInformationJsonParser;
+import com.antonkarpenko.ffmpegkit.MediaInformationSession;
+import com.antonkarpenko.ffmpegkit.Packages;
+import com.antonkarpenko.ffmpegkit.ReturnCode;
+import com.antonkarpenko.ffmpegkit.Session;
+import com.antonkarpenko.ffmpegkit.SessionState;
+import com.antonkarpenko.ffmpegkit.Signal;
+import com.antonkarpenko.ffmpegkit.Statistics;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.BaseActivityEventListener;
 import com.facebook.react.bridge.Promise;
@@ -228,7 +228,7 @@ public class FFmpegKitReactNativeModule extends ReactContextBaseJavaModule {
         } else {
           timeout = AbstractSession.DEFAULT_TIMEOUT_FOR_ASYNCHRONOUS_MESSAGES_IN_TRANSMIT;
         }
-        final List<com.arthenica.ffmpegkit.Log> allLogs = session.getAllLogs(timeout);
+        final List<com.antonkarpenko.ffmpegkit.Log> allLogs = session.getAllLogs(timeout);
         promise.resolve(toLogArray(allLogs));
       }
     } else {
@@ -243,7 +243,7 @@ public class FFmpegKitReactNativeModule extends ReactContextBaseJavaModule {
       if (session == null) {
         promise.reject("SESSION_NOT_FOUND", "Session not found.");
       } else {
-        final List<com.arthenica.ffmpegkit.Log> allLogs = session.getLogs();
+        final List<com.antonkarpenko.ffmpegkit.Log> allLogs = session.getLogs();
         promise.resolve(toLogArray(allLogs));
       }
     } else {
@@ -1107,7 +1107,7 @@ public class FFmpegKitReactNativeModule extends ReactContextBaseJavaModule {
     return map;
   }
 
-  protected static WritableMap toMap(final com.arthenica.ffmpegkit.Log log) {
+  protected static WritableMap toMap(final com.antonkarpenko.ffmpegkit.Log log) {
     final WritableMap logMap = Arguments.createMap();
 
     logMap.putDouble(KEY_LOG_SESSION_ID, log.getSessionId());
@@ -1234,7 +1234,7 @@ public class FFmpegKitReactNativeModule extends ReactContextBaseJavaModule {
     return sessionArray;
   }
 
-  protected static WritableArray toLogArray(final List<com.arthenica.ffmpegkit.Log> logList) {
+  protected static WritableArray toLogArray(final List<com.antonkarpenko.ffmpegkit.Log> logList) {
     final WritableArray logArray = Arguments.createArray();
 
     for (int i = 0; i < logList.size(); i++) {
@@ -1244,7 +1244,7 @@ public class FFmpegKitReactNativeModule extends ReactContextBaseJavaModule {
     return logArray;
   }
 
-  protected static WritableArray toStatisticsArray(final List<com.arthenica.ffmpegkit.Statistics> statisticsList) {
+  protected static WritableArray toStatisticsArray(final List<com.antonkarpenko.ffmpegkit.Statistics> statisticsList) {
     final WritableArray statisticsArray = Arguments.createArray();
 
     for (int i = 0; i < statisticsList.size(); i++) {
