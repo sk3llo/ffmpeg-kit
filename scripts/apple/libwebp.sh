@@ -41,7 +41,7 @@ fi
   --with-tifflibdir="${LIB_INSTALL_BASE}/tiff/lib" \
   --host="${HOST}" || return 1
 
-make -j$(get_cpu_count) || return 1
+sudo make -j$(get_cpu_count) || return 1
 
 make install || return 1
 

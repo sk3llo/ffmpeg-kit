@@ -3813,7 +3813,6 @@ AC_HELP_STRING([--enable-render-d3d], [enable the Direct3D render driver [[defau
         if test x$enable_haptic = xyes; then
             AC_DEFINE(SDL_HAPTIC_IOKIT, 1, [ ])
             SOURCES="$SOURCES $srcdir/src/haptic/darwin/*.c"
-            EXTRA_LDFLAGS="$EXTRA_LDFLAGS -Wl,-framework,ForceFeedback"
             have_haptic=yes
         fi
         # Set up files for the power library

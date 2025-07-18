@@ -230,9 +230,13 @@ for library in {0..61}; do
       CONFIGURE_POSTFIX+=" --enable-librubberband"
       ;;
     sdl)
-      FFMPEG_CFLAGS+=" $(pkg-config --cflags sdl2 2>>"${BASEDIR}"/build.log)"
-      FFMPEG_LDFLAGS+=" $(pkg-config --libs --static sdl2 2>>"${BASEDIR}"/build.log)"
-      CONFIGURE_POSTFIX+=" --enable-sdl2"
+      if [ "$ARCH" = "x86-64" ]; then
+        echo "INFO: Skipping sdl for x86_64 architecture."
+      else
+        FFMPEG_CFLAGS+=" $(pkg-config --cflags sdl2 2>>"${BASEDIR}"/build.log)"
+        FFMPEG_LDFLAGS+=" $(pkg-config --libs --static sdl2 2>>"${BASEDIR}"/build.log)"
+        CONFIGURE_POSTFIX+=" --enable-sdl2"
+      fi
       ;;
     shine)
       FFMPEG_CFLAGS+=" $(pkg-config --cflags shine 2>>"${BASEDIR}"/build.log)"
@@ -281,11 +285,15 @@ for library in {0..61}; do
       FFMPEG_LDFLAGS+=" $(pkg-config --libs --static x264 2>>"${BASEDIR}"/build.log)"
       CONFIGURE_POSTFIX+=" --enable-libx264"
       ;;
-#    x265)
-#      FFMPEG_CFLAGS+=" $(pkg-config --cflags x265 2>>"${BASEDIR}"/build.log)"
-#      FFMPEG_LDFLAGS+=" $(pkg-config --libs --static x265 2>>"${BASEDIR}"/build.log)"
-#      CONFIGURE_POSTFIX+=" --enable-libx265"
-#      ;;
+    x265)
+      if [ "$ARCH" = "x86-64" ]; then
+        echo "INFO: Skipping libx265 for x86_64 architecture."
+      else
+        FFMPEG_CFLAGS+=" $(pkg-config --cflags x265 2>>"${BASEDIR}"/build.log)"
+        FFMPEG_LDFLAGS+=" $(pkg-config --libs --static x265 2>>"${BASEDIR}"/build.log)"
+        CONFIGURE_POSTFIX+=" --enable-libx265"
+      fi
+      ;;
     xvidcore)
       FFMPEG_CFLAGS+=" $(pkg-config --cflags xvidcore 2>>"${BASEDIR}"/build.log)"
       FFMPEG_LDFLAGS+=" $(pkg-config --libs --static xvidcore 2>>"${BASEDIR}"/build.log)"
@@ -461,7 +469,7 @@ echo -n -e "\n${LIB_NAME}: "
 
 if [[ -z ${NO_WORKSPACE_CLEANUP_ffmpeg} ]]; then
   echo -e "INFO: Cleaning workspace for ${LIB_NAME}\n" 1>>"${BASEDIR}"/build.log 2>&1
-  sudo make distclean 2>/dev/null 1>/dev/null
+  make distclean 2>/dev/null 1>/dev/null
 
   # WORKAROUND TO MANUALLY DELETE UNCLEANED FILES
   rm -f "${BASEDIR}"/src/"${LIB_NAME}"/libavfilter/opencl/*.o 1>>"${BASEDIR}"/build.log 2>&1

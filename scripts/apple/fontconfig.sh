@@ -29,7 +29,7 @@ fi
 # 1. test-bz106632.c
 overwrite_file "${BASEDIR}"/src/"${LIB_NAME}"/test/test-bz106618.c "${BASEDIR}"/src/"${LIB_NAME}"/test/test-bz106632.c
 
-make -j$(get_cpu_count) || return 1
+sudo make -j$(get_cpu_count) || return 1
 
 make install || return 1
 

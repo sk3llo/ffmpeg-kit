@@ -88,7 +88,7 @@ full
 
 video
 ```
-./ios.sh --enable-dav1d --enable-fontconfig --enable-freetype --enable-fribidi --enable-kvazaar --enable-libass --enable-libiconv --enable-libtheora --enable-libvpx --enable-libwebp --enable-snappy --enable-zimg
+./ios.sh --enable-dav1d --enable-fontconfig --enable-freetype --enable-fribidi --enable-kvazaar --enable-libass --enable-ios-libiconv --enable-libtheora --enable-libvpx --enable-libwebp --enable-snappy --enable-zimg
 ```
 
 audio
@@ -98,7 +98,7 @@ audio
 
 https-gpl
 ```
-./ios.sh --enable-gmp --enable-gnutls --enable-vid.stab --enable-x264 --enable-x265 --enable-xvidcore
+./ios.sh --enable-gpl --enable-gmp --enable-gnutls --enable-libvidstab --enable-x264 --enable-x265 --enable-xvidcore
 ```
 
 https
@@ -108,7 +108,7 @@ https
 
 min-gpl
 ```
-./ios.sh --enable-vid.stab --enable-x264 --enable-x265 --enable-xvidcore
+./ios.sh --enable-gpl --enable-libvidstab --enable-x264 --enable-x265 --enable-xvidcore
 ```
 
 min

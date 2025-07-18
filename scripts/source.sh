@@ -38,7 +38,7 @@ get_library_source() {
     ;;
   fontconfig)
     SOURCE_REPO_URL="https://github.com/arthenica/fontconfig"
-    SOURCE_ID="2.14.2"
+    SOURCE_ID="2.16.2"
     SOURCE_TYPE="TAG"
     ;;
   freetype)
@@ -98,7 +98,7 @@ get_library_source() {
     ;;
   libass)
     SOURCE_REPO_URL="https://github.com/arthenica/libass"
-    SOURCE_ID="0.17.1"
+    SOURCE_ID="0.17.4"
     SOURCE_TYPE="TAG"
     ;;
   libiconv)
@@ -197,8 +197,8 @@ get_library_source() {
     SOURCE_TYPE="TAG"
     ;;
   sdl)
-    SOURCE_REPO_URL="https://github.com/arthenica/SDL"
-    SOURCE_ID="release-2.0.8"
+    SOURCE_REPO_URL="https://github.com/libsdl-org/SDL"
+    SOURCE_ID="release-2.32.8"
     SOURCE_TYPE="TAG"
     ;;
   shine)

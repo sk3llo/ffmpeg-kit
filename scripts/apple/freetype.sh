@@ -36,7 +36,7 @@ overwrite_file "${FFMPEG_KIT_TMPDIR}"/source/config/config.sub "${BASEDIR}"/src/
   --disable-mmap \
   --host="${HOST}" || return 1
 
-make -j$(get_cpu_count) || return 1
+sudo make -j$(get_cpu_count) || return 1
 
 make install || return 1
 
