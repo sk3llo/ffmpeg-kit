@@ -21,7 +21,7 @@ fi
   --with-pic \
   --with-sysroot="${ANDROID_SYSROOT}" \
   --with-zlib \
-  --with-iconv="${LIB_INSTALL_BASE}/libiconv/lib" \
+  --with-iconv="${LIB_INSTALL_BASE}/libiconv" \
   --with-sax1 \
   --without-python \
   --without-debug \

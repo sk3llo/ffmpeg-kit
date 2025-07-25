@@ -8,7 +8,7 @@
 * As usual for GNU packages:
 
 ```
-./configure --prefix=/usr/local && sudo make && sudo make install
+sudo ./configure --prefix=/usr/local && sudo make && sudo make install
 ```
 
 * SOMETIMES:
@@ -30,42 +30,42 @@ sudo make clean && sudo make distclean
 
 full-gpl
 ```
-export ANDROID_SDK_ROOT=/Users/me/Library/Android/sdk && export ANDROID_NDK_ROOT=/Users/me/Library/Android/sdk/ndk/29.0.13113456 && ./android.sh --full --enable-gpl --disable-arm-v7a --disable-arm-v7a-neon --disable-x86 --disable-x86-64
+export ANDROID_SDK_ROOT=/Users/me/Library/Android/sdk && export ANDROID_NDK_ROOT=/Users/me/Library/Android/sdk/ndk/29.0.13113456 && sudo -E ./android.sh --full --enable-gpl --disable-arm-v7a --disable-arm-v7a-neon --disable-x86 --disable-x86-64
 ```
 
 full
 ```
-export ANDROID_SDK_ROOT=/Users/me/Library/Android/sdk && export ANDROID_NDK_ROOT=/Users/me/Library/Android/sdk/ndk/29.0.13113456 && ./android.sh --enable-dav1d --enable-fontconfig --enable-freetype --enable-fribidi --enable-gmp --enable-gnutls --enable-kvazaar --enable-lame --enable-libass --enable-libiconv --enable-libilbc --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libxml2 --enable-opencore-amr --enable- --enable-opus --enable-shine --enable-snappy --enable-soxr --enable-speex --enable-twolame --enable-vo-amrwbenc --enable-zimg 
+export ANDROID_SDK_ROOT=/Users/me/Library/Android/sdk && export ANDROID_NDK_ROOT=/Users/me/Library/Android/sdk/ndk/29.0.13113456 && sudo -E ./android.sh --enable-dav1d --enable-fontconfig --enable-freetype --enable-fribidi --enable-gmp --enable-gnutls --enable-kvazaar --enable-lame --enable-libass --enable-libiconv --enable-libilbc --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libxml2 --enable-opencore-amr --enable- --enable-opus --enable-shine --enable-snappy --enable-soxr --enable-speex --enable-twolame --enable-vo-amrwbenc --enable-zimg 
 ```
 
 video
 ```
-export ANDROID_SDK_ROOT=/Users/me/Library/Android/sdk && export ANDROID_NDK_ROOT=/Users/me/Library/Android/sdk/ndk/29.0.13113456 && ./android.sh --enable-dav1d --enable-fontconfig --enable-freetype --enable-fribidi --enable-kvazaar --enable-libass --enable-libiconv --enable-libtheora --enable-libvpx --enable-libwebp --enable-snappy --enable-zimg
+export ANDROID_SDK_ROOT=/Users/me/Library/Android/sdk && export ANDROID_NDK_ROOT=/Users/me/Library/Android/sdk/ndk/29.0.13113456 && sudo -E ./android.sh --enable-dav1d --enable-fontconfig --enable-freetype --enable-fribidi --enable-kvazaar --enable-libass --enable-libiconv --enable-libtheora --enable-libvpx --enable-libwebp --enable-snappy --enable-zimg
 ```
 
 audio
 ```
-export ANDROID_SDK_ROOT=/Users/me/Library/Android/sdk && export ANDROID_NDK_ROOT=/Users/me/Library/Android/sdk/ndk/29.0.13113456 && ./android.sh --enable-lame --enable-libilbc --enable-libvorbis --enable-opencore-amr --enable-opus --enable-shine --enable-soxr --enable-speex --enable-vo-amrwbenc 
+export ANDROID_SDK_ROOT=/Users/me/Library/Android/sdk && export ANDROID_NDK_ROOT=/Users/me/Library/Android/sdk/ndk/29.0.13113456 && sudo -E ./android.sh --enable-lame --enable-libilbc --enable-libvorbis --enable-opencore-amr --enable-opus --enable-shine --enable-soxr --enable-speex --enable-vo-amrwbenc 
 ```
 
-https-gpl
+https-gpl (WHEN BUILDING - ENABLE gnutls IN scripts/android/ffmpeg.sh)
 ```
-export ANDROID_SDK_ROOT=/Users/me/Library/Android/sdk && export ANDROID_NDK_ROOT=/Users/me/Library/Android/sdk/ndk/29.0.13113456 && ./android.sh --enable-gmp --enable-gnutls --enable-vid.stab --enable-x264 --enable-x265 --enable-xvidcore
+export ANDROID_SDK_ROOT=/Users/me/Library/Android/sdk && export ANDROID_NDK_ROOT=/Users/me/Library/Android/sdk/ndk/29.0.13113456 && sudo -E ./android.sh --enable-gpl --enable-gmp --enable-gnutls --enable-libvidstab --enable-x264 --enable-x265 --enable-xvidcore
 ```
 
-https
+https (WHEN BUILDING - ENABLE gnutls IN scripts/android/ffmpeg.sh)
 ```
-export ANDROID_SDK_ROOT=/Users/me/Library/Android/sdk && export ANDROID_NDK_ROOT=/Users/me/Library/Android/sdk/ndk/29.0.13113456 && ./android.sh --enable-gmp --enable-gnutls
+export ANDROID_SDK_ROOT=/Users/me/Library/Android/sdk && export ANDROID_NDK_ROOT=/Users/me/Library/Android/sdk/ndk/29.0.13113456 && sudo -E ./android.sh --enable-gmp --enable-gnutls
 ```
 
 min-gpl
 ```
-export ANDROID_SDK_ROOT=/Users/me/Library/Android/sdk && export ANDROID_NDK_ROOT=/Users/me/Library/Android/sdk/ndk/29.0.13113456 && ./android.sh --enable-vid.stab --enable-x264 --enable-x265 --enable-xvidcore
+export ANDROID_SDK_ROOT=/Users/me/Library/Android/sdk && export ANDROID_NDK_ROOT=/Users/me/Library/Android/sdk/ndk/29.0.13113456 && sudo -E ./android.sh --enable-gpl --enable-libvidstab --enable-x264 --enable-x265 --enable-xvidcore
 ```
 
 min
 ```
-export ANDROID_SDK_ROOT=/Users/me/Library/Android/sdk && export ANDROID_NDK_ROOT=/Users/me/Library/Android/sdk/ndk/29.0.13113456 && ./android.sh
+export ANDROID_SDK_ROOT=/Users/me/Library/Android/sdk && export ANDROID_NDK_ROOT=/Users/me/Library/Android/sdk/ndk/29.0.13113456 && sudo -E ./android.sh
 ```
 
 
@@ -74,46 +74,46 @@ export ANDROID_SDK_ROOT=/Users/me/Library/Android/sdk && export ANDROID_NDK_ROOT
 
 
 
-* iOS: `./ios.sh`
+* iOS:
 
 full-gpl
 ```
-./ios.sh --full --enable-gpl
+sudo ./ios.sh --full --enable-gpl
 ```
 
 full
 ```
-./ios.sh --full
+sudo ./ios.sh --full
 ```
 
 video
 ```
-./ios.sh --enable-dav1d --enable-fontconfig --enable-freetype --enable-fribidi --enable-kvazaar --enable-libass --enable-ios-libiconv --enable-libtheora --enable-libvpx --enable-libwebp --enable-snappy --enable-zimg
+sudo ./ios.sh --enable-dav1d --enable-fontconfig --enable-freetype --enable-fribidi --enable-kvazaar --enable-libass --enable-ios-libiconv --enable-libtheora --enable-libvpx --enable-libwebp --enable-snappy --enable-zimg
 ```
 
 audio
 ```
-./ios.sh --enable-lame --enable-libilbc --enable-libvorbis --enable-opencore-amr --enable-opus --enable-shine --enable-soxr --enable-speex --enable-vo-amrwbenc
+sudo ./ios.sh --enable-lame --enable-libilbc --enable-libvorbis --enable-opencore-amr --enable-opus --enable-shine --enable-soxr --enable-speex --enable-vo-amrwbenc
 ```
 
-https-gpl
+https-gpl (WHEN BUILDING - ENABLE gnutls IN scripts/apple/ffmpeg.sh)
 ```
-./ios.sh --enable-gpl --enable-gmp --enable-gnutls --enable-libvidstab --enable-x264 --enable-x265 --enable-xvidcore
+sudo ./ios.sh --enable-gpl --enable-gmp --enable-gnutls --enable-libvidstab --enable-x264 --enable-x265 --enable-xvidcore
 ```
 
-https
+https (WHEN BUILDING - ENABLE gnutls IN scripts/apple/ffmpeg.sh)
 ```
-./ios.sh --enable-gmp --enable-gnutls
+sudo ./ios.sh --enable-gmp --enable-gnutls
 ```
 
 min-gpl
 ```
-./ios.sh --enable-gpl --enable-libvidstab --enable-x264 --enable-x265 --enable-xvidcore
+sudo ./ios.sh --enable-gpl --enable-libvidstab --enable-x264 --enable-x265 --enable-xvidcore
 ```
 
 min
 ```
-./ios.sh
+sudo ./ios.sh
 ```
 
 

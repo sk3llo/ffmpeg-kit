@@ -207,7 +207,7 @@ for library in {0..61}; do
       LDFLAGS+=" $(pkg-config --libs --static rubberband 2>>"${BASEDIR}"/build.log)"
       CONFIGURE_POSTFIX+=" --enable-librubberband"
       ;;
-    sdl)
+    sdl2)
       CFLAGS+=" $(pkg-config --cflags sdl2 2>>"${BASEDIR}"/build.log)"
       LDFLAGS+=" $(pkg-config --libs --static sdl2 2>>"${BASEDIR}"/build.log)"
       CONFIGURE_POSTFIX+=" --enable-sdl2"
@@ -373,7 +373,7 @@ echo -n -e "\n${LIB_NAME}: "
 
 if [[ -z ${NO_WORKSPACE_CLEANUP_ffmpeg} ]]; then
   echo -e "INFO: Cleaning workspace for ${LIB_NAME}\n" 1>>"${BASEDIR}"/build.log 2>&1
-  make distclean 2>/dev/null 1>/dev/null
+  sudo make distclean 2>/dev/null 1>/dev/null
 
   # WORKAROUND TO MANUALLY DELETE UNCLEANED FILES
   rm -f "${BASEDIR}"/src/"${LIB_NAME}"/libavfilter/opencl/*.o 1>>"${BASEDIR}"/build.log 2>&1
@@ -410,9 +410,9 @@ if [[ ${NO_FFMPEG_KIT_PROTOCOLS} == "1" ]]; then
   ${SED_INLINE} "s| av_set_saf|//av_set_saf|g" "${BASEDIR}"/android/ffmpeg-kit-android-lib/src/main/cpp/ffmpegkit.c 1>>"${BASEDIR}"/build.log 2>&1
   echo -e "\nINFO: Disabled custom ffmpeg-kit protocols\n" 1>>"${BASEDIR}"/build.log 2>&1
 else
-  cat ../../tools/protocols/libavformat_file.c >> libavformat/file.c
+#  cat ../../tools/protocols/libavformat_file.c >> libavformat/file.c
   cat ../../tools/protocols/libavutil_file.h >> libavutil/file.h
-  cat ../../tools/protocols/libavutil_file.c >> libavutil/file.c
+#  cat ../../tools/protocols/libavutil_file.c >> libavutil/file.c
   awk '{gsub(/ff_file_protocol;/,"ff_file_protocol;\nextern const URLProtocol ff_saf_protocol;")}1' libavformat/protocols.c > libavformat/protocols.c.tmp
   cat libavformat/protocols.c.tmp > libavformat/protocols.c
   echo -e "\nINFO: Enabled custom ffmpeg-kit protocols\n" 1>>"${BASEDIR}"/build.log 2>&1

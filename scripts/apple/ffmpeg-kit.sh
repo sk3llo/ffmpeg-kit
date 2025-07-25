@@ -37,10 +37,10 @@ make distclean 2>/dev/null 1>/dev/null
 rm -f "${BASEDIR}"/apple/src/libffmpegkit* 1>>"${BASEDIR}"/build.log 2>&1
 
 # CHECK IF VIDEOTOOLBOX IS ENABLED
-VIDEOTOOLBOX_SUPPORT_FLAG=""
-if [[ ${ENABLED_LIBRARIES[$LIBRARY_APPLE_VIDEOTOOLBOX]} -eq 1 ]]; then
-  VIDEOTOOLBOX_SUPPORT_FLAG="--enable-videotoolbox"
-fi
+VIDEOTOOLBOX_SUPPORT_FLAG="--enable-videotoolbox"
+#if [[ ${ENABLED_LIBRARIES[$LIBRARY_APPLE_VIDEOTOOLBOX]} -eq 1 ]]; then
+#  VIDEOTOOLBOX_SUPPORT_FLAG="--enable-videotoolbox"
+#fi
 
 # ALWAYS REGENERATE BUILD FILES - NECESSARY TO APPLY THE WORKAROUNDS
 autoreconf_library "${LIB_NAME}" 1>>"${BASEDIR}"/build.log 2>&1 || return 1

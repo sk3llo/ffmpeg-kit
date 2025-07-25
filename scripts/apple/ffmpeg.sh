@@ -363,7 +363,35 @@ for library in {0..61}; do
         CONFIGURE_POSTFIX+=" --enable-opengl"
         ;;
       *-videotoolbox)
-        CONFIGURE_POSTFIX+=" --enable-videotoolbox"
+        if [[ ${FFMPEG_KIT_BUILD_TYPE} == "ios" ]]; then
+          CONFIGURE_POSTFIX+=" --enable-videotoolbox"
+
+          # DISABLE FILTERS THAT REQUIRE IOS 16.0
+          if [[ $(compare_versions "$IOS_MIN_VERSION" "16.0") -lt 1 ]]; then
+            CONFIGURE_POSTFIX+=" --disable-filter=scale_vt"
+            echo -e "WARN: Disabled scale_vt filter as it requires min sdk version >= 16.0 for ios. Currently it is set to $IOS_MIN_VERSION.\n" 1>>"${BASEDIR}"/build.log 2>&1
+          elif [[ $(compare_versions "$MAC_CATALYST_MIN_VERSION" "16.0") -lt 1 ]]; then
+            CONFIGURE_POSTFIX+=" --disable-filter=scale_vt"
+            echo -e "WARN: Disabled scale_vt filter as it requires min sdk version >= 16.0 for ios. Currently it is set to $MAC_CATALYST_MIN_VERSION.\n" 1>>"${BASEDIR}"/build.log 2>&1
+          fi
+        elif [[ ${FFMPEG_KIT_BUILD_TYPE} == "macos" ]]; then
+
+          if [[ $(compare_versions "$MACOS_MIN_VERSION" "10.13") -ge 1 ]]; then
+            CONFIGURE_POSTFIX+=" --enable-videotoolbox"
+          else
+            CONFIGURE_POSTFIX+=" --disable-videotoolbox"
+            echo -e "WARN: Disabled videotoolbox as it requires min sdk version >= 10.13 for macos. Currently it is set to $MACOS_MIN_VERSION.\n" 1>>"${BASEDIR}"/build.log 2>&1
+          fi
+
+        elif [[ ${FFMPEG_KIT_BUILD_TYPE} == "tvos" ]]; then
+          CONFIGURE_POSTFIX+=" --enable-videotoolbox"
+
+          # DISABLE FILTERS THAT REQUIRE TVOS 16
+          if [[ $(compare_versions "$TVOS_MIN_VERSION" "16.0") -lt 1 ]]; then
+            CONFIGURE_POSTFIX+=" --disable-filter=scale_vt"
+            echo -e "WARN: Disabled scale_vt filter as it requires min sdk version >= 16.0 for tvos. Currently it is set to $TVOS_MIN_VERSION.\n" 1>>"${BASEDIR}"/build.log 2>&1
+          fi
+        fi
         ;;
       *-zlib)
         CONFIGURE_POSTFIX+=" --enable-zlib"
@@ -525,6 +553,7 @@ ${SED_INLINE} 's/static int av_log_level/__thread int av_log_level/g' "${BASEDIR
   --enable-swscale \
   ${BUILD_LIBRARY_OPTIONS} \
   --enable-pthreads \
+  --enable-videotoolbox \
   --disable-v4l2-m2m \
   --disable-outdev=v4l2 \
   --disable-outdev=fbdev \
