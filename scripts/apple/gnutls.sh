@@ -17,6 +17,8 @@ ${SED_INLINE} 's|gitlab.com/redhat-crypto/tests/interop|github.com/arthenica/red
 export CFLAGS="$(get_cflags ${LIB_NAME}) -I${SDK_PATH}/usr/include"
 export CXXFLAGS=$(get_cxxflags "${LIB_NAME}")
 export LDFLAGS="$(get_ldflags ${LIB_NAME}) -L${SDK_PATH}/usr/lib"
+#export LDFLAGS="-L/opt/homebrew/opt/gmp/lib -L/opt/homebrew/opt/nettle/lib"
+#export CPPFLAGS="-I/opt/homebrew/opt/gmp/include -I/opt/homebrew/opt/nettle/include"
 
 export NETTLE_CFLAGS="-I${LIB_INSTALL_BASE}/nettle/include"
 export NETTLE_LIBS="-L${LIB_INSTALL_BASE}/nettle/lib -lnettle -L${LIB_INSTALL_BASE}/gmp/lib -lgmp"

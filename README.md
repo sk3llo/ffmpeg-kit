@@ -8,7 +8,11 @@
 * As usual for GNU packages:
 
 ```
+OLD:
 sudo ./configure --prefix=/usr/local && sudo make && sudo make install
+
+NEW: 
+sudo ./configure && sudo make && sudo make install
 ```
 
 * SOMETIMES:
@@ -120,6 +124,46 @@ sudo ./ios.sh
 
 
 * MacOS: `./macos.sh`
+
+full-gpl
+```
+sudo ./macos.sh --full --enable-gpl
+```
+
+full
+```
+sudo ./macos.sh --full
+```
+
+video
+```
+sudo ./macos.sh --enable-dav1d --enable-fontconfig --enable-freetype --enable-fribidi --enable-kvazaar --enable-libass --enable-ios-libiconv --enable-libtheora --enable-libvpx --enable-libwebp --enable-snappy --enable-zimg
+```
+
+audio
+```
+sudo ./macos.sh --enable-lame --enable-libilbc --enable-libvorbis --enable-opencore-amr --enable-opus --enable-shine --enable-soxr --enable-speex --enable-vo-amrwbenc
+```
+
+https-gpl (WHEN BUILDING - ENABLE gnutls IN scripts/apple/ffmpeg.sh)
+```
+sudo ./macos.sh --enable-gpl --enable-gmp --enable-gnutls --enable-libvidstab --enable-x264 --enable-x265 --enable-xvidcore
+```
+
+https (WHEN BUILDING - ENABLE gnutls IN scripts/apple/ffmpeg.sh)
+```
+sudo ./macos.sh --enable-gmp --enable-gnutls
+```
+
+min-gpl
+```
+sudo ./macos.sh --enable-gpl --enable-libvidstab --enable-x264 --enable-x265 --enable-xvidcore
+```
+
+min
+```
+sudo ./macos.sh
+```
 
 
 MACOS:
