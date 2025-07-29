@@ -6,8 +6,10 @@ if [ -z "${HOST_PKG_CONFIG_PATH}" ]; then
   exit 1
 fi
 
-# TEMPORARY FIX FOR MACOS PATHS
-#export PKG_CONFIG_PATH="/opt/homebrew/opt/fontconfig/lib/pkgconfig:/opt/homebrew/opt/freetype/lib/pkgconfig:/opt/homebrew/opt/fribidi/lib/pkgconfig:/opt/homebrew/opt/harfbuzz/lib/pkgconfig:/opt/homebrew/opt/libunibreak/lib/pkgconfig:/opt/homebrew/opt/zlib/lib/pkgconfig:/opt/homebrew/opt/bzip2/lib/pkgconfig:/opt/homebrew/opt/libiconv/lib/pkgconfig:/opt/homebrew/opt/srt/lib/pkgconfig:/opt/homebrew/opt/ossp-uuid/lib/pkgconfig:/opt/homebrew/opt/libsamplerate/lib/pkgconfig:/opt/homebrew/opt/graphite2/lib/pkgconfig:/opt/homebrew/opt/glib/lib/pkgconfig:/opt/homebrew/opt/pcre2/lib/pkgconfig"
+# TEMPORARY FIX FOR MACOS PATHS (ERROR: libass <= 11.0.0)
+if [[ "${FFMPEG_KIT_BUILD_TYPE}" == "macos" ]] && [[ "${ARCH}" == "arm64" ]]; then
+  export PKG_CONFIG_PATH="/opt/homebrew/opt/fontconfig/lib/pkgconfig:/opt/homebrew/opt/freetype/lib/pkgconfig:/opt/homebrew/opt/fribidi/lib/pkgconfig:/opt/homebrew/opt/harfbuzz/lib/pkgconfig:/opt/homebrew/opt/libunibreak/lib/pkgconfig:/opt/homebrew/opt/zlib/lib/pkgconfig:/opt/homebrew/opt/bzip2/lib/pkgconfig:/opt/homebrew/opt/libiconv/lib/pkgconfig:/opt/homebrew/opt/srt/lib/pkgconfig:/opt/homebrew/opt/ossp-uuid/lib/pkgconfig:/opt/homebrew/opt/libsamplerate/lib/pkgconfig:/opt/homebrew/opt/graphite2/lib/pkgconfig:/opt/homebrew/opt/glib/lib/pkgconfig:/opt/homebrew/opt/pcre2/lib/pkgconfig"
+fi
 
 LIB_NAME="ffmpeg"
 
@@ -127,7 +129,7 @@ for library in {0..61}; do
       CONFIGURE_POSTFIX+=" --enable-libdav1d"
       ;;
     fontconfig)
-      if [ "$ARCH" = "x86-64" ] && [ "$OS" = "macos" ]; then
+      if [ "$ARCH" = "x86-64" ] && [  "${FFMPEG_KIT_BUILD_TYPE}" = "macos" ]; then
         echo "INFO: Skipping fontconfig for x86_64 architecture."
       else
         FFMPEG_CFLAGS+=" $(pkg-config --cflags fontconfig 2>>"${BASEDIR}"/build.log)"
@@ -136,7 +138,7 @@ for library in {0..61}; do
       fi
       ;;
     freetype)
-      if [ "$ARCH" = "x86-64" ] && [ "$OS" = "macos" ]; then
+      if [ "$ARCH" = "x86-64" ] && [  "${FFMPEG_KIT_BUILD_TYPE}" = "macos" ]; then
         echo "INFO: Skipping freetype for x86_64 architecture."
       else
         FFMPEG_CFLAGS+=" $(pkg-config --cflags freetype2 2>>"${BASEDIR}"/build.log)"
@@ -145,7 +147,7 @@ for library in {0..61}; do
       fi
       ;;
     fribidi)
-      if [ "$ARCH" = "x86-64" ] && [ "$OS" = "macos" ]; then
+      if [ "$ARCH" = "x86-64" ] && [  "${FFMPEG_KIT_BUILD_TYPE}" = "macos" ]; then
         echo "INFO: Skipping fribidi for x86_64 architecture."
       else
         FFMPEG_CFLAGS+=" $(pkg-config --cflags fribidi 2>>"${BASEDIR}"/build.log)"
@@ -179,7 +181,7 @@ for library in {0..61}; do
       CONFIGURE_POSTFIX+=" --enable-libaom"
       ;;
     libass)
-      if [ "$ARCH" = "x86-64" ] && [ "$OS" = "macos" ]; then
+      if [ "$ARCH" = "x86-64" ] && [ "${FFMPEG_KIT_BUILD_TYPE}" = "macos" ]; then
         echo "INFO: Skipping libass for x86_64 architecture."
       else
         FFMPEG_CFLAGS+=" $(pkg-config --cflags libass 2>>"${BASEDIR}"/build.log)"
@@ -218,7 +220,7 @@ for library in {0..61}; do
       CONFIGURE_POSTFIX+=" --enable-libwebp"
       ;;
     libxml2)
-      if [ "$ARCH" = "x86-64" ] && [ "$OS" = "macos" ]; then
+      if [ "$ARCH" = "x86-64" ] && [  "${FFMPEG_KIT_BUILD_TYPE}" = "macos" ]; then
         echo "INFO: Skipping libxml2 for x86_64 architecture."
       else
         FFMPEG_CFLAGS+=" $(pkg-config --cflags libxml-2.0 2>>"${BASEDIR}"/build.log)"
@@ -247,7 +249,7 @@ for library in {0..61}; do
       CONFIGURE_POSTFIX+=" --enable-libopus"
       ;;
     rubberband)
-      if [ "$ARCH" = "x86-64" ] && [ "$OS" = "macos" ]; then
+      if [ "$ARCH" = "x86-64" ] && [  "${FFMPEG_KIT_BUILD_TYPE}" = "macos" ]; then
         echo "INFO: Skipping rubberband for x86_64 architecture."
       else
         FFMPEG_CFLAGS+=" $(pkg-config --cflags rubberband 2>>"${BASEDIR}"/build.log)"
@@ -286,7 +288,7 @@ for library in {0..61}; do
       CONFIGURE_POSTFIX+=" --enable-libspeex"
       ;;
     srt)
-      if [ "$ARCH" = "x86-64" ] && [ "$OS" = "macos" ]; then
+      if [ "$ARCH" = "x86-64" ] && [  "${FFMPEG_KIT_BUILD_TYPE}" = "macos" ]; then
         echo "INFO: Skipping srt for x86_64 architecture."
       else
       FFMPEG_CFLAGS+=" $(pkg-config --cflags srt 2>>"${BASEDIR}"/build.log)"
@@ -302,12 +304,12 @@ for library in {0..61}; do
       CONFIGURE_POSTFIX+=" --enable-libtesseract"
       ;;
     twolame)
-      if [ "$ARCH" = "x86-64" ] && [ "$OS" = "macos" ]; then
+      if [ "$ARCH" = "x86-64" ] && [  "${FFMPEG_KIT_BUILD_TYPE}" = "macos" ]; then
         echo "INFO: Skipping twolame for x86_64 architecture."
       else
-      FFMPEG_CFLAGS+=" $(pkg-config --cflags twolame 2>>"${BASEDIR}"/build.log)"
-      FFMPEG_LDFLAGS+=" $(pkg-config --libs --static twolame 2>>"${BASEDIR}"/build.log)"
-      CONFIGURE_POSTFIX+=" --enable-libtwolame"
+        FFMPEG_CFLAGS+=" $(pkg-config --cflags twolame 2>>"${BASEDIR}"/build.log)"
+        FFMPEG_LDFLAGS+=" $(pkg-config --libs --static twolame 2>>"${BASEDIR}"/build.log)"
+        CONFIGURE_POSTFIX+=" --enable-libtwolame"
       fi
       ;;
     vo-amrwbenc)
@@ -398,35 +400,7 @@ for library in {0..61}; do
         CONFIGURE_POSTFIX+=" --enable-opengl"
         ;;
       *-videotoolbox)
-        if [[ ${FFMPEG_KIT_BUILD_TYPE} == "ios" ]]; then
-          CONFIGURE_POSTFIX+=" --enable-videotoolbox"
-
-          # DISABLE FILTERS THAT REQUIRE IOS 16.0
-          if [[ $(compare_versions "$IOS_MIN_VERSION" "16.0") -lt 1 ]]; then
-            CONFIGURE_POSTFIX+=" --disable-filter=scale_vt"
-            echo -e "WARN: Disabled scale_vt filter as it requires min sdk version >= 16.0 for ios. Currently it is set to $IOS_MIN_VERSION.\n" 1>>"${BASEDIR}"/build.log 2>&1
-          elif [[ $(compare_versions "$MAC_CATALYST_MIN_VERSION" "16.0") -lt 1 ]]; then
-            CONFIGURE_POSTFIX+=" --disable-filter=scale_vt"
-            echo -e "WARN: Disabled scale_vt filter as it requires min sdk version >= 16.0 for ios. Currently it is set to $MAC_CATALYST_MIN_VERSION.\n" 1>>"${BASEDIR}"/build.log 2>&1
-          fi
-        elif [[ ${FFMPEG_KIT_BUILD_TYPE} == "macos" ]]; then
-
-          if [[ $(compare_versions "$MACOS_MIN_VERSION" "10.13") -ge 1 ]]; then
-            CONFIGURE_POSTFIX+=" --enable-videotoolbox"
-          else
-            CONFIGURE_POSTFIX+=" --disable-videotoolbox"
-            echo -e "WARN: Disabled videotoolbox as it requires min sdk version >= 10.13 for macos. Currently it is set to $MACOS_MIN_VERSION.\n" 1>>"${BASEDIR}"/build.log 2>&1
-          fi
-
-        elif [[ ${FFMPEG_KIT_BUILD_TYPE} == "tvos" ]]; then
-          CONFIGURE_POSTFIX+=" --enable-videotoolbox"
-
-          # DISABLE FILTERS THAT REQUIRE TVOS 16
-          if [[ $(compare_versions "$TVOS_MIN_VERSION" "16.0") -lt 1 ]]; then
-            CONFIGURE_POSTFIX+=" --disable-filter=scale_vt"
-            echo -e "WARN: Disabled scale_vt filter as it requires min sdk version >= 16.0 for tvos. Currently it is set to $TVOS_MIN_VERSION.\n" 1>>"${BASEDIR}"/build.log 2>&1
-          fi
-        fi
+        CONFIGURE_POSTFIX+=" --enable-videotoolbox"
         ;;
       *-zlib)
         CONFIGURE_POSTFIX+=" --enable-zlib"
@@ -588,7 +562,6 @@ ${SED_INLINE} 's/static int av_log_level/__thread int av_log_level/g' "${BASEDIR
   --enable-swscale \
   ${BUILD_LIBRARY_OPTIONS} \
   --enable-pthreads \
-  --enable-videotoolbox \
   --disable-v4l2-m2m \
   --disable-outdev=v4l2 \
   --disable-outdev=fbdev \

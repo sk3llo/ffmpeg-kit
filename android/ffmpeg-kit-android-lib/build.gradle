@@ -6,14 +6,14 @@ android {
     if (project.android.hasProperty("namespace")) {
         namespace 'com.antonkarpenko.ffmpegkit'
     }
-    compileSdk 35
+    compileSdk 36
     ndkVersion "29.0.13113456"
 
     defaultConfig {
         minSdk 24
-        targetSdk 35
-        versionCode 240600
-        versionName "6.0"
+        targetSdk 36
+        versionCode 240601
+        versionName "7.1.1"
         project.archivesBaseName = "ffmpeg-kit"
         consumerProguardFiles "consumer-rules.pro"
     }

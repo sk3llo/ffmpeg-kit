@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Taner Sener
+ * Copyright (c) 2021 Anton Karpenko
  *
  * This file is part of FFmpegKit.
  *
@@ -13,8 +13,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- *  You should have received a copy of the GNU Lesser General Public License
- *  along with FFmpegKit.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with FFmpegKit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.antonkarpenko.ffmpegkit;
@@ -85,7 +85,7 @@ public class NativeLoader {
     }
 
     static String loadVersion() {
-        final String version = "6.0";
+        final String version = "7.1.1";
 
         if (isTestModeDisabled()) {
             return FFmpegKitConfig.getVersion();
@@ -134,17 +134,15 @@ public class NativeLoader {
         boolean nativeFFmpegLoaded = false;
         boolean nativeFFmpegTriedAndFailed = false;
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-
-            /* LOADING LINKED LIBRARIES MANUALLY ON API < 21 */
-            final List<String> externalLibrariesEnabled = loadExternalLibraries();
-            for (String dependantLibrary : LIBRARIES_LINKED_WITH_CXX) {
-                if (externalLibrariesEnabled.contains(dependantLibrary)) {
-                    loadLibrary("c++_shared");
-                    break;
-                }
+        final List<String> externalLibrariesEnabled = loadExternalLibraries();
+        for (String dependantLibrary : LIBRARIES_LINKED_WITH_CXX) {
+            if (externalLibrariesEnabled.contains(dependantLibrary)) {
+                loadLibrary("c++_shared");
+                break;
             }
+        }
 
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             if (AbiDetect.ARM_V7A.equals(loadNativeAbi())) {
                 try {
                     for (String ffmpegLibrary : FFMPEG_LIBRARIES) {
@@ -156,11 +154,11 @@ public class NativeLoader {
                     nativeFFmpegTriedAndFailed = true;
                 }
             }
+        }
 
-            if (!nativeFFmpegLoaded) {
-                for (String ffmpegLibrary : FFMPEG_LIBRARIES) {
-                    loadLibrary(ffmpegLibrary);
-                }
+        if (!nativeFFmpegLoaded) {
+            for (String ffmpegLibrary : FFMPEG_LIBRARIES) {
+                loadLibrary(ffmpegLibrary);
             }
         }
 

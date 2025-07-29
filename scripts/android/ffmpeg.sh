@@ -149,6 +149,7 @@ for library in {0..61}; do
     libilbc)
       CFLAGS+=" $(pkg-config --cflags libilbc 2>>"${BASEDIR}"/build.log)"
       LDFLAGS+=" $(pkg-config --libs --static libilbc 2>>"${BASEDIR}"/build.log)"
+      LDFLAGS+=" -lstdc++"
       CONFIGURE_POSTFIX+=" --enable-libilbc"
       ;;
     libtheora)

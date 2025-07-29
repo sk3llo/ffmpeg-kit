@@ -27,4 +27,4 @@ sudo make -j$(get_cpu_count) || return 1
 sudo make install || return 1
 
 # CREATE PACKAGE CONFIG MANUALLY
-create_libiconv_package_config "1.17" || return 1
+create_libiconv_package_config "1.18" || return 1
