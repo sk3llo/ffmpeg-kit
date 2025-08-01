@@ -259,13 +259,13 @@ for library in {0..61}; do
       fi
       ;;
     sdl)
-      if [ "$ARCH" = "x86-64" ]; then
-        echo "INFO: Skipping sdl for x86_64 architecture."
-      else
+#      if [ "$ARCH" = "x86-64" ]; then
+#        echo "INFO: Skipping sdl for x86_64 architecture."
+#      else
         FFMPEG_CFLAGS+=" $(pkg-config --cflags sdl2 2>>"${BASEDIR}"/build.log)"
         FFMPEG_LDFLAGS+=" $(pkg-config --libs --static sdl2 2>>"${BASEDIR}"/build.log)"
         CONFIGURE_POSTFIX+=" --enable-sdl2"
-      fi
+#      fi
       ;;
     shine)
       FFMPEG_CFLAGS+=" $(pkg-config --cflags shine 2>>"${BASEDIR}"/build.log)"
@@ -403,9 +403,13 @@ for library in {0..61}; do
         CONFIGURE_POSTFIX+=" --enable-videotoolbox"
         ;;
       *-zlib)
-        CONFIGURE_POSTFIX+=" --enable-zlib"
-        FFMPEG_CFLAGS+=" $(pkg-config --cflags zlib 2>>"${BASEDIR}"/build.log)"
-        FFMPEG_LDFLAGS+=" $(pkg-config --libs zlib 2>>"${BASEDIR}"/build.log)"
+#        if [ "$ARCH" = "x86-64" ]; then
+#          echo "INFO: Skipping zlib for x86_64 architecture."
+#        else
+          CONFIGURE_POSTFIX+=" --enable-zlib"
+          FFMPEG_CFLAGS+=" $(pkg-config --cflags zlib 2>>"${BASEDIR}"/build.log)"
+          FFMPEG_LDFLAGS+=" $(pkg-config --libs zlib 2>>"${BASEDIR}"/build.log)"
+#        fi
         ;;
       esac
       ;;
