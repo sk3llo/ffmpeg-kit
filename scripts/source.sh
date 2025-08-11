@@ -38,12 +38,12 @@ get_library_source() {
     ;;
   fontconfig)
     SOURCE_REPO_URL="https://github.com/arthenica/fontconfig"
-    SOURCE_ID="2.16.2"
+    SOURCE_ID="2.17.1"
     SOURCE_TYPE="TAG"
     ;;
   freetype)
     SOURCE_REPO_URL="https://github.com/arthenica/freetype2"
-    SOURCE_ID="VER-2-13-0"
+    SOURCE_ID="VER-2-13-3"
     SOURCE_TYPE="TAG"
     ;;
   fribidi)
@@ -68,7 +68,7 @@ get_library_source() {
     ;;
   harfbuzz)
     SOURCE_REPO_URL="https://github.com/arthenica/harfbuzz"
-    SOURCE_ID="8.0.1"
+    SOURCE_ID="11.3.3"
     SOURCE_TYPE="TAG"
     ;;
   jpeg)

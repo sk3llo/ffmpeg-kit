@@ -9,6 +9,8 @@ fi
 # TEMPORARY FIX FOR MACOS PATHS (ERROR: libass <= 11.0.0)
 if [[ "${FFMPEG_KIT_BUILD_TYPE}" == "macos" ]] && [[ "${ARCH}" == "arm64" ]]; then
   export PKG_CONFIG_PATH="/opt/homebrew/opt/fontconfig/lib/pkgconfig:/opt/homebrew/opt/freetype/lib/pkgconfig:/opt/homebrew/opt/fribidi/lib/pkgconfig:/opt/homebrew/opt/harfbuzz/lib/pkgconfig:/opt/homebrew/opt/libunibreak/lib/pkgconfig:/opt/homebrew/opt/zlib/lib/pkgconfig:/opt/homebrew/opt/bzip2/lib/pkgconfig:/opt/homebrew/opt/libiconv/lib/pkgconfig:/opt/homebrew/opt/srt/lib/pkgconfig:/opt/homebrew/opt/ossp-uuid/lib/pkgconfig:/opt/homebrew/opt/libsamplerate/lib/pkgconfig:/opt/homebrew/opt/graphite2/lib/pkgconfig:/opt/homebrew/opt/glib/lib/pkgconfig:/opt/homebrew/opt/pcre2/lib/pkgconfig"
+elif [[ "${FFMPEG_KIT_BUILD_TYPE}" == "macos" ]] && [[ "${ARCH}" == "x86-64" ]]; then
+  export PKG_CONFIG_PATH="" #/usr/local/lib/pkgconfig
 fi
 
 LIB_NAME="ffmpeg"
@@ -129,31 +131,40 @@ for library in {0..61}; do
       CONFIGURE_POSTFIX+=" --enable-libdav1d"
       ;;
     fontconfig)
-      if [ "$ARCH" = "x86-64" ] && [  "${FFMPEG_KIT_BUILD_TYPE}" = "macos" ]; then
-        echo "INFO: Skipping fontconfig for x86_64 architecture."
-      else
+#      if [ "$ARCH" = "x86-64" ] && [  "${FFMPEG_KIT_BUILD_TYPE}" = "macos" ]; then
+#        echo "INFO: Skipping fontconfig for x86_64 architecture."
+#      else
         FFMPEG_CFLAGS+=" $(pkg-config --cflags fontconfig 2>>"${BASEDIR}"/build.log)"
         FFMPEG_LDFLAGS+=" $(pkg-config --libs --static fontconfig 2>>"${BASEDIR}"/build.log)"
         CONFIGURE_POSTFIX+=" --enable-libfontconfig"
-      fi
+#      fi
       ;;
     freetype)
-      if [ "$ARCH" = "x86-64" ] && [  "${FFMPEG_KIT_BUILD_TYPE}" = "macos" ]; then
-        echo "INFO: Skipping freetype for x86_64 architecture."
-      else
+#      if [ "$ARCH" = "x86-64" ] && [  "${FFMPEG_KIT_BUILD_TYPE}" = "macos" ]; then
+#        echo "INFO: Skipping freetype for x86_64 architecture."
+#      else
         FFMPEG_CFLAGS+=" $(pkg-config --cflags freetype2 2>>"${BASEDIR}"/build.log)"
         FFMPEG_LDFLAGS+=" $(pkg-config --libs --static freetype2 2>>"${BASEDIR}"/build.log)"
         CONFIGURE_POSTFIX+=" --enable-libfreetype"
-      fi
+#      fi
+      ;;
+    harfbuzz)
+#      if [ "$ARCH" = "x86-64" ] && [  "${FFMPEG_KIT_BUILD_TYPE}" = "macos" ]; then
+#        echo "INFO: Skipping harfbuzz for x86_64 architecture."
+#      else
+        FFMPEG_CFLAGS+=" $(pkg-config --cflags harfbuzz 2>>"${BASEDIR}"/build.log)"
+        FFMPEG_LDFLAGS+=" $(pkg-config --libs --static harfbuzz 2>>"${BASEDIR}"/build.log)"
+        CONFIGURE_POSTFIX+=" --enable-libharfbuzz"
+#      fi
       ;;
     fribidi)
-      if [ "$ARCH" = "x86-64" ] && [  "${FFMPEG_KIT_BUILD_TYPE}" = "macos" ]; then
-        echo "INFO: Skipping fribidi for x86_64 architecture."
-      else
+#      if [ "$ARCH" = "x86-64" ] && [  "${FFMPEG_KIT_BUILD_TYPE}" = "macos" ]; then
+#        echo "INFO: Skipping fribidi for x86_64 architecture."
+#      else
         FFMPEG_CFLAGS+=" $(pkg-config --cflags fribidi 2>>"${BASEDIR}"/build.log)"
         FFMPEG_LDFLAGS+=" $(pkg-config --libs --static fribidi 2>>"${BASEDIR}"/build.log)"
         CONFIGURE_POSTFIX+=" --enable-libfribidi"
-      fi
+#      fi
       ;;
     gmp)
       FFMPEG_CFLAGS+=" $(pkg-config --cflags gmp 2>>"${BASEDIR}"/build.log)"
@@ -249,16 +260,16 @@ for library in {0..61}; do
       CONFIGURE_POSTFIX+=" --enable-libopus"
       ;;
     rubberband)
-      if [ "$ARCH" = "x86-64" ] && [  "${FFMPEG_KIT_BUILD_TYPE}" = "macos" ]; then
-        echo "INFO: Skipping rubberband for x86_64 architecture."
-      else
+#      if [ "$ARCH" = "x86-64" ] && [  "${FFMPEG_KIT_BUILD_TYPE}" = "macos" ]; then
+#        echo "INFO: Skipping rubberband for x86_64 architecture."
+#      else
         FFMPEG_CFLAGS+=" $(pkg-config --cflags rubberband 2>>"${BASEDIR}"/build.log)"
         FFMPEG_LDFLAGS+=" $(pkg-config --libs --static rubberband 2>>"${BASEDIR}"/build.log)"
         FFMPEG_LDFLAGS+=" -framework Accelerate"
         CONFIGURE_POSTFIX+=" --enable-librubberband"
-      fi
+#      fi
       ;;
-    sdl)
+    sdl2)
 #      if [ "$ARCH" = "x86-64" ]; then
 #        echo "INFO: Skipping sdl for x86_64 architecture."
 #      else
