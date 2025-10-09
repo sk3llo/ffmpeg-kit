@@ -13,6 +13,12 @@ sudo ./configure --prefix=/usr/local && sudo make && sudo make install
 
 NEW: 
 sudo ./configure && sudo make && sudo make install
+
+SOME LIBS (LIKE `libxml2):
+./autogen.sh
+
+SOMETIMES:
+sudo ./configure --prefix=/usr/local --enable-shared
 ```
 
 * SOMETIMES:
@@ -171,4 +177,24 @@ MACOS:
 
 
 
+### FIX FOR CERTAIN LIBS
+
+# LIBSRT
+
+(INSIDE `src/srt` directory):
+1. rm -rf CMakeCache.txt CMakeFiles/
+2. sudo cmake . -DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++
+3. sudo make && sudo make install
+
+# LIBVORBIS
+
+1. sudo make distclean
+2. sudo autoreconf -fiv
+3. sudo make && sudo make install
+
+# LIBTHEORA
+
+1. sudo make distclean
+2. sudo ./autogen.sh
+3. sudo ./configure && sudo make && sudo make install
 

@@ -1,5 +1,6 @@
 /*
  * Muxer/output file setup.
+ * Copyright (c) 2023 ARTHENICA LTD
  *
  * This file is part of FFmpeg.
  *
@@ -23,6 +24,7 @@
  * manually update it each time we depend on a new ffmpeg version. Below you can see the list of changes applied
  * by us to develop ffmpeg-kit library.
  *
+ * ffmpeg-kit changes by ARTHENICA LTD
  *
  * 07.2023
  * --------------------------------------------------------
@@ -282,9 +284,9 @@ static int enc_stats_init(OutputStream *ost, EncStats *es, int pre,
     static const struct {
         enum EncStatsType  type;
         const char        *str;
-        unsigned int                pre_only:1;
-        unsigned int                post_only:1;
-        unsigned int                need_input_data:1;
+        unsigned int       pre_only:1;
+        unsigned int       post_only:1;
+        unsigned int       need_input_data:1;
     } fmt_specs[] = {
         { ENC_STATS_FILE_IDX,       "fidx"                      },
         { ENC_STATS_STREAM_IDX,     "sidx"                      },

@@ -13,6 +13,8 @@ elif [[ "${FFMPEG_KIT_BUILD_TYPE}" == "macos" ]] && [[ "${ARCH}" == "x86-64" ]];
   export PKG_CONFIG_PATH="" #/usr/local/lib/pkgconfig
 fi
 
+#/opt/homebrew/Cellar/fontconfig/2.16.0/lib/pkgconfig:/opt/homebrew/Cellar/2.13.3/lib/pkgconfig:/opt/homebrew/Cellar/fribidi/1.0.16/lib/pkgconfig:/opt/homebrew/Cellar/harfbuzz/11.3.3/lib/pkgconfig:/opt/homebrew/Cellar/libunibreak/6.1lib/pkgconfig:/opt/homebrew/Cellar/zlib/1.3.1/lib/pkgconfig:/opt/homebrew/Cellar/bzip2/1.0.8/lib/pkgconfig:/opt/homebrew/Cellar/libiconv/1.18/lib/pkgconfig:/opt/homebrew/Cellar/srt/1.5.4/lib/pkgconfig:/opt/homebrew/Cellar/ossp-uuid/1.6.2/lib/pkgconfig:/opt/homebrew/Cellar/libsamplerate/0.2.2/lib/pkgconfig:/opt/homebrew/Cellar/graphite2/1.3.14/lib/pkgconfig:/opt/homebrew/Cellar/glib/2.84.3/lib/pkgconfig:/opt/homebrew/Cellar/pcre2/10.45/lib/pkgconfig
+
 LIB_NAME="ffmpeg"
 
 echo -e "----------------------------------------------------------------" 1>>"${BASEDIR}"/build.log 2>&1
@@ -401,8 +403,6 @@ for library in {0..61}; do
         ;;
       *-libiconv)
         CONFIGURE_POSTFIX+=" --enable-iconv"
-        FFMPEG_CFLAGS+=" $(pkg-config --cflags libiconv 2>>"${BASEDIR}"/build.log)"
-        FFMPEG_LDFLAGS+=" $(pkg-config --libs libiconv 2>>"${BASEDIR}"/build.log)"
         ;;
       *-opencl)
         CONFIGURE_POSTFIX+=" --enable-opencl"
@@ -568,7 +568,9 @@ ${SED_INLINE} 's/static int av_log_level/__thread int av_log_level/g' "${BASEDIR
   --ranlib="${RANLIB}" \
   --strip="${STRIP}" \
   --nm="${NM}" \
+  --extra-cflags="${FFMPEG_CFLAGS}" \
   --extra-ldflags="$(get_min_version_cflags)" \
+  --extra-libs="${FFMPEG_LDFLAGS}" \
   --disable-autodetect \
   --enable-cross-compile \
   --enable-pic \
@@ -587,7 +589,6 @@ ${SED_INLINE} 's/static int av_log_level/__thread int av_log_level/g' "${BASEDIR
   ${DEBUG_OPTIONS} \
   --disable-neon-clobber-test \
   --disable-programs \
-  --disable-postproc \
   --disable-doc \
   --disable-htmlpages \
   --disable-manpages \

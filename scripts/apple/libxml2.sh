@@ -3,7 +3,9 @@
 # ALWAYS CLEAN THE PREVIOUS BUILD
 make distclean 2>/dev/null 1>/dev/null
 
-export PKG_CONFIG_PATH="/opt/homebrew/opt/libiconv/lib/pkgconfig"
+# REMOVED the incorrect PKG_CONFIG_PATH export.
+export LDFLAGS="-L/opt/homebrew/opt/libiconv/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/libiconv/include"
 
 # REGENERATE BUILD FILES IF NECESSARY OR REQUESTED
 if [[ ! -f "${BASEDIR}"/src/"${LIB_NAME}"/configure ]] || [[ ${RECONF_libxml2} -eq 1 ]]; then
@@ -12,12 +14,12 @@ if [[ ! -f "${BASEDIR}"/src/"${LIB_NAME}"/configure ]] || [[ ${RECONF_libxml2} -
   autoreconf_library "${LIB_NAME}" 1>>"${BASEDIR}"/build.log 2>&1 || return 1
 fi
 
-sudo ./configure \
+# 3. REMOVED sudo and the problematic --with-iconv flag.
+./configure \
   --prefix="${LIB_INSTALL_PREFIX}" \
   --with-pic \
   --with-sysroot="${SDK_PATH}" \
   --with-zlib \
-  --with-iconv="${SDK_PATH}"/usr \
   --with-sax1 \
   --without-python \
   --without-debug \
@@ -27,9 +29,10 @@ sudo ./configure \
   --disable-fast-install \
   --host="${HOST}" || return 1
 
+# 4. REMOVED sudo from make.
 make -j$(get_cpu_count) || return 1
 
 make install || return 1
 
 # CREATE PACKAGE CONFIG MANUALLY
-create_libxml2_package_config "2.11.4" || return 1
+create_libxml2_package_config "2.14.5" || return 1

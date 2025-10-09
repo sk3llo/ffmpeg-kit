@@ -952,8 +952,10 @@ static int configure_input_video_filter(FilterGraph *fg, InputFilter *ifilter,
         int32_t *displaymatrix = ifilter->displaymatrix;
         double theta;
 
-        if (!displaymatrix)
-            displaymatrix = (int32_t *)av_stream_get_side_data(ist->st, AV_PKT_DATA_DISPLAYMATRIX, NULL);
+        /* av_stream_get_side_data removed in FFmpeg 7.x - only use ifilter->displaymatrix if available */
+        if (!displaymatrix) {
+            displaymatrix = NULL; /* Stream side data API removed */
+        }
         theta = get_rotation(displaymatrix);
 
         if (fabs(theta - 90) < 1.0) {

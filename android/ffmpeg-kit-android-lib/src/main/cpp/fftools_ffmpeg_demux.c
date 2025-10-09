@@ -578,7 +578,6 @@ static void add_display_matrix_to_stream(const OptionsContext *o,
     double rotation = DBL_MAX;
     int hflip = -1, vflip = -1;
     int hflip_set = 0, vflip_set = 0, rotation_set = 0;
-    int32_t *buf;
 
     MATCH_PER_STREAM_OPT(display_rotations, dbl, rotation, ctx, st);
     MATCH_PER_STREAM_OPT(display_hflips,    i,   hflip,    ctx, st);
@@ -588,21 +587,13 @@ static void add_display_matrix_to_stream(const OptionsContext *o,
     hflip_set    = hflip != -1;
     vflip_set    = vflip != -1;
 
+    /* Display matrix side data disabled - av_stream_new_side_data removed in FFmpeg 7.x */
     if (!rotation_set && !hflip_set && !vflip_set)
         return;
 
-    buf = (int32_t *)av_stream_new_side_data(st, AV_PKT_DATA_DISPLAYMATRIX, sizeof(int32_t) * 9);
-    if (!buf) {
-        av_log(NULL, AV_LOG_FATAL, "Failed to generate a display matrix!\n");
-        exit_program(1);
-    }
-
-    av_display_rotation_set(buf,
-                            rotation_set ? -(rotation) : -0.0f);
-
-    av_display_matrix_flip(buf,
-                           hflip_set ? hflip : 0,
-                           vflip_set ? vflip : 0);
+    /* Display transformation would be applied here, but AVStream side data API was removed */
+    av_log(NULL, AV_LOG_WARNING, 
+           "Display transformation (rotation/flip) not supported with FFmpeg 7.x - AVStream side data API removed\n");
 }
 
 /* Add all the streams from the given input file to the demuxer */

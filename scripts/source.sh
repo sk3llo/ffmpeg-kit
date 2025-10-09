@@ -33,7 +33,7 @@ get_library_source() {
     ;;
   ffmpeg)
     SOURCE_REPO_URL="https://github.com/arthenica/FFmpeg"
-    SOURCE_ID="n7.1.1"
+    SOURCE_ID="n8.0"
     SOURCE_TYPE="TAG"
     ;;
   fontconfig)
@@ -163,7 +163,7 @@ get_library_source() {
     ;;
   libxml2)
     SOURCE_REPO_URL="https://github.com/arthenica/libxml2"
-    SOURCE_ID="v2.14.4"
+    SOURCE_ID="v2.14.5"
     SOURCE_TYPE="TAG"
     ;;
   nettle)

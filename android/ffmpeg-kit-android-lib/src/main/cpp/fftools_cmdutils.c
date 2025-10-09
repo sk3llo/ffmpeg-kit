@@ -62,7 +62,7 @@
  * - longjmp_value added to store exit code
  * - (optindex < argc) validation added before accessing argv[optindex] inside split_commandline()
  *   and parse_options()
- * - all av_log_set_callback invocations updated to set ffmpegkit_log_callback_function from ffmpegkit.c
+ * - all av_log_set_callback invocations updated to set ffmpegkit_log_callback_function from FFmpegKitConfig.m
  * - unused log_callback_help method removed
  * - (idx + 1 < argc) validation added in parse_loglevel()
  */
