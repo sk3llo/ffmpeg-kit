@@ -403,6 +403,7 @@ for library in {0..61}; do
         ;;
       *-libiconv)
         CONFIGURE_POSTFIX+=" --enable-iconv"
+        FFMPEG_LDFLAGS+=" -liconv"
         ;;
       *-opencl)
         CONFIGURE_POSTFIX+=" --enable-opencl"
