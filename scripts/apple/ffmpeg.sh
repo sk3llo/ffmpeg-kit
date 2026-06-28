@@ -6,14 +6,16 @@ if [ -z "${HOST_PKG_CONFIG_PATH}" ]; then
   exit 1
 fi
 
-# TEMPORARY FIX FOR MACOS PATHS (ERROR: libass <= 11.0.0)
-if [[ "${FFMPEG_KIT_BUILD_TYPE}" == "macos" ]] && [[ "${ARCH}" == "arm64" ]]; then
-  export PKG_CONFIG_PATH="/opt/homebrew/opt/fontconfig/lib/pkgconfig:/opt/homebrew/opt/freetype/lib/pkgconfig:/opt/homebrew/opt/fribidi/lib/pkgconfig:/opt/homebrew/opt/harfbuzz/lib/pkgconfig:/opt/homebrew/opt/libunibreak/lib/pkgconfig:/opt/homebrew/opt/zlib/lib/pkgconfig:/opt/homebrew/opt/bzip2/lib/pkgconfig:/opt/homebrew/opt/libiconv/lib/pkgconfig:/opt/homebrew/opt/srt/lib/pkgconfig:/opt/homebrew/opt/ossp-uuid/lib/pkgconfig:/opt/homebrew/opt/libsamplerate/lib/pkgconfig:/opt/homebrew/opt/graphite2/lib/pkgconfig:/opt/homebrew/opt/glib/lib/pkgconfig:/opt/homebrew/opt/pcre2/lib/pkgconfig"
-elif [[ "${FFMPEG_KIT_BUILD_TYPE}" == "macos" ]] && [[ "${ARCH}" == "x86-64" ]]; then
-  export PKG_CONFIG_PATH="" #/usr/local/lib/pkgconfig
+# Build FFmpeg against the ffmpeg-kit static prefix ONLY. PKG_CONFIG_LIBDIR (set
+# below) points pkg-config at our per-arch prefix. Do NOT add Homebrew pkgconfig
+# dirs here: PKG_CONFIG_PATH is searched *before* PKG_CONFIG_LIBDIR, so Homebrew
+# .pc files would make FFmpeg link Homebrew's *dynamic* dylibs (/opt/homebrew/...)
+# instead of our static .a — producing macOS frameworks that fail to dyld-load on
+# any machine without those exact Homebrew formulae installed. iOS and macOS
+# x86-64 already build clean/static this way; arm64 must match.
+if [[ "${FFMPEG_KIT_BUILD_TYPE}" == "macos" ]]; then
+  export PKG_CONFIG_PATH=""
 fi
-
-#/opt/homebrew/Cellar/fontconfig/2.16.0/lib/pkgconfig:/opt/homebrew/Cellar/2.13.3/lib/pkgconfig:/opt/homebrew/Cellar/fribidi/1.0.16/lib/pkgconfig:/opt/homebrew/Cellar/harfbuzz/11.3.3/lib/pkgconfig:/opt/homebrew/Cellar/libunibreak/6.1lib/pkgconfig:/opt/homebrew/Cellar/zlib/1.3.1/lib/pkgconfig:/opt/homebrew/Cellar/bzip2/1.0.8/lib/pkgconfig:/opt/homebrew/Cellar/libiconv/1.18/lib/pkgconfig:/opt/homebrew/Cellar/srt/1.5.4/lib/pkgconfig:/opt/homebrew/Cellar/ossp-uuid/1.6.2/lib/pkgconfig:/opt/homebrew/Cellar/libsamplerate/0.2.2/lib/pkgconfig:/opt/homebrew/Cellar/graphite2/1.3.14/lib/pkgconfig:/opt/homebrew/Cellar/glib/2.84.3/lib/pkgconfig:/opt/homebrew/Cellar/pcre2/10.45/lib/pkgconfig
 
 LIB_NAME="ffmpeg"
 

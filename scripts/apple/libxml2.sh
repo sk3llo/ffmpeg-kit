@@ -4,8 +4,12 @@
 make distclean 2>/dev/null 1>/dev/null
 
 # REMOVED the incorrect PKG_CONFIG_PATH export.
-export LDFLAGS="-L/opt/homebrew/opt/libiconv/lib"
-export CPPFLAGS="-I/opt/homebrew/opt/libiconv/include"
+# Do NOT point at Homebrew's libiconv: that path gets baked into
+# libxml-2.0.pc's Libs.private and then into the shipped framework, breaking
+# dyld-load on machines without Homebrew. iconv ships in the SDK sysroot
+# (--with-sysroot below), so no explicit -L/-I is needed.
+export LDFLAGS=""
+export CPPFLAGS=""
 
 # REGENERATE BUILD FILES IF NECESSARY OR REQUESTED
 if [[ ! -f "${BASEDIR}"/src/"${LIB_NAME}"/configure ]] || [[ ${RECONF_libxml2} -eq 1 ]]; then
