@@ -121,9 +121,12 @@ run_variant() {
       $SUDO ./"$platform".sh $flags ;;
     android)
       flags="$(android_flags "$variant")" || { echo "  SKIP $variant (unknown)"; return 0; }
-      echo ">>> [android/$variant] ./android.sh $flags"
-      ANDROID_SDK_ROOT="$ANDROID_SDK_ROOT" ANDROID_NDK_ROOT="$ANDROID_NDK_ROOT" \
-        $SUDO -E ./android.sh $flags ;;
+      echo ">>> [android/$variant] ${SUDO:+sudo -E }./android.sh $flags"
+      if [ -n "$SUDO" ]; then
+        ANDROID_SDK_ROOT="$ANDROID_SDK_ROOT" ANDROID_NDK_ROOT="$ANDROID_NDK_ROOT" "$SUDO" -E ./android.sh $flags
+      else
+        ANDROID_SDK_ROOT="$ANDROID_SDK_ROOT" ANDROID_NDK_ROOT="$ANDROID_NDK_ROOT" ./android.sh $flags
+      fi ;;
     windows)
       flags="$(windows_flags "$variant")"; rc=$?
       [ "$rc" = "2" ] && { echo "  SKIP $variant (windows: only min/full/full-gpl are scripted here)"; return 0; }
