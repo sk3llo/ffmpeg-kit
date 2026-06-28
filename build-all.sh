@@ -98,13 +98,9 @@ ensure_apple_gnutls() {
   if grep -qE '^#[[:space:]]*gnutls\)' "$f"; then
     echo "  [gnutls] uncommenting gnutls block in $f (backup: $f.bak)"
     cp "$f" "$f.bak"
-    sed -i.tmp -E \
-      -e '/^#[[:space:]]*gnutls\)/s/^#//' \
-      -e '/^#.*FFMPEG_CFLAGS.*gnutls/s/^#//' \
-      -e '/^#.*FFMPEG_LDFLAGS.*gnutls/s/^#//' \
-      -e '/^#.*CONFIGURE_POSTFIX.*enable-gnutls/s/^#//' \
-      "$f"
-    rm -f "$f.tmp"
+    # Uncomment the whole 5-line gnutls case block INCLUDING its ';;' terminator.
+    # (Dropping ';;' makes the case fall through to kvazaar) => bash syntax error.)
+    perl -0pi -e 's/#(\s*gnutls\))\n#(\s*FFMPEG_CFLAGS[^\n]*)\n#(\s*FFMPEG_LDFLAGS[^\n]*)\n#(\s*CONFIGURE_POSTFIX[^\n]*--enable-gnutls[^\n]*)\n#(\s*;;)/$1\n$2\n$3\n$4\n$5/' "$f"
   else
     echo "  [gnutls] already enabled in $f"
   fi
