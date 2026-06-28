@@ -707,10 +707,8 @@ static int configure_output_audio_filter(FilterGraph *fg, OutputFilter *ofilter,
     snprintf(name, sizeof(name), "out_%d_%d", ost->file_index, ost->index);
     ret = avfilter_graph_create_filter(&ofilter->filter,
                                        avfilter_get_by_name("abuffersink"),
-                                       name, NULL, NULL, fg->graph);
+                                       name, "all_channel_counts=1", NULL, fg->graph);
     if (ret < 0)
-        return ret;
-    if ((ret = av_opt_set_int(ofilter->filter, "all_channel_counts", 1, AV_OPT_SEARCH_CHILDREN)) < 0)
         return ret;
 
 #define AUTO_INSERT_FILTER(opt_name, filter_name, arg) do {                 \
