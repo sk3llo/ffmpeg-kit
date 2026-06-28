@@ -106,6 +106,16 @@ ensure_apple_gnutls() {
   fi
 }
 
+# Restore scripts/apple/ffmpeg.sh to its committed state (gnutls case commented
+# out => openssl-only). ensure_apple_gnutls() flips gnutls ON only for the https
+# variants; without this reset that toggle leaks into later variants — e.g. full
+# enables openssl and configure then aborts with
+# "GnuTLS and OpenSSL must not be enabled at the same time."
+reset_apple_ffmpeg_script() {
+  git checkout -- scripts/apple/ffmpeg.sh 2>/dev/null
+  rm -f scripts/apple/ffmpeg.sh.bak
+}
+
 # Reset the shared FFmpeg source to pristine between variants. Building several
 # variants back-to-back in one src/ffmpeg leaves reconfigure/object residue that
 # makes a later variant fail (e.g. full after https-gpl). External libs under
@@ -124,6 +134,7 @@ run_variant() {
   case "$platform" in
     ios|macos)
       flags="$(apple_flags "$variant")" || { echo "  SKIP $variant (unknown)"; return 0; }
+      reset_apple_ffmpeg_script
       case "$variant" in https|https-gpl) ensure_apple_gnutls ;; esac
       echo ">>> [$platform/$variant] $SUDO ./$platform.sh $flags"
       $SUDO ./"$platform".sh $flags ;;
