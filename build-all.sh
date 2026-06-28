@@ -128,6 +128,31 @@ reset_ffmpeg_source() {
   fi
 }
 
+# Guard: shipped macOS/iOS framework binaries must reference ONLY system dylibs
+# (/usr/lib, /System). A /opt/homebrew, /opt/local or /usr/local reference means
+# a non-portable build that fails to dyld-load on end-user machines (see the
+# PKG_CONFIG_PATH fix in scripts/apple/ffmpeg.sh + libxml2.sh). Returns non-zero
+# if any leak is found so the variant is marked failed.
+check_apple_portability() {
+  local platform="$1" fw bad=0 bin
+  case "$platform" in
+    ios)   fw="prebuilt/bundle-apple-framework-ios" ;;
+    macos) fw="prebuilt/bundle-apple-framework-macos" ;;
+    *) return 0 ;;
+  esac
+  [ -d "$fw" ] || return 0
+  for lib in libavutil libavcodec libavformat libavfilter libavdevice libswscale libswresample ffmpegkit; do
+    bin="$fw/$lib.framework/Versions/A/$lib"; [ -f "$bin" ] || bin="$fw/$lib.framework/$lib"
+    [ -f "$bin" ] || continue
+    if otool -L "$bin" 2>/dev/null | grep -qE "/opt/homebrew|/opt/local|/usr/local"; then
+      echo "  !! PORTABILITY: $lib references non-system dylibs (would fail to load off this machine):"
+      otool -L "$bin" 2>/dev/null | grep -E "/opt/homebrew|/opt/local|/usr/local" | sed 's/^/        /'
+      bad=1
+    fi
+  done
+  return $bad
+}
+
 # --- run one variant -------------------------------------------------------
 run_variant() {
   local platform="$1" variant="$2" flags rc
@@ -169,7 +194,9 @@ declare -a OK_LIST FAIL_LIST
 for v in $VARIANTS; do
   echo "=================================================================="
   reset_ffmpeg_source
-  if run_variant "$PLATFORM" "$v"; then OK_LIST+=("$v"); else FAIL_LIST+=("$v"); echo "  !! FAILED: $v"; fi
+  if run_variant "$PLATFORM" "$v"; then
+    if check_apple_portability "$PLATFORM"; then OK_LIST+=("$v"); else FAIL_LIST+=("$v"); echo "  !! FAILED (portability): $v"; fi
+  else FAIL_LIST+=("$v"); echo "  !! FAILED: $v"; fi
 done
 
 echo "=================================================================="
