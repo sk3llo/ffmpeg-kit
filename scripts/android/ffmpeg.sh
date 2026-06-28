@@ -379,7 +379,7 @@ echo -n -e "\n${LIB_NAME}: "
 
 if [[ -z ${NO_WORKSPACE_CLEANUP_ffmpeg} ]]; then
   echo -e "INFO: Cleaning workspace for ${LIB_NAME}\n" 1>>"${BASEDIR}"/build.log 2>&1
-  sudo make distclean 2>/dev/null 1>/dev/null
+  make distclean 2>/dev/null 1>/dev/null
 
   # WORKAROUND TO MANUALLY DELETE UNCLEANED FILES
   rm -f "${BASEDIR}"/src/"${LIB_NAME}"/libavfilter/opencl/*.o 1>>"${BASEDIR}"/build.log 2>&1
