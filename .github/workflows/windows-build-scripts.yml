@@ -1,0 +1,61 @@
+name: windows build scripts
+
+on:
+  push:
+    branches:
+      - development
+      - main
+    paths:
+      - '.github/workflows/windows-build-scripts.yml'
+      - 'windows/**'
+      - 'scripts/**'
+      - 'tools/**'
+      - 'windows.sh'
+  pull_request:
+    branches:
+      - development
+      - main
+    paths:
+      - '.github/workflows/windows-build-scripts.yml'
+      - 'windows/**'
+      - 'scripts/**'
+      - 'tools/**'
+      - 'windows.sh'
+
+jobs:
+  build-main-on-windows-latest:
+    name: windows main on windows-latest
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v4
+      - name: setup msys2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            git
+            make
+            pkg-config
+            yasm
+            nasm
+            autoconf
+            automake
+            libtool
+            curl
+            mingw-w64-x86_64-toolchain
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-meson
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-rapidjson
+      - name: run the build script
+        run: ./windows.sh -d
+      - name: print build logs
+        if: ${{ always() }}
+        run: cat build.log
+      - name: print ffbuild logs
+        if: ${{ failure() }}
+        run: '[[ -f ./src/ffmpeg/ffbuild/config.log ]] && tail -50 ./src/ffmpeg/ffbuild/config.log'

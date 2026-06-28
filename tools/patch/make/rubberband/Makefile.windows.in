@@ -1,0 +1,79 @@
+
+PREFIX		:= @prefix@
+CXX		:= @CXX@
+CC		:= @CC@
+CXXFLAGS	:= -DUSE_SPEEX -DUSE_BUILTIN_FFT -DNO_THREAD_CHECKS -DNO_THREADING -DNO_TIMING -DNDEBUG -DPROCESS_SAMPLE_TYPE=float -DUSE_POMMIER_MATHFUN -I. -Isrc -Irubberband @CXXFLAGS@ $(OPTFLAGS)
+CFLAGS		:= @CFLAGS@ $(OPTFLAGS)
+LDFLAGS		:= @LDFLAGS@ $(LDFLAGS)
+
+# THE WINDOWS BUILD ONLY PRODUCES THE STATIC LIBRARY THAT FFMPEG LINKS AGAINST.
+# IT USES THE BUNDLED SPEEX RESAMPLER AND BUILT-IN FFT SO IT DOES NOT DEPEND ON
+# EXTERNAL libsamplerate OR libsndfile (THE LATTER IS ONLY NEEDED FOR THE CLI).
+
+LIBRARY_LIBS		:=
+
+MKDIR			:= mkdir
+AR			:= ar
+
+INSTALL_INCDIR		:= $(PREFIX)/include/rubberband
+INSTALL_LIBDIR		:= $(PREFIX)/lib
+INSTALL_PKGDIR		:= $(PREFIX)/lib/pkgconfig
+
+LIBNAME			:= librubberband
+
+STATIC_TARGET  		:= lib/$(LIBNAME).a
+
+all:	lib $(STATIC_TARGET)
+
+static:		$(STATIC_TARGET)
+library:	$(STATIC_TARGET)
+
+PUBLIC_INCLUDES := \
+	rubberband/rubberband-c.h \
+	rubberband/RubberBandStretcher.h
+
+LIBRARY_SOURCES := \
+	src/rubberband-c.cpp \
+	src/RubberBandStretcher.cpp \
+	src/StretcherProcess.cpp \
+	src/StretchCalculator.cpp \
+	src/base/Profiler.cpp \
+	src/dsp/AudioCurveCalculator.cpp \
+	src/audiocurves/CompoundAudioCurve.cpp \
+	src/audiocurves/SpectralDifferenceAudioCurve.cpp \
+	src/audiocurves/HighFrequencyAudioCurve.cpp \
+	src/audiocurves/SilentAudioCurve.cpp \
+	src/audiocurves/ConstantAudioCurve.cpp \
+	src/audiocurves/PercussiveAudioCurve.cpp \
+	src/dsp/Resampler.cpp \
+	src/dsp/FFT.cpp \
+	src/system/Allocators.cpp \
+	src/system/sysutils.cpp \
+	src/system/Thread.cpp \
+	src/StretcherChannelData.cpp \
+	src/StretcherImpl.cpp \
+	src/speex/resample.c
+
+LIBRARY_OBJECTS := $(LIBRARY_SOURCES:.cpp=.o)
+LIBRARY_OBJECTS := $(LIBRARY_OBJECTS:.c=.o)
+
+$(STATIC_TARGET):	$(LIBRARY_OBJECTS)
+	$(AR) rsc $@ $^
+
+lib:
+	$(MKDIR) $@
+
+install:	all
+	$(MKDIR) -p $(DESTDIR)$(INSTALL_INCDIR)
+	$(MKDIR) -p $(DESTDIR)$(INSTALL_LIBDIR)
+	$(MKDIR) -p $(DESTDIR)$(INSTALL_PKGDIR)
+	cp $(PUBLIC_INCLUDES) $(DESTDIR)$(INSTALL_INCDIR)
+	cp $(STATIC_TARGET) $(DESTDIR)$(INSTALL_LIBDIR)
+	sed "s,%PREFIX%,$(PREFIX)," rubberband.pc.in \
+	  > rubberband.pc
+
+clean:
+	rm -f $(LIBRARY_OBJECTS)
+
+distclean:	clean
+	rm -f $(STATIC_TARGET)

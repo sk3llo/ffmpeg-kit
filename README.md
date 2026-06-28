@@ -2,7 +2,7 @@
 
 <img src="https://github.com/arthenica/ffmpeg-kit/blob/main/docs/assets/ffmpeg-kit-icon-v9.png" width="240">
 
-`FFmpegKit` is a collection of tools to use `FFmpeg` in `Android`, `iOS`, `Linux`, `macOS`, `tvOS`, `Flutter` and `React Native` applications.
+`FFmpegKit` is a collection of tools to use `FFmpeg` in `Android`, `iOS`, `Linux`, `macOS`, `tvOS`, `Windows`, `Flutter` and `React Native` applications.
 
 It includes scripts to build `FFmpeg` native libraries, a wrapper library to run `FFmpeg`/`FFprobe` commands in
  applications and 8 prebuilt binary packages available at [Github](https://github.com/arthenica/ffmpeg-kit/releases),
@@ -11,7 +11,7 @@ It includes scripts to build `FFmpeg` native libraries, a wrapper library to run
 ### 1. Features
 - Scripts to build FFmpeg native libraries
 - `FFmpegKit` wrapper library to run `FFmpeg`/`FFprobe` commands in applications
-- Supports native platforms: Android, iOS, Linux, macOS and tvOS
+- Supports native platforms: Android, iOS, Linux, macOS, tvOS and Windows
 - Supports hybrid platforms: Flutter, React Native
 - Based on FFmpeg `v4.5-dev` or later with optional system and external libraries
 - 8 prebuilt binary packages available at [Github](https://github.com/arthenica/ffmpeg-kit/releases), [Maven Central](https://search.maven.org), [CocoaPods](https://cocoapods.org), [pub](https://pub.dev) and [npm](https://www.npmjs.com)
@@ -33,28 +33,32 @@ See [Flutter](flutter/flutter) to learn more about `FFmpegKit` for `Flutter`.
 
 See [Linux](linux) to learn more about `FFmpegKit` for `Linux`.
 
-### 6. React Native
+### 6. Windows
+
+See [Windows](windows) to learn more about `FFmpegKit` for `Windows`.
+
+### 7. React Native
 
 See [React Native](react-native) to learn more about `FFmpegKit` for `React Native`.
 
-### 7. Build Scripts
+### 8. Build Scripts
 
-Use `android.sh`, `ios.sh`, `linux.sh`, `macos.sh` and `tvos.sh` to build `FFmpegKit` for each native platform.
+Use `android.sh`, `ios.sh`, `linux.sh`, `macos.sh`, `tvos.sh` and `windows.sh` to build `FFmpegKit` for each native platform.
 
 All scripts support additional options to enable optional libraries and disable platform architectures. See
 [Building](https://github.com/arthenica/ffmpeg-kit/wiki/Building) wiki page for the details.
 
-### 8. FFmpegKit Library
+### 9. FFmpegKit Library
 
 `FFmpegKit` is a wrapper library that allows you to easily run `FFmpeg`/`FFprobe` commands in applications. It 
 provides additional features on top of `FFmpeg` to enable platform specific resources, control how commands are 
 executed and how the results are handled.
 
 `Android` library of `FFmpegKit` has a `Java` API, `Apple` libraries (`iOS`, `macOS`, `tvOS`) have an `Objective-C`
- API, `Flutter` library comes with a `Dart` API, `Linux` library has a `C++` API and `React Native` library provides
+ API, `Flutter` library comes with a `Dart` API, `Linux` and `Windows` libraries have a `C++` API and `React Native` library provides
 a `JavaScript` API with `Typescript` definitions, which are identical in terms of features and capabilities.
 
-### 9. Packages
+### 10. Packages
 
 There are eight different `ffmpeg-kit` packages distributed on 
 [Github](https://github.com/arthenica/ffmpeg-kit/releases), 
@@ -115,7 +119,7 @@ include them.
  - `VideoToolbox` is not available on LTS releases of `iOS` and `tvOS`
  - `zimg` is supported since `v4.5.1`
 
-### 10. Versions
+### 11. Versions
 
 `FFmpegKit` binaries generated use the same major and minor version numbers as the upstream `FFmpeg` project. The
 third and last number in the version string, if exists, is specific to `FFmpegKit`. It shows different releases from
@@ -124,7 +128,7 @@ the same `FFmpeg` release branch.
 `dev` part in the version string indicates that `FFmpeg` source code is cloned from the `FFmpeg` `master` branch and
 the exact version number of `FFmpeg` is obtained using the `git describe --tags` command.
 
-### 11. LTS Releases
+### 12. LTS Releases
 
 `FFmpegKit` binaries are published in two release variants: `Main Release` and `LTS Release`. 
 
@@ -154,11 +158,11 @@ This table shows the differences between two variants.
 | tvOS Architectures | arm64<br/>x86-64<br/>arm64-simulator |                     arm64<br/>x86-64                      |
 | tvOS Bundle Format | XCFrameworks |                        Frameworks                         |
 
-### 12. Documentation
+### 13. Documentation
 
 A more detailed documentation is available under [Wiki](https://github.com/arthenica/ffmpeg-kit/wiki).
 
-### 13. Test Applications
+### 14. Test Applications
 
 You can see how `FFmpegKit` is used inside an application by running test applications created under 
 [FFmpegKit Test](https://github.com/arthenica/ffmpeg-kit-test) project.
@@ -166,7 +170,7 @@ You can see how `FFmpegKit` is used inside an application by running test applic
 All applications are identical and supports command execution, video encoding, accessing https urls, encoding audio,
 burning subtitles, video stabilisation, pipe operations and concurrent command execution.
 
-### 14. License
+### 15. License
 
 `FFmpegKit` library alone is licensed under the `LGPL v3.0`.
 
@@ -185,7 +189,7 @@ Refer to [Licenses](https://github.com/arthenica/ffmpeg-kit/wiki/Licenses) to se
 [Trademark](https://github.com/arthenica/ffmpeg-kit/wiki/Trademark) lists the trademarks used in the `FFmpegKit`
 documentation.
 
-### 15. Patents
+### 16. Patents
 
 It is not clearly explained in their documentation, but it is believed that `FFmpeg`, `kvazaar`, `x264` and `x265`
 include algorithms which are subject to software patents. If you live in a country where software algorithms are
@@ -196,11 +200,11 @@ that you seek legal advice first. See [FFmpeg Patent Mini-FAQ](https://ffmpeg.or
 distribute that library, then you are subject to pay MPEG LA licensing fees. Refer to
 [OpenH264 FAQ](https://www.openh264.org/faq.html) page for the details.
 
-### 16. Contributing
+### 17. Contributing
 
 See our [CONTRIBUTING](CONTRIBUTING.md) guide.
 
-### 17. See Also
+### 18. See Also
 
 - [FFmpeg API Documentation](https://ffmpeg.org/doxygen/4.0/index.html)
 - [FFmpeg Wiki](https://trac.ffmpeg.org/wiki/WikiStart)

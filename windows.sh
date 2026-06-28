@@ -20,7 +20,11 @@
 #
 # Example: ./windows.sh --enable-windows-media-foundation --enable-windows-openssl
 #
-set -e
+# NOTE: do NOT enable `set -e` here. The shared scripts/function.sh use `let var=0`
+# (which returns exit status 1 when the result is 0) and other errexit-incompatible
+# constructs; the build framework relies on explicit `|| return 1` / `exit 1` / RC
+# checks instead, exactly like android.sh / linux.sh / macos.sh (none of which use
+# `set -e`). With errexit on, the run dies in print_enabled_architectures.
 
 # Print error and exit with status 1
 error_exit() {
@@ -196,11 +200,31 @@ fi
 if [[ -n ${BUILD_FULL} ]]; then
   # Assuming a similar range of libraries as linux
   for library in {0..91}; do
-    if [ "${GPL_ENABLED}" == "yes" ] || [[ $(is_gpl_licensed $library) -ne 1 ]]; then
+    # is_gpl_licensed returns 1 for non-GPL libs, 0 for GPL libs. Enable a
+    # library when GPL is on (everything) or when it is non-GPL (-eq 1).
+    if [ "${GPL_ENABLED}" == "yes" ] || [[ $(is_gpl_licensed $library) -eq 1 ]]; then
         enable_library "$(get_library_name $library)" 1
     fi
   done
 fi
+
+# FORCE-DISABLE LIBRARIES THAT HAVE NO scripts/windows/<lib>.sh.
+# Some are pulled in by the dependency cascades in set_library() even though
+# their own platform support is off (those cascades assign ENABLED_LIBRARIES
+# directly, bypassing is_library_supported_on_platform), e.g.
+#   libwebp        -> giflib, jpeg, tiff
+#   twolame        -> sndfile
+#   fontconfig     -> libuuid
+#   libass         -> libuuid
+# Zero them here (after --full / cascades) so the build never tries to compile
+# a missing script. None are needed by the FFmpeg configuration we enable.
+for windows_unsupported in \
+  ${LIBRARY_GIFLIB} ${LIBRARY_JPEG} ${LIBRARY_TIFF} ${LIBRARY_SNDFILE} \
+  ${LIBRARY_LIBSAMPLERATE} ${LIBRARY_LIBUUID} ${LIBRARY_SDL} \
+  ${LIBRARY_TESSERACT} ${LIBRARY_LEPTONICA} ${LIBRARY_VO_AMRWBENC} \
+  ${LIBRARY_RUBBERBAND}; do
+  ENABLED_LIBRARIES[${windows_unsupported}]=0
+done
 
 # DISABLE SPECIFIED LIBRARIES
 for disabled_library in "${disabled_libraries[@]}"; do
@@ -265,7 +289,7 @@ for run_arch in {0..12}; do
             export HOST="i686-w64-mingw32"
             export CROSS_PREFIX="${HOST}-"
             ;;
-        x86_64)
+        x86-64)
             export HOST="x86_64-w64-mingw32"
             export CROSS_PREFIX="${HOST}-"
             ;;

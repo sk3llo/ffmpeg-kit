@@ -171,10 +171,86 @@ min (No Videotoolbox support)
 sudo ./macos.sh
 ```
 
+full-gpl
+```
+./windows.sh --enable-gpl --enable-chromaprint --enable-dav1d --enable-kvazaar --enable-libilbc --enable-libaom --enable-openh264 --enable-openssl --enable-srt --enable-x264 --enable-zimg
+```
 
-MACOS:
-* BUILD MACOS FRAMEWORKS:     ./macos.sh -x --full --enable-gpl
+* Windows: `./windows.sh`
 
+ALL COMMANDS BELOW MUST BE RUN FROM THE MSYS2 MINGW64 TERMINAL (NOT PowerShell, CMD, or Git Bash).
+
+### Prerequisites
+
+1. Install [MSYS2](https://www.msys2.org/)
+2. Open `MSYS2 MinGW64` terminal (Start Menu -> MSYS2 MinGW64)
+3. Install build dependencies:
+
+```
+pacman -S --needed git make pkg-config yasm nasm autoconf automake libtool curl \
+  mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake mingw-w64-x86_64-meson \
+  mingw-w64-x86_64-ninja mingw-w64-x86_64-rapidjson
+```
+
+4. Navigate to the ffmpeg-kit directory:
+```
+cd /c/Users/kapra/StudioProjects/ffmpeg-kit
+```
+
+### Supported Libraries
+
+chromaprint, dav1d, kvazaar, libilbc, libaom, openh264, openssl, srt, x264 (GPL), zimg
+
+Windows-specific flags: --enable-windows-zlib, --enable-windows-dxva2, --enable-windows-d3d11va, --enable-windows-schannel
+
+### Build Commands
+
+full
+```
+./windows.sh --enable-chromaprint --enable-dav1d --enable-kvazaar --enable-libilbc --enable-libaom --enable-openh264 --enable-openssl --enable-srt --enable-zimg
+```
+
+https-gpl
+```
+./windows.sh --enable-gpl --enable-openssl --enable-x264
+```
+
+https
+```
+./windows.sh --enable-openssl
+```
+
+min-gpl
+```
+./windows.sh --enable-gpl --enable-x264
+```
+
+min
+```
+./windows.sh
+```
+
+min with debug
+```
+./windows.sh -d
+```
+
+Hardware acceleration can be added to any command above:
+```
+./windows.sh --enable-windows-dxva2 --enable-windows-d3d11va [other flags...]
+```
+
+### Output
+
+The built files will be in:
+
+```
+prebuilt/bundle-windows-x86_64/ffmpeg-kit/
+├── bin/        # DLLs (libffmpegkit.dll, avcodec-61.dll, etc.)
+├── include/    # Header files
+├── lib/        # Import libraries
+└── pkgconfig/  # pkg-config files
+```
 
 
 ### FIX FOR CERTAIN LIBS

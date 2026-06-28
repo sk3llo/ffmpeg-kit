@@ -109,6 +109,8 @@ get_library_name() {
       echo "macos-zlib"
     elif [[ ${FFMPEG_KIT_BUILD_TYPE} == "tvos" ]]; then
       echo "tvos-zlib"
+    elif [[ ${FFMPEG_KIT_BUILD_TYPE} == "windows" ]]; then
+      echo "windows-zlib"
     fi
     ;;
   51) echo "linux-alsa" ;;
@@ -210,6 +212,10 @@ get_library_name() {
   89) echo "linux-tesseract" ;;
   90) echo "linux-vaapi" ;;
   91) echo "linux-vo-amrwbenc" ;;
+  92) echo "windows-zlib" ;;
+  93) echo "windows-dxva2" ;;
+  94) echo "windows-d3d11va" ;;
+  95) echo "windows-schannel" ;;
   esac
 }
 
@@ -265,7 +271,7 @@ from_library_name() {
   libsamplerate) echo 47 ;;
   harfbuzz) echo 48 ;;
   cpu-features) echo 49 ;;
-  android-zlib | ios-zlib | linux-zlib | macos-zlib | tvos-zlib) echo 50 ;;
+  android-zlib | ios-zlib | linux-zlib | macos-zlib | tvos-zlib | windows-zlib) echo 50 ;;
   linux-alsa) echo 51 ;;
   android-media-codec) echo 52 ;;
   ios-audiotoolbox | macos-audiotoolbox | tvos-audiotoolbox) echo 53 ;;
@@ -307,6 +313,10 @@ from_library_name() {
   linux-tesseract) echo 89 ;;
   linux-vaapi) echo 90 ;;
   linux-vo-amrwbenc) echo 91 ;;
+  windows-zlib) echo 92 ;;
+  windows-dxva2) echo 93 ;;
+  windows-d3d11va) echo 94 ;;
+  windows-schannel) echo 95 ;;
   esac
 }
 
@@ -321,8 +331,8 @@ is_library_supported_on_platform() {
     echo "0"
     ;;
 
-  # ALL EXCEPT LINUX
-  0 | 1 | 2 | 3 | 4 | 5 | 6 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 19 | 20 | 21 | 22 | 24 | 25 | 26 | 29 | 30 | 31 | 33 | 37 | 38 | 39 | 40 | 42 | 43 | 44 | 45 | 46 | 47 | 48)
+  # ALL EXCEPT LINUX (android, apple AND windows build these from source)
+  0 | 1 | 2 | 3 | 4 | 5 | 6 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 19 | 20 | 21 | 24 | 25 | 26 | 29 | 39 | 40 | 42 | 44 | 48)
     if [[ ${FFMPEG_KIT_BUILD_TYPE} == "linux" ]]; then
       echo "1"
     else
@@ -330,8 +340,28 @@ is_library_supported_on_platform() {
     fi
     ;;
 
+  # ALL EXCEPT LINUX AND WINDOWS (no Windows build scripts yet: rubberband,
+  # sdl, tesseract, vo-amrwbenc, giflib, jpeg, tiff, sndfile, leptonica,
+  # libsamplerate)
+  22 | 30 | 31 | 33 | 37 | 38 | 43 | 45 | 46 | 47)
+    if [[ ${FFMPEG_KIT_BUILD_TYPE} == "linux" ]] || [[ ${FFMPEG_KIT_BUILD_TYPE} == "windows" ]]; then
+      echo "1"
+    else
+      echo "0"
+    fi
+    ;;
+
+  # ANDROID AND WINDOWS (libiconv is built from source on both)
+  7)
+    if [[ ${FFMPEG_KIT_BUILD_TYPE} == "android" ]] || [[ ${FFMPEG_KIT_BUILD_TYPE} == "windows" ]]; then
+      echo "0"
+    else
+      echo "1"
+    fi
+    ;;
+
   # ANDROID
-  7 | 41 | 49 | 52)
+  41 | 49 | 52)
     if [[ ${FFMPEG_KIT_BUILD_TYPE} == "android" ]]; then
       echo "0"
     else
@@ -378,8 +408,17 @@ is_library_supported_on_platform() {
     ;;
 
   # ONLY LINUX
-  62 | 63 | 64 | 65 | 66 | 67 | 68 | 69 | 70 | 71 | 72 | 73 | 74 | 75 | 76 | 77 | 78 | 79 | 80 | 81 | 82 | 83 | 84 | 85 | 86 | 87 | 88 | 89 | 90 | 91 | 92)
+  62 | 63 | 64 | 65 | 66 | 67 | 68 | 69 | 70 | 71 | 72 | 73 | 74 | 75 | 76 | 77 | 78 | 79 | 80 | 81 | 82 | 83 | 84 | 85 | 86 | 87 | 88 | 89 | 90 | 91)
     if [[ ${FFMPEG_KIT_BUILD_TYPE} == "linux" ]]; then
+      echo "0"
+    else
+      echo "1"
+    fi
+    ;;
+
+  # ONLY WINDOWS
+  92 | 93 | 94 | 95)
+    if [[ ${FFMPEG_KIT_BUILD_TYPE} == "windows" ]]; then
       echo "0"
     else
       echo "1"
@@ -398,12 +437,22 @@ is_arch_supported_on_platform() {
   local arch_index=$(from_arch_name "$1")
   case ${arch_index} in
   $ARCH_X86_64)
+    # x86-64 is supported on android, ios, linux, macos, tvos, windows
     echo 1
     ;;
 
     # ANDROID
-  $ARCH_ARM_V7A | $ARCH_ARM_V7A_NEON | $ARCH_ARM64_V8A | $ARCH_X86)
+  $ARCH_ARM_V7A | $ARCH_ARM_V7A_NEON | $ARCH_ARM64_V8A)
     if [[ ${FFMPEG_KIT_BUILD_TYPE} == "android" ]]; then
+      echo 1
+    else
+      echo 0
+    fi
+    ;;
+
+    # ANDROID OR WINDOWS
+  $ARCH_X86)
+    if [[ ${FFMPEG_KIT_BUILD_TYPE} == "android" ]] || [[ ${FFMPEG_KIT_BUILD_TYPE} == "windows" ]]; then
       echo 1
     else
       echo 0
@@ -428,9 +477,9 @@ is_arch_supported_on_platform() {
     fi
     ;;
 
-    # IOS, MACOS OR TVOS
+    # IOS, MACOS, TVOS OR WINDOWS
   $ARCH_ARM64)
-    if [[ ${FFMPEG_KIT_BUILD_TYPE} == "ios" ]] || [[ ${FFMPEG_KIT_BUILD_TYPE} == "macos" ]] || [[ ${FFMPEG_KIT_BUILD_TYPE} == "tvos" ]]; then
+    if [[ ${FFMPEG_KIT_BUILD_TYPE} == "ios" ]] || [[ ${FFMPEG_KIT_BUILD_TYPE} == "macos" ]] || [[ ${FFMPEG_KIT_BUILD_TYPE} == "tvos" ]] || [[ ${FFMPEG_KIT_BUILD_TYPE} == "windows" ]]; then
       echo 1
     else
       echo 0
@@ -473,6 +522,9 @@ get_meson_target_host_family() {
     ;;
   linux)
     echo "linux"
+    ;;
+  windows)
+    echo "windows"
     ;;
   *)
     echo "darwin"
@@ -535,6 +587,8 @@ get_target() {
       echo "$(get_target_cpu)-apple-darwin$(get_min_sdk_version)"
     elif [[ ${FFMPEG_KIT_BUILD_TYPE} == "tvos" ]]; then
       echo "$(get_target_cpu)-apple-tvos$(get_min_sdk_version)-simulator"
+    elif [[ ${FFMPEG_KIT_BUILD_TYPE} == "windows" ]]; then
+      echo "x86_64-w64-mingw32"
     fi
     ;;
   *)
@@ -584,6 +638,8 @@ get_host() {
       echo "$(get_target_cpu)-apple-darwin"
     elif [[ ${FFMPEG_KIT_BUILD_TYPE} == "tvos" ]]; then
       echo "$(get_target_cpu)-tvos-darwin"
+    elif [[ ${FFMPEG_KIT_BUILD_TYPE} == "windows" ]]; then
+      echo "x86_64-w64-mingw32"
     fi
     ;;
   esac
@@ -1046,7 +1102,7 @@ set_library() {
   fi
 
   case $1 in
-  android-zlib | ios-zlib | linux-zlib | macos-zlib | tvos-zlib)
+  android-zlib | ios-zlib | linux-zlib | macos-zlib | tvos-zlib | windows-zlib)
     ENABLED_LIBRARIES[LIBRARY_SYSTEM_ZLIB]=$2
     ;;
   linux-alsa)
@@ -1364,6 +1420,18 @@ set_library() {
   linux-xvidcore)
     ENABLED_LIBRARIES[LIBRARY_LINUX_XVIDCORE]=$2
     ;;
+  windows-zlib)
+    ENABLED_LIBRARIES[LIBRARY_WINDOWS_ZLIB]=$2
+    ;;
+  windows-dxva2)
+    ENABLED_LIBRARIES[LIBRARY_WINDOWS_DXVA2]=$2
+    ;;
+  windows-d3d11va)
+    ENABLED_LIBRARIES[LIBRARY_WINDOWS_D3D11VA]=$2
+    ;;
+  windows-schannel)
+    ENABLED_LIBRARIES[LIBRARY_WINDOWS_SCHANNEL]=$2
+    ;;
   *)
     print_unknown_library $1
     ;;
@@ -1393,7 +1461,11 @@ set_virtual_library() {
     fi
     ;;
   zlib)
-    ENABLED_LIBRARIES[LIBRARY_SYSTEM_ZLIB]=$2
+    if [[ ${FFMPEG_KIT_BUILD_TYPE} == "windows" ]]; then
+      ENABLED_LIBRARIES[LIBRARY_WINDOWS_ZLIB]=$2
+    else
+      ENABLED_LIBRARIES[LIBRARY_SYSTEM_ZLIB]=$2
+    fi
     ;;
   *)
     print_unknown_virtual_library $1

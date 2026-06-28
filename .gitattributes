@@ -1,0 +1,19 @@
+# Normalize line endings to avoid CRLF breaking shell scripts on macOS/Linux.
+# Build scripts (android.sh, apple.sh, ios.sh, macos.sh, etc.) MUST be LF —
+# a CRLF shebang causes "/bin/bash^M: bad interpreter" when the script is run.
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Leave binaries untouched.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.a binary
+*.so binary
+*.dylib binary
+*.dll binary
+*.framework binary
+*.xcframework binary
+*.zip binary

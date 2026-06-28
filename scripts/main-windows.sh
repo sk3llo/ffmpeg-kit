@@ -1,387 +1,204 @@
 #!/bin/bash
 
-# Set environment variables for Windows build
-set -e
+if [[ -z ${ARCH} ]]; then
+  echo -e "\n(*) ARCH not defined\n"
+  exit 1
+fi
 
-# Set the base directory
-BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+if [[ -z ${BASEDIR} ]]; then
+  echo -e "\n(*) BASEDIR not defined\n"
+  exit 1
+fi
 
-# Source common functions
-source "${BASEDIR}/scripts/function.sh"
+echo -e "\nBuilding ${ARCH} platform\n"
+echo -e "\nINFO: Starting new build for ${ARCH} at $(date)\n" 1>>"${BASEDIR}"/build.log 2>&1
 
-# Source Windows specific functions
-source "${BASEDIR}/scripts/function-windows.sh"
+# SET BASE INSTALLATION DIRECTORY FOR THIS ARCHITECTURE
+export LIB_INSTALL_BASE="${BASEDIR}/prebuilt/$(get_build_directory)"
 
-# Initialize variables
-FFMPEG_KIT_BUILD_TYPE="windows"
-BUILD_DIRECTORY="${BASEDIR}/build/windows"
-ENABLED_ARCHITECTURES=(
-  "x86"
-  "x86_64"
-  "arm64"
-)
+# CREATE PACKAGE CONFIG DIRECTORY FOR THIS ARCHITECTURE
+PKG_CONFIG_DIRECTORY="${LIB_INSTALL_BASE}/pkgconfig"
+if [ ! -d "${PKG_CONFIG_DIRECTORY}" ]; then
+  mkdir -p "${PKG_CONFIG_DIRECTORY}" || return 1
+fi
 
-# Parse command line arguments
-while [[ $# -gt 0 ]]; do
-  case $1 in
-    --disable-x86)
-      ENABLED_ARCHITECTURES=("${ENABLED_ARCHITECTURES[@]/x86/}")
-      shift
-      ;;
-    --disable-x86_64)
-      ENABLED_ARCHITECTURES=("${ENABLED_ARCHITECTURES[@]/x86_64/}")
-      shift
-      ;;
-    --disable-arm64)
-      ENABLED_ARCHITECTURES=("${ENABLED_ARCHITECTURES[@]/arm64/}")
-      shift
-      ;;
-    --full)
-      # Enable all external libraries
-      ENABLED_LIBRARIES=(
-        "windows-media-foundation"
-        "windows-msmpeg4v3"
-        "windows-openssl"
-        "windows-schannel"
-        "windows-sdl2"
-        "windows-zlib"
-        "windows-zlibng"
-        "windows-bzip2"
-        "windows-lzma"
-        "windows-iconv"
-      )
-      shift
-      ;;
-    --enable-windows-*)
-      # Handle individual library enables
-      ENABLED_LIBRARIES+=("${1#--enable-}")
-      shift
-      ;;
-    -h|--help)
-      display_help
-      exit 0
-      ;;
-    -l|--lts)
-      ENABLE_LTS_BUILD=1
-      shift
-      ;;
-    *)
-      echo "Unknown option: $1"
-      display_help
-      exit 1
-      ;;
-  esac
+# FILTER WHICH EXTERNAL LIBRARIES WILL BE BUILT
+# NOTE THAT BUILT-IN LIBRARIES ARE FORWARDED TO FFMPEG SCRIPT WITHOUT ANY PROCESSING
+enabled_library_list=()
+for library in {1..50}; do
+  if [[ ${!library} -eq 1 ]]; then
+    ENABLED_LIBRARY=$(get_library_name $((library - 1)))
+    enabled_library_list+=(${ENABLED_LIBRARY})
+
+    echo -e "INFO: Enabled library ${ENABLED_LIBRARY} will be built\n" 1>>"${BASEDIR}"/build.log 2>&1
+  fi
 done
 
-# Create build directory if it doesn't exist
-mkdir -p "${BUILD_DIRECTORY}"
-
-# Set up the build environment
-setup_build_environment() {
-  echo "Setting up build environment for Windows..."
-  
-  # Set up Visual Studio environment if available
-  if [ -z "${VSINSTALLDIR}" ] && [ -f "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvars64.bat" ]; then
-    echo "Setting up Visual Studio 2022 environment..."
-    cmd.exe /c "call \"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvars64.bat\" && set > %TEMP%\vs_env_vars.txt"
-    while IFS='=' read -r key value; do
-      if [[ ! -z "$key" && ! -z "$value" ]]; then
-        export "$key"="$value"
+# BUILD ENABLED LIBRARIES AND THEIR DEPENDENCIES
+let completed=0
+while [ ${#enabled_library_list[@]} -gt $completed ]; do
+  for library in "${enabled_library_list[@]}"; do
+    let run=0
+    case $library in
+    srt)
+      if [[ $OK_openssl -eq 1 ]]; then
+        run=1
       fi
-    done < "${TEMP}/vs_env_vars.txt"
-  fi
-  
-  # Set up MSYS2 environment if available
-  if [ -z "${MSYSTEM}" ] && [ -d "/c/msys64" ]; then
-    echo "Setting up MSYS2 environment..."
-    export MSYSTEM=MINGW64
-    export MSYS2_PATH_TYPE=inherit
-    export PATH="/c/msys64/usr/bin:${PATH}"
-  fi
-}
+      ;;
+    freetype)
+      if [[ $OK_libpng -eq 1 ]]; then
+        run=1
+      fi
+      ;;
+    harfbuzz)
+      if [[ $OK_freetype -eq 1 ]]; then
+        run=1
+      fi
+      ;;
+    fontconfig)
+      if [[ $OK_freetype -eq 1 ]] && [[ $OK_expat -eq 1 ]] && [[ $OK_libiconv -eq 1 ]]; then
+        run=1
+      fi
+      ;;
+    libass)
+      if [[ $OK_freetype -eq 1 ]] && [[ $OK_fribidi -eq 1 ]] && [[ $OK_harfbuzz -eq 1 ]] && [[ $OK_fontconfig -eq 1 ]]; then
+        run=1
+      fi
+      ;;
+    libvorbis)
+      if [[ $OK_libogg -eq 1 ]]; then
+        run=1
+      fi
+      ;;
+    libtheora)
+      if [[ $OK_libogg -eq 1 ]] && [[ $OK_libvorbis -eq 1 ]]; then
+        run=1
+      fi
+      ;;
+    nettle)
+      if [[ $OK_gmp -eq 1 ]]; then
+        run=1
+      fi
+      ;;
+    gnutls)
+      if [[ $OK_nettle -eq 1 ]] && [[ $OK_gmp -eq 1 ]]; then
+        run=1
+      fi
+      ;;
+    libxml2)
+      if [[ $OK_libiconv -eq 1 ]]; then
+        run=1
+      fi
+      ;;
+    *)
+      run=1
+      ;;
+    esac
 
-# Build FFmpeg for a specific architecture
-build_ffmpeg() {
-  local arch=$1
-  local build_dir="${BUILD_DIRECTORY}/${arch}"
-  
-  echo "Building FFmpeg for ${arch}..."
-  
-  # Create build directory
-  mkdir -p "${build_dir}"
-  
-  # Configure FFmpeg
-  cd "${build_dir}"
-  "${BASEDIR}/ffmpeg/configure" \
-    --arch=${arch} \
-    --target-os=mingw32 \
-    --cross-prefix=${arch}-w64-mingw32- \
-    --enable-cross-compile \
-    --prefix="${build_dir}/install" \
-    --disable-static \
-    --enable-shared \
-    --enable-version3 \
-    --enable-w32threads \
-    --enable-avresample \
-    --enable-libmfx \
-    --enable-dxva2 \
-    --enable-d3d11va \
-    --enable-nvenc \
-    --enable-nvdec \
-    --enable-libmp3lame \
-    --enable-libvpx \
-    --enable-libx264 \
-    --enable-libx265 \
-    --enable-libvorbis \
-    --enable-libopus \
-    --enable-libfdk-aac \
-    --enable-libass \
-    --enable-libfreetype \
-    --enable-libfribidi \
-    --enable-libwebp \
-    --enable-libzimg \
-    --enable-libsoxr \
-    --enable-libmodplug \
-    --enable-libopenjpeg \
-    --enable-libspeex \
-    --enable-libtheora \
-    --enable-libtwolame \
-    --enable-libwavpack \
-    --enable-libxvid \
-    --enable-libzvbi \
-    --enable-libmysofa \
-    --enable-libsnappy \
-    --enable-libaom \
-    --enable-libdav1d \
-    --enable-librav1e \
-    --enable-libsvtav1 \
-    --enable-libvmaf \
-    --enable-libxml2 \
-    --enable-libzimg \
-    --enable-libopenmpt \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libmp3lame \
-    --enable-libshine \
-    --enable-libvorbis \
-    --enable-libopus \
-    --enable-libspeex \
-    --enable-libwavpack \
-    --enable-libtwolame \
-    --enable-libmp3lame \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libopenjpeg \
-    --enable-libwebp \
-    --enable-libzimg \
-    --enable-libsoxr \
-    --enable-libmodplug \
-    --enable-libsnappy \
-    --enable-libaom \
-    --enable-libdav1d \
-    --enable-librav1e \
-    --enable-libsvtav1 \
-    --enable-libvmaf \
-    --enable-libxml2 \
-    --enable-libzimg \
-    --enable-libopenmpt \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libmp3lame \
-    --enable-libshine \
-    --enable-libvorbis \
-    --enable-libopus \
-    --enable-libspeex \
-    --enable-libwavpack \
-    --enable-libtwolame \
-    --enable-libmp3lame \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libopenjpeg \
-    --enable-libwebp \
-    --enable-libzimg \
-    --enable-libsoxr \
-    --enable-libmodplug \
-    --enable-libsnappy \
-    --enable-libaom \
-    --enable-libdav1d \
-    --enable-librav1e \
-    --enable-libsvtav1 \
-    --enable-libvmaf \
-    --enable-libxml2 \
-    --enable-libzimg \
-    --enable-libopenmpt \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libmp3lame \
-    --enable-libshine \
-    --enable-libvorbis \
-    --enable-libopus \
-    --enable-libspeex \
-    --enable-libwavpack \
-    --enable-libtwolame \
-    --enable-libmp3lame \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libopenjpeg \
-    --enable-libwebp \
-    --enable-libzimg \
-    --enable-libsoxr \
-    --enable-libmodplug \
-    --enable-libsnappy \
-    --enable-libaom \
-    --enable-libdav1d \
-    --enable-librav1e \
-    --enable-libsvtav1 \
-    --enable-libvmaf \
-    --enable-libxml2 \
-    --enable-libzimg \
-    --enable-libopenmpt \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libmp3lame \
-    --enable-libshine \
-    --enable-libvorbis \
-    --enable-libopus \
-    --enable-libspeex \
-    --enable-libwavpack \
-    --enable-libtwolame \
-    --enable-libmp3lame \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libopenjpeg \
-    --enable-libwebp \
-    --enable-libzimg \
-    --enable-libsoxr \
-    --enable-libmodplug \
-    --enable-libsnappy \
-    --enable-libaom \
-    --enable-libdav1d \
-    --enable-librav1e \
-    --enable-libsvtav1 \
-    --enable-libvmaf \
-    --enable-libxml2 \
-    --enable-libzimg \
-    --enable-libopenmpt \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libmp3lame \
-    --enable-libshine \
-    --enable-libvorbis \
-    --enable-libopus \
-    --enable-libspeex \
-    --enable-libwavpack \
-    --enable-libtwolame \
-    --enable-libmp3lame \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libopenjpeg \
-    --enable-libwebp \
-    --enable-libzimg \
-    --enable-libsoxr \
-    --enable-libmodplug \
-    --enable-libsnappy \
-    --enable-libaom \
-    --enable-libdav1d \
-    --enable-librav1e \
-    --enable-libsvtav1 \
-    --enable-libvmaf \
-    --enable-libxml2 \
-    --enable-libzimg \
-    --enable-libopenmpt \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libmp3lame \
-    --enable-libshine \
-    --enable-libvorbis \
-    --enable-libopus \
-    --enable-libspeex \
-    --enable-libwavpack \
-    --enable-libtwolame \
-    --enable-libmp3lame \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libopenjpeg \
-    --enable-libwebp \
-    --enable-libzimg \
-    --enable-libsoxr \
-    --enable-libmodplug \
-    --enable-libsnappy \
-    --enable-libaom \
-    --enable-libdav1d \
-    --enable-librav1e \
-    --enable-libsvtav1 \
-    --enable-libvmaf \
-    --enable-libxml2 \
-    --enable-libzimg \
-    --enable-libopenmpt \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libmp3lame \
-    --enable-libshine \
-    --enable-libvorbis \
-    --enable-libopus \
-    --enable-libspeex \
-    --enable-libwavpack \
-    --enable-libtwolame \
-    --enable-libmp3lame \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libopenjpeg \
-    --enable-libwebp \
-    --enable-libzimg \
-    --enable-libsoxr \
-    --enable-libmodplug \
-    --enable-libsnappy \
-    --enable-libaom \
-    --enable-libdav1d \
-    --enable-librav1e \
-    --enable-libsvtav1 \
-    --enable-libvmaf \
-    --enable-libxml2 \
-    --enable-libzimg \
-    --enable-libopenmpt \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc
-    
-  # Build FFmpeg
-  make -j$(nproc)
-  make install
-  
-  cd - > /dev/null
-}
+    BUILD_COMPLETED_FLAG=$(echo "OK_${library}" | sed "s/\-/\_/g")
+    REBUILD_FLAG=$(echo "REBUILD_${library}" | sed "s/\-/\_/g")
+    DEPENDENCY_REBUILT_FLAG=$(echo "DEPENDENCY_REBUILT_${library}" | sed "s/\-/\_/g")
 
-# Main build function
-build() {
-  echo "Starting FFmpegKit build for Windows..."
-  
-  # Set up build environment
-  setup_build_environment
-  
-  # Build for each enabled architecture
-  for arch in "${ENABLED_ARCHITECTURES[@]}"; do
-    if [ -n "$arch" ]; then
-      build_ffmpeg "$arch"
+    if [[ $run -eq 1 ]] && [[ "${!BUILD_COMPLETED_FLAG}" != "1" ]]; then
+      LIBRARY_IS_INSTALLED=$(library_is_installed "${LIB_INSTALL_BASE}" "${library}")
+
+      echo -e "INFO: Flags detected for ${library}: already installed=${LIBRARY_IS_INSTALLED}, rebuild requested by user=${!REBUILD_FLAG}, will be rebuilt due to dependency update=${!DEPENDENCY_REBUILT_FLAG}\n" 1>>"${BASEDIR}"/build.log 2>&1
+
+      if [[ ${LIBRARY_IS_INSTALLED} -ne 1 ]] || [[ ${!REBUILD_FLAG} -eq 1 ]] || [[ ${!DEPENDENCY_REBUILT_FLAG} -eq 1 ]]; then
+
+        echo -n "${library}: "
+
+        "${BASEDIR}"/scripts/run-windows.sh "${library}" 1>>"${BASEDIR}"/build.log 2>&1
+
+        RC=$?
+
+        if [ $RC -eq 0 ]; then
+          ((completed += 1))
+          declare "$BUILD_COMPLETED_FLAG=1"
+          check_if_dependency_rebuilt "${library}"
+          echo "ok"
+        elif [ $RC -eq 200 ]; then
+          echo -e "not supported\n\nSee build.log for details\n"
+          exit 1
+        else
+          echo -e "failed\n\nSee build.log for details\n"
+          exit 1
+        fi
+      else
+        ((completed += 1))
+        declare "$BUILD_COMPLETED_FLAG=1"
+        echo "${library}: already built"
+      fi
+    else
+      echo -e "INFO: Skipping $library, dependencies built=$run, already built=${!BUILD_COMPLETED_FLAG}\n" 1>>"${BASEDIR}"/build.log 2>&1
     fi
   done
-  
-  echo "FFmpegKit build completed successfully!"
-}
+done
 
-# Run the build
-build
+# BUILD CUSTOM LIBRARIES
+for custom_library_index in "${CUSTOM_LIBRARIES[@]}"; do
+  library_name="CUSTOM_LIBRARY_${custom_library_index}_NAME"
+
+  echo -e "\nDEBUG: Custom library ${!library_name} will be built\n" 1>>"${BASEDIR}"/build.log 2>&1
+
+  REBUILD_FLAG=$(echo "REBUILD_${!library_name}" | sed "s/\-/\_/g")
+  LIBRARY_IS_INSTALLED=$(library_is_installed "${LIB_INSTALL_BASE}" "${!library_name}")
+
+  echo -e "INFO: Flags detected for custom library ${!library_name}: already installed=${LIBRARY_IS_INSTALLED}, rebuild requested by user=${!REBUILD_FLAG}\n" 1>>"${BASEDIR}"/build.log 2>&1
+
+  if [[ ${LIBRARY_IS_INSTALLED} -ne 1 ]] || [[ ${!REBUILD_FLAG} -eq 1 ]]; then
+
+    echo -n "${!library_name}: "
+
+    "${BASEDIR}"/scripts/run-windows.sh "${!library_name}" 1>>"${BASEDIR}"/build.log 2>&1
+
+    RC=$?
+
+    if [ $RC -eq 0 ]; then
+      echo "ok"
+    elif [ $RC -eq 200 ]; then
+      echo -e "not supported\n\nSee build.log for details\n"
+      exit 1
+    else
+      echo -e "failed\n\nSee build.log for details\n"
+      exit 1
+    fi
+  else
+    echo "${!library_name}: already built"
+  fi
+done
+
+# SKIP TO SPEED UP THE BUILD
+if [[ ${SKIP_ffmpeg} -ne 1 ]]; then
+
+  LIB_NAME="ffmpeg"
+  set_toolchain_paths "${LIB_NAME}"
+
+  HOST=$(get_host)
+  export CFLAGS=$(get_cflags "${LIB_NAME}")
+  export CXXFLAGS=$(get_cxxflags "${LIB_NAME}")
+  export LDFLAGS=$(get_ldflags "${LIB_NAME}")
+  export PKG_CONFIG_LIBDIR="${INSTALL_PKG_CONFIG_DIR}"
+
+  cd "${BASEDIR}"/src/"${LIB_NAME}" 1>>"${BASEDIR}"/build.log 2>&1 || return 1
+
+  LIB_INSTALL_PREFIX="${LIB_INSTALL_BASE}/${LIB_NAME}"
+
+  source "${BASEDIR}"/scripts/windows/ffmpeg.sh
+
+  if [[ $? -ne 0 ]]; then
+    exit 1
+  fi
+else
+  echo -e "\nffmpeg: skipped"
+fi
+
+# SKIP TO SPEED UP THE BUILD
+if [[ ${SKIP_ffmpeg_kit} -ne 1 ]]; then
+
+  . "${BASEDIR}"/scripts/windows/ffmpeg-kit.sh "$@" || return 1
+else
+  echo -e "\nffmpeg-kit: skipped"
+fi
+
+echo -e "\nINFO: Completed build for ${ARCH} at $(date)\n" 1>>"${BASEDIR}"/build.log 2>&1
