@@ -38,6 +38,8 @@ public class NativeLoader {
 
     static final String[] LIBRARIES_LINKED_WITH_CXX = {"chromaprint", "openh264", "rubberband", "snappy", "srt", "tesseract", "x265", "zimg", "libilbc"};
 
+    static boolean cppSharedLoaded = false;
+
     static boolean isTestModeDisabled() {
         return (System.getProperty("enable.ffmpeg.kit.test.mode") == null);
     }
@@ -134,13 +136,16 @@ public class NativeLoader {
         boolean nativeFFmpegLoaded = false;
         boolean nativeFFmpegTriedAndFailed = false;
 
-        final List<String> externalLibrariesEnabled = loadExternalLibraries();
-        for (String dependantLibrary : LIBRARIES_LINKED_WITH_CXX) {
-            if (externalLibrariesEnabled.contains(dependantLibrary)) {
+        if (!cppSharedLoaded) {
+            try {
                 loadLibrary("c++_shared");
-                break;
+                cppSharedLoaded = true;
+            } catch (final Error e) {
+                android.util.Log.w(FFmpegKitConfig.TAG, "c++_shared library not found, native libraries will load it automatically if needed.");
             }
         }
+
+        final List<String> externalLibrariesEnabled = loadExternalLibraries();
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             if (AbiDetect.ARM_V7A.equals(loadNativeAbi())) {
