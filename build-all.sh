@@ -106,6 +106,18 @@ ensure_apple_gnutls() {
   fi
 }
 
+# Reset the shared FFmpeg source to pristine between variants. Building several
+# variants back-to-back in one src/ffmpeg leaves reconfigure/object residue that
+# makes a later variant fail (e.g. full after https-gpl). External libs under
+# src/<lib> are NOT touched (cached, FFmpeg-version-independent).
+reset_ffmpeg_source() {
+  if [ -d src/ffmpeg/.git ]; then
+    echo "  [clean] resetting src/ffmpeg to pristine"
+    git -C src/ffmpeg clean -xffd >/dev/null 2>&1
+    git -C src/ffmpeg checkout -- . >/dev/null 2>&1
+  fi
+}
+
 # --- run one variant -------------------------------------------------------
 run_variant() {
   local platform="$1" variant="$2" flags rc
@@ -145,6 +157,7 @@ echo
 declare -a OK_LIST FAIL_LIST
 for v in $VARIANTS; do
   echo "=================================================================="
+  reset_ffmpeg_source
   if run_variant "$PLATFORM" "$v"; then OK_LIST+=("$v"); else FAIL_LIST+=("$v"); echo "  !! FAILED: $v"; fi
 done
 
