@@ -1,387 +1,101 @@
 #!/bin/bash
+#
+# main-windows.sh — per-architecture FFmpeg build for Windows (MSYS2/MinGW).
+#
+# Invoked by windows.sh ONCE PER ENABLED ARCH via:  . scripts/main-windows.sh "${ENABLED_LIBRARIES[@]}"
+# windows.sh has already exported, for the current arch:
+#   ARCH        x86 | x86_64 | arm64
+#   FULL_ARCH   windows-x86 | windows-x86_64 | windows-arm64
+#   HOST        i686-w64-mingw32 | x86_64-w64-mingw32 | aarch64-w64-mingw32
+#   CROSS_PREFIX "${HOST}-"
+#   BUILD_DIR   build/windows/${FULL_ARCH}
+# and the build-wide flags GPL_ENABLED (yes/no) and BUILD_FULL (1 when --full).
+#
+# DEPENDENCY MODEL: external libraries come from MSYS2 packages (pacman), NOT from
+# source. pkg-config (PKG_CONFIG_PATH=/mingw64/lib/pkgconfig, set by windows.sh)
+# resolves them. Install the deps once with the pacman list in PUBLISHING-WINDOWS.md.
+#
+# This script builds FFmpeg 8.1.1 shared DLLs only. The FFmpegKit wrapper
+# (libffmpegkit) is built in a later step once FFmpeg compiles cleanly.
 
-# Set environment variables for Windows build
 set -e
 
-# Set the base directory
 BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-# Source common functions
-source "${BASEDIR}/scripts/function.sh"
+# windows.sh sources us in its own shell, so ARCH/HOST/BUILD_DIR are inherited.
+# Guard against being run standalone.
+if [ -z "${ARCH}" ] || [ -z "${HOST}" ] || [ -z "${BUILD_DIR}" ]; then
+  echo "ERROR: main-windows.sh must be invoked from windows.sh (ARCH/HOST/BUILD_DIR unset)."
+  exit 1
+fi
 
-# Source Windows specific functions
-source "${BASEDIR}/scripts/function-windows.sh"
+FFMPEG_SRC="${BASEDIR}/src/ffmpeg"
+FFMPEG_PREFIX="${BUILD_DIR}/install"
+[ -d "${FFMPEG_SRC}" ] || { echo "ERROR: FFmpeg source not found at ${FFMPEG_SRC} (run the download step)."; exit 1; }
 
-# Initialize variables
-FFMPEG_KIT_BUILD_TYPE="windows"
-BUILD_DIRECTORY="${BASEDIR}/build/windows"
-ENABLED_ARCHITECTURES=(
-  "x86"
-  "x86_64"
-  "arm64"
-)
+echo "Building FFmpeg for ${FULL_ARCH:-$ARCH} (host=${HOST})..."
 
-# Parse command line arguments
-while [[ $# -gt 0 ]]; do
-  case $1 in
-    --disable-x86)
-      ENABLED_ARCHITECTURES=("${ENABLED_ARCHITECTURES[@]/x86/}")
-      shift
-      ;;
-    --disable-x86_64)
-      ENABLED_ARCHITECTURES=("${ENABLED_ARCHITECTURES[@]/x86_64/}")
-      shift
-      ;;
-    --disable-arm64)
-      ENABLED_ARCHITECTURES=("${ENABLED_ARCHITECTURES[@]/arm64/}")
-      shift
-      ;;
-    --full)
-      # Enable all external libraries
-      ENABLED_LIBRARIES=(
-        "windows-media-foundation"
-        "windows-msmpeg4v3"
-        "windows-openssl"
-        "windows-schannel"
-        "windows-sdl2"
-        "windows-zlib"
-        "windows-zlibng"
-        "windows-bzip2"
-        "windows-lzma"
-        "windows-iconv"
-      )
-      shift
-      ;;
-    --enable-windows-*)
-      # Handle individual library enables
-      ENABLED_LIBRARIES+=("${1#--enable-}")
-      shift
-      ;;
-    -h|--help)
-      display_help
-      exit 0
-      ;;
-    -l|--lts)
-      ENABLE_LTS_BUILD=1
-      shift
-      ;;
-    *)
-      echo "Unknown option: $1"
-      display_help
-      exit 1
-      ;;
-  esac
-done
+# ---------------------------------------------------------------------------
+# Variant-aware enable list. Windows only ships min / full / full-gpl, selected
+# by BUILD_FULL + GPL_ENABLED. External libs below must exist as MSYS2 packages
+# (mingw-w64-${MINGW_PKG_ARCH}-<name>); FFmpeg's configure will name any missing
+# one so you can `pacman -S` it. TLS uses native SChannel (no openssl/gnutls dep).
+# ---------------------------------------------------------------------------
+FF_ENABLES=""
 
-# Create build directory if it doesn't exist
-mkdir -p "${BUILD_DIRECTORY}"
+# Always-on, dependency-free (system / native Windows) features.
+FF_ENABLES+=" --enable-zlib --enable-bzlib --enable-iconv --enable-schannel"
+FF_ENABLES+=" --enable-mediafoundation --enable-d3d11va --enable-dxva2"
 
-# Set up the build environment
-setup_build_environment() {
-  echo "Setting up build environment for Windows..."
-  
-  # Set up Visual Studio environment if available
-  if [ -z "${VSINSTALLDIR}" ] && [ -f "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvars64.bat" ]; then
-    echo "Setting up Visual Studio 2022 environment..."
-    cmd.exe /c "call \"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvars64.bat\" && set > %TEMP%\vs_env_vars.txt"
-    while IFS='=' read -r key value; do
-      if [[ ! -z "$key" && ! -z "$value" ]]; then
-        export "$key"="$value"
-      fi
-    done < "${TEMP}/vs_env_vars.txt"
-  fi
-  
-  # Set up MSYS2 environment if available
-  if [ -z "${MSYSTEM}" ] && [ -d "/c/msys64" ]; then
-    echo "Setting up MSYS2 environment..."
-    export MSYSTEM=MINGW64
-    export MSYS2_PATH_TYPE=inherit
-    export PATH="/c/msys64/usr/bin:${PATH}"
-  fi
-}
+if [ -n "${BUILD_FULL}" ]; then
+  # 'full' external set — all available from MSYS2 mingw-w64 packages.
+  FF_ENABLES+=" --enable-libmp3lame --enable-libvorbis --enable-libopus"
+  FF_ENABLES+=" --enable-libvpx --enable-libwebp --enable-libtheora"
+  FF_ENABLES+=" --enable-libass --enable-libfreetype --enable-libfribidi --enable-libfontconfig --enable-libharfbuzz"
+  FF_ENABLES+=" --enable-libxml2 --enable-libsoxr --enable-libspeex --enable-libsnappy"
+  FF_ENABLES+=" --enable-libdav1d --enable-libaom --enable-libopenjpeg --enable-libzimg"
+  FF_ENABLES+=" --enable-libtwolame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libvo-amrwbenc"
+  FF_ENABLES+=" --enable-libopenh264 --enable-libsrt --enable-sdl2 --enable-chromaprint --enable-libtesseract"
+fi
 
-# Build FFmpeg for a specific architecture
-build_ffmpeg() {
-  local arch=$1
-  local build_dir="${BUILD_DIRECTORY}/${arch}"
-  
-  echo "Building FFmpeg for ${arch}..."
-  
-  # Create build directory
-  mkdir -p "${build_dir}"
-  
-  # Configure FFmpeg
-  cd "${build_dir}"
-  "${BASEDIR}/ffmpeg/configure" \
-    --arch=${arch} \
-    --target-os=mingw32 \
-    --cross-prefix=${arch}-w64-mingw32- \
-    --enable-cross-compile \
-    --prefix="${build_dir}/install" \
-    --disable-static \
-    --enable-shared \
-    --enable-version3 \
-    --enable-w32threads \
-    --enable-avresample \
-    --enable-libmfx \
-    --enable-dxva2 \
-    --enable-d3d11va \
-    --enable-nvenc \
-    --enable-nvdec \
-    --enable-libmp3lame \
-    --enable-libvpx \
-    --enable-libx264 \
-    --enable-libx265 \
-    --enable-libvorbis \
-    --enable-libopus \
-    --enable-libfdk-aac \
-    --enable-libass \
-    --enable-libfreetype \
-    --enable-libfribidi \
-    --enable-libwebp \
-    --enable-libzimg \
-    --enable-libsoxr \
-    --enable-libmodplug \
-    --enable-libopenjpeg \
-    --enable-libspeex \
-    --enable-libtheora \
-    --enable-libtwolame \
-    --enable-libwavpack \
-    --enable-libxvid \
-    --enable-libzvbi \
-    --enable-libmysofa \
-    --enable-libsnappy \
-    --enable-libaom \
-    --enable-libdav1d \
-    --enable-librav1e \
-    --enable-libsvtav1 \
-    --enable-libvmaf \
-    --enable-libxml2 \
-    --enable-libzimg \
-    --enable-libopenmpt \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libmp3lame \
-    --enable-libshine \
-    --enable-libvorbis \
-    --enable-libopus \
-    --enable-libspeex \
-    --enable-libwavpack \
-    --enable-libtwolame \
-    --enable-libmp3lame \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libopenjpeg \
-    --enable-libwebp \
-    --enable-libzimg \
-    --enable-libsoxr \
-    --enable-libmodplug \
-    --enable-libsnappy \
-    --enable-libaom \
-    --enable-libdav1d \
-    --enable-librav1e \
-    --enable-libsvtav1 \
-    --enable-libvmaf \
-    --enable-libxml2 \
-    --enable-libzimg \
-    --enable-libopenmpt \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libmp3lame \
-    --enable-libshine \
-    --enable-libvorbis \
-    --enable-libopus \
-    --enable-libspeex \
-    --enable-libwavpack \
-    --enable-libtwolame \
-    --enable-libmp3lame \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libopenjpeg \
-    --enable-libwebp \
-    --enable-libzimg \
-    --enable-libsoxr \
-    --enable-libmodplug \
-    --enable-libsnappy \
-    --enable-libaom \
-    --enable-libdav1d \
-    --enable-librav1e \
-    --enable-libsvtav1 \
-    --enable-libvmaf \
-    --enable-libxml2 \
-    --enable-libzimg \
-    --enable-libopenmpt \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libmp3lame \
-    --enable-libshine \
-    --enable-libvorbis \
-    --enable-libopus \
-    --enable-libspeex \
-    --enable-libwavpack \
-    --enable-libtwolame \
-    --enable-libmp3lame \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libopenjpeg \
-    --enable-libwebp \
-    --enable-libzimg \
-    --enable-libsoxr \
-    --enable-libmodplug \
-    --enable-libsnappy \
-    --enable-libaom \
-    --enable-libdav1d \
-    --enable-librav1e \
-    --enable-libsvtav1 \
-    --enable-libvmaf \
-    --enable-libxml2 \
-    --enable-libzimg \
-    --enable-libopenmpt \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libmp3lame \
-    --enable-libshine \
-    --enable-libvorbis \
-    --enable-libopus \
-    --enable-libspeex \
-    --enable-libwavpack \
-    --enable-libtwolame \
-    --enable-libmp3lame \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libopenjpeg \
-    --enable-libwebp \
-    --enable-libzimg \
-    --enable-libsoxr \
-    --enable-libmodplug \
-    --enable-libsnappy \
-    --enable-libaom \
-    --enable-libdav1d \
-    --enable-librav1e \
-    --enable-libsvtav1 \
-    --enable-libvmaf \
-    --enable-libxml2 \
-    --enable-libzimg \
-    --enable-libopenmpt \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libmp3lame \
-    --enable-libshine \
-    --enable-libvorbis \
-    --enable-libopus \
-    --enable-libspeex \
-    --enable-libwavpack \
-    --enable-libtwolame \
-    --enable-libmp3lame \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libopenjpeg \
-    --enable-libwebp \
-    --enable-libzimg \
-    --enable-libsoxr \
-    --enable-libmodplug \
-    --enable-libsnappy \
-    --enable-libaom \
-    --enable-libdav1d \
-    --enable-librav1e \
-    --enable-libsvtav1 \
-    --enable-libvmaf \
-    --enable-libxml2 \
-    --enable-libzimg \
-    --enable-libopenmpt \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libmp3lame \
-    --enable-libshine \
-    --enable-libvorbis \
-    --enable-libopus \
-    --enable-libspeex \
-    --enable-libwavpack \
-    --enable-libtwolame \
-    --enable-libmp3lame \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libopenjpeg \
-    --enable-libwebp \
-    --enable-libzimg \
-    --enable-libsoxr \
-    --enable-libmodplug \
-    --enable-libsnappy \
-    --enable-libaom \
-    --enable-libdav1d \
-    --enable-librav1e \
-    --enable-libsvtav1 \
-    --enable-libvmaf \
-    --enable-libxml2 \
-    --enable-libzimg \
-    --enable-libopenmpt \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libmp3lame \
-    --enable-libshine \
-    --enable-libvorbis \
-    --enable-libopus \
-    --enable-libspeex \
-    --enable-libwavpack \
-    --enable-libtwolame \
-    --enable-libmp3lame \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libopenjpeg \
-    --enable-libwebp \
-    --enable-libzimg \
-    --enable-libsoxr \
-    --enable-libmodplug \
-    --enable-libsnappy \
-    --enable-libaom \
-    --enable-libdav1d \
-    --enable-librav1e \
-    --enable-libsvtav1 \
-    --enable-libvmaf \
-    --enable-libxml2 \
-    --enable-libzimg \
-    --enable-libopenmpt \
-    --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc
-    
-  # Build FFmpeg
-  make -j$(nproc)
-  make install
-  
-  cd - > /dev/null
-}
+if [ "${GPL_ENABLED}" == "yes" ]; then
+  # GPL-only libraries (require --enable-gpl).
+  FF_ENABLES+=" --enable-gpl --enable-version3"
+  FF_ENABLES+=" --enable-libx264 --enable-libx265 --enable-libxvid --enable-libvidstab --enable-librubberband"
+fi
 
-# Main build function
-build() {
-  echo "Starting FFmpegKit build for Windows..."
-  
-  # Set up build environment
-  setup_build_environment
-  
-  # Build for each enabled architecture
-  for arch in "${ENABLED_ARCHITECTURES[@]}"; do
-    if [ -n "$arch" ]; then
-      build_ffmpeg "$arch"
-    fi
-  done
-  
-  echo "FFmpegKit build completed successfully!"
-}
+# ---------------------------------------------------------------------------
+# Configure + build. Out-of-tree build so each arch is isolated.
+# ---------------------------------------------------------------------------
+mkdir -p "${BUILD_DIR}/ffmpeg-build"
+cd "${BUILD_DIR}/ffmpeg-build"
 
-# Run the build
-build
+"${FFMPEG_SRC}/configure" \
+  --prefix="${FFMPEG_PREFIX}" \
+  --arch="${ARCH}" \
+  --target-os=mingw32 \
+  --cross-prefix="${CROSS_PREFIX}" \
+  --pkg-config=pkg-config \
+  --pkg-config-flags="--static" \
+  --enable-cross-compile \
+  --disable-static \
+  --enable-shared \
+  --enable-pic \
+  --enable-w32threads \
+  --enable-small \
+  --disable-debug \
+  --disable-programs \
+  --disable-doc \
+  --disable-htmlpages \
+  --disable-manpages \
+  --disable-podpages \
+  --disable-txtpages \
+  ${FF_ENABLES}
+
+make -j"$(nproc)"
+make install
+
+cd - > /dev/null
+
+echo "FFmpeg for ${FULL_ARCH:-$ARCH} installed to ${FFMPEG_PREFIX}"
+echo "NOTE: FFmpegKit wrapper (libffmpegkit) build is a separate step — see PUBLISHING-WINDOWS.md."

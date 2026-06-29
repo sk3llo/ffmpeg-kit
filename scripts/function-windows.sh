@@ -103,3 +103,32 @@ get_ldflags() {
 get_build_directory() {
   echo "${BUILD_DIRECTORY}"
 }
+
+get_bundle_directory() {
+  echo "bundle-windows"
+}
+
+# Collect the per-arch FFmpeg install trees produced by main-windows.sh
+# (build/windows/<full-arch>/install) into prebuilt/bundle-windows/<full-arch>/
+# {bin,lib,include} so the result can be zipped and shipped. Bundles every arch
+# that actually built; returns non-zero if none did.
+create_windows_bundle() {
+  local bundle_root="${BASEDIR}/prebuilt/$(get_bundle_directory)"
+  local built=0 arch_dir full_arch dest
+  for arch_dir in "${BASEDIR}"/build/windows/*/install; do
+    [ -d "${arch_dir}" ] || continue
+    full_arch="$(basename "$(dirname "${arch_dir}")")"
+    dest="${bundle_root}/${full_arch}"
+    echo -e "DEBUG: bundling ${full_arch} from ${arch_dir}\n" 1>>"${BASEDIR}"/build.log 2>&1
+    mkdir -p "${dest}"
+    cp -r "${arch_dir}/bin"     "${dest}/" 2>>"${BASEDIR}"/build.log || true   # runtime DLLs
+    cp -r "${arch_dir}/lib"     "${dest}/" 2>>"${BASEDIR}"/build.log || true   # import libs + pkgconfig
+    cp -r "${arch_dir}/include" "${dest}/" 2>>"${BASEDIR}"/build.log || true   # headers
+    built=$((built+1))
+  done
+  if [ "${built}" -eq 0 ]; then
+    echo "WARNING: no FFmpeg install trees under build/windows/*/install — nothing bundled." 1>>"${BASEDIR}"/build.log 2>&1
+    return 1
+  fi
+  return 0
+}
