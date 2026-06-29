@@ -36,42 +36,47 @@ FFMPEG_PREFIX="${BUILD_DIR}/install"
 echo "Building FFmpeg for ${FULL_ARCH:-$ARCH} (host=${HOST})..."
 
 # ---------------------------------------------------------------------------
-# Variant-aware enable list. Windows only ships min / full / full-gpl, selected
-# by BUILD_FULL + GPL_ENABLED. External libs below must exist as MSYS2 packages
-# (mingw-w64-${MINGW_PKG_ARCH}-<name>); FFmpeg's configure will name any missing
-# one so you can `pacman -S` it. TLS uses native SChannel (no openssl/gnutls dep).
+# Variant-aware enable list. The enabled external-library set determines the
+# variant FFmpegKit's Packages::getPackageName() reports (windows/src/Packages.cpp).
+# Select with FFMPEGKIT_VARIANT (min|min-gpl|https|https-gpl|audio|video|full|
+# full-gpl); if unset it is derived from --full / --enable-gpl (back-compat:
+# nothing=min, --full=full, --full --enable-gpl=full-gpl). All libs below are
+# MSYS2 packages (see PUBLISHING-WINDOWS.md). NOTE: FFmpeg rejects --enable-gnutls
+# together with --enable-schannel, so gnutls-bearing variants (https*, full*) use
+# gnutls as the TLS backend and the others use native SChannel.
 # ---------------------------------------------------------------------------
-FF_ENABLES=""
+FF_ENABLES=" --enable-zlib --enable-bzlib --enable-iconv --enable-mediafoundation --enable-d3d11va --enable-dxva2"
 
-# Always-on, dependency-free (system / native Windows) features.
-FF_ENABLES+=" --enable-zlib --enable-bzlib --enable-iconv"
-FF_ENABLES+=" --enable-mediafoundation --enable-d3d11va --enable-dxva2"
+# Reusable groups (the canonical per-variant signatures).
+# --enable-version3 is required by gmp (TLS) and opencore-amr/vo-amrwbenc (audio):
+# those are (L)GPLv3 and FFmpeg refuses them under plain --enable-version2. It is
+# harmless where unused and does not affect the variant classification.
+_GPL=" --enable-gpl --enable-version3 --enable-libx264 --enable-libx265 --enable-libxvid --enable-libvidstab --enable-librubberband"
+_TLS=" --enable-version3 --enable-gmp --enable-gnutls"
+_AUDIO=" --enable-version3 --enable-libmp3lame --enable-libilbc --enable-libvorbis --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libvo-amrwbenc --enable-libopus --enable-libshine --enable-libsoxr --enable-libspeex --enable-libtwolame"
+_VIDEO=" --enable-libdav1d --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libkvazaar --enable-libass --enable-libtheora --enable-libvpx --enable-libwebp --enable-libsnappy --enable-libzimg"
+_FULLEXTRA=" --enable-libxml2 --enable-libaom --enable-libopenh264 --enable-libopenjpeg --enable-libsrt --enable-sdl2 --enable-chromaprint --enable-libtesseract --enable-libharfbuzz"
+_SCHANNEL=" --enable-schannel"
 
-if [ -n "${BUILD_FULL}" ]; then
-  # 'full' external set — all available from MSYS2 mingw-w64 packages.
-  FF_ENABLES+=" --enable-libmp3lame --enable-libvorbis --enable-libopus"
-  FF_ENABLES+=" --enable-libvpx --enable-libwebp --enable-libtheora"
-  FF_ENABLES+=" --enable-libass --enable-libfreetype --enable-libfribidi --enable-libfontconfig --enable-libharfbuzz"
-  FF_ENABLES+=" --enable-libxml2 --enable-libsoxr --enable-libspeex --enable-libsnappy"
-  FF_ENABLES+=" --enable-libdav1d --enable-libaom --enable-libopenjpeg --enable-libzimg"
-  FF_ENABLES+=" --enable-libtwolame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libvo-amrwbenc"
-  FF_ENABLES+=" --enable-libopenh264 --enable-libsrt --enable-sdl2 --enable-chromaprint --enable-libtesseract"
-  # gnutls (+gmp), kvazaar, libilbc and shine complete the canonical full-gpl
-  # external-library signature that FFmpegKit's Packages::getPackageName() checks
-  # (windows/src/Packages.cpp). gnutls is FFmpeg's TLS backend here. NOTE: FFmpeg
-  # rejects --enable-gnutls together with --enable-schannel, so schannel is used
-  # only for the min variant (below), not for full/full-gpl.
-  FF_ENABLES+=" --enable-gmp --enable-gnutls --enable-libkvazaar --enable-libilbc --enable-libshine"
-else
-  # min: native SChannel TLS (no external gnutls/gmp dependency).
-  FF_ENABLES+=" --enable-schannel"
+VARIANT="${FFMPEGKIT_VARIANT:-}"
+if [ -z "${VARIANT}" ]; then
+  if [ -n "${BUILD_FULL}" ] && [ "${GPL_ENABLED}" == "yes" ]; then VARIANT="full-gpl"
+  elif [ -n "${BUILD_FULL}" ]; then VARIANT="full"
+  else VARIANT="min"; fi
 fi
+echo "FFmpegKit variant: ${VARIANT}"
 
-if [ "${GPL_ENABLED}" == "yes" ]; then
-  # GPL-only libraries (require --enable-gpl).
-  FF_ENABLES+=" --enable-gpl --enable-version3"
-  FF_ENABLES+=" --enable-libx264 --enable-libx265 --enable-libxvid --enable-libvidstab --enable-librubberband"
-fi
+case "${VARIANT}" in
+  min)        FF_ENABLES+="${_SCHANNEL}" ;;
+  min-gpl)    FF_ENABLES+="${_SCHANNEL}${_GPL}" ;;
+  https)      FF_ENABLES+="${_TLS}" ;;
+  https-gpl)  FF_ENABLES+="${_TLS}${_GPL}" ;;
+  audio)      FF_ENABLES+="${_SCHANNEL}${_AUDIO}" ;;
+  video)      FF_ENABLES+="${_SCHANNEL}${_VIDEO}" ;;
+  full)       FF_ENABLES+="${_TLS}${_AUDIO}${_VIDEO}${_FULLEXTRA}" ;;
+  full-gpl)   FF_ENABLES+="${_TLS}${_AUDIO}${_VIDEO}${_FULLEXTRA}${_GPL}" ;;
+  *) echo "ERROR: unknown FFMPEGKIT_VARIANT '${VARIANT}'." >&2; exit 1 ;;
+esac
 
 # ---------------------------------------------------------------------------
 # Configure + build. Out-of-tree build so each arch is isolated.
