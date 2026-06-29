@@ -32,36 +32,42 @@ pacman -S --needed \
 # GPL-only (for --enable-gpl):
 pacman -S --needed \
   mingw-w64-x86_64-x264 mingw-w64-x86_64-x265 mingw-w64-x86_64-xvidcore \
-  mingw-w64-x86_64-libvidstab mingw-w64-x86_64-rubberband
+  mingw-w64-x86_64-vid.stab mingw-w64-x86_64-rubberband
 ```
 If `configure` later complains a library is missing, `pacman -Ss <name>` to find
 the package and install it (or drop the matching `--enable-` from the variant set
 in `scripts/main-windows.sh`).
 
 ## 3. Build (x86_64 only)
-The default enables x86 + x86_64 + arm64, but MSYS2 ships only the x86_64
-mingw toolchain by default, so scope to x86_64:
+Only x86_64 is wired (MSYS2 ships just the x86_64 mingw toolchain by default), so
+`enable_default_windows_architectures` enables x86_64 only — no `--disable-*`
+needed (and `--disable-x86` would error, since x86 isn't a supported windows arch):
 
 ```bash
 cd /path/to/ffmpeg-kit-6.0.LTS
 # min:
-./windows.sh --disable-x86 --disable-arm64
+./windows.sh
 # full:
-./windows.sh --full --disable-x86 --disable-arm64
+./windows.sh --full
 # full-gpl:
-./windows.sh --full --enable-gpl --disable-x86 --disable-arm64
+./windows.sh --full --enable-gpl
 ```
 
 ## 4. Output
-- Per-arch FFmpeg install: `build/windows/windows-x86_64/install/{bin,lib,include}`
+- Per-arch FFmpeg install: `build/windows/x86_64/install/{bin,lib,include}`
   (`bin/*.dll` are the runtime DLLs; `lib/*.dll.a` are import libs).
-- Bundled for shipping: `prebuilt/bundle-windows/windows-x86_64/{bin,lib,include}`.
+- Bundled for shipping: `prebuilt/bundle-windows/x86_64/{bin,lib,include}`.
 
 Verify it compiled:
 ```bash
-ls build/windows/windows-x86_64/install/bin/*.dll
-build/windows/windows-x86_64/install/bin/avcodec-*.dll  # version in the name
+ls build/windows/x86_64/install/bin/*.dll
+build/windows/x86_64/install/bin/avcodec-*.dll  # version in the name (8.1.1 -> avcodec-62)
 ```
+
+> NOTE: the av* DLLs link **shared** against the MSYS2 codec DLLs (libx264-165.dll,
+> libx265-216.dll, libdav1d-7.dll, xvidcore.dll, …). They must be on `PATH`
+> (`/mingw64/bin`) at runtime; `create_windows_bundle` does not yet gather that
+> dependency closure, so the bundle is not standalone.
 
 ## What to report back
 - Whether `configure` succeeds (and any “ERROR: <lib> not found” lines).

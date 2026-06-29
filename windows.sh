@@ -20,7 +20,11 @@
 #
 # Example: ./windows.sh --enable-windows-media-foundation --enable-windows-openssl
 #
-set -e
+# NOTE: do NOT enable `set -e` here. The shared scripts/function.sh use `let var=0`
+# (which returns exit status 1 when the result is 0) and other errexit-incompatible
+# constructs (e.g. print_enabled_architectures); the framework relies on explicit
+# `|| return 1` / `exit 1` / RC checks instead, exactly like android.sh/linux.sh.
+# With errexit on, the run dies in print_enabled_architectures.
 
 # Print error and exit with status 1
 error_exit() {
@@ -265,9 +269,12 @@ for run_arch in {0..12}; do
             export HOST="i686-w64-mingw32"
             export CROSS_PREFIX="${HOST}-"
             ;;
-        x86_64)
+        x86-64 | x86_64)
             export HOST="x86_64-w64-mingw32"
             export CROSS_PREFIX="${HOST}-"
+            # get_arch_name() yields "x86-64"; normalize to the underscore form
+            # FFmpeg's configure --arch expects.
+            export ARCH="x86_64"
             ;;
         arm64)
             export HOST="aarch64-w64-mingw32"

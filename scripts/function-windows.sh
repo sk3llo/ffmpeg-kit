@@ -5,9 +5,11 @@ source "${BASEDIR}/scripts/function.sh"
 prepare_inline_sed
 
 enable_default_windows_architectures() {
+  # Only x86_64 is wired (MSYS2 ships just the x86_64 mingw toolchain by default,
+  # and is_arch_supported_on_platform() accepts only ARCH_X86_64 for windows).
+  # Enabling x86/arm64 here makes them un-disablable (disable_arch rejects an
+  # unsupported arch) and the build loop would then fail on a missing toolchain.
   ENABLED_ARCHITECTURES[ARCH_X86_64]=1
-  ENABLED_ARCHITECTURES[ARCH_X86]=1
-  ENABLED_ARCHITECTURES[ARCH_ARM64]=1
 }
 
 get_ffmpeg_kit_version() {

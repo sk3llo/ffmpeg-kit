@@ -74,7 +74,13 @@ cd "${BUILD_DIR}/ffmpeg-build"
   --prefix="${FFMPEG_PREFIX}" \
   --arch="${ARCH}" \
   --target-os=mingw32 \
-  --cross-prefix="${CROSS_PREFIX}" \
+  --cc="${CROSS_PREFIX}gcc" \
+  --cxx="${CROSS_PREFIX}g++" \
+  --ar=ar \
+  --nm=nm \
+  --ranlib=ranlib \
+  --strip=strip \
+  --windres=windres \
   --pkg-config=pkg-config \
   --pkg-config-flags="--static" \
   --enable-cross-compile \
