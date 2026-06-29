@@ -30,7 +30,12 @@ pacman -S --needed \
   mingw-w64-x86_64-dav1d mingw-w64-x86_64-aom mingw-w64-x86_64-openjpeg2 \
   mingw-w64-x86_64-zimg mingw-w64-x86_64-twolame mingw-w64-x86_64-opencore-amr \
   mingw-w64-x86_64-vo-amrwbenc mingw-w64-x86_64-openh264 mingw-w64-x86_64-srt \
-  mingw-w64-x86_64-SDL2 mingw-w64-x86_64-chromaprint mingw-w64-x86_64-tesseract-ocr
+  mingw-w64-x86_64-SDL2 mingw-w64-x86_64-chromaprint mingw-w64-x86_64-tesseract-ocr \
+  mingw-w64-x86_64-gmp mingw-w64-x86_64-gnutls mingw-w64-x86_64-kvazaar \
+  mingw-w64-x86_64-libilbc mingw-w64-x86_64-shine
+# gmp/gnutls/kvazaar/libilbc/shine complete FFmpegKit's full-gpl signature so the
+# runtime reports `full-gpl` (not `custom`). gnutls is the TLS backend for full*
+# (it conflicts with --enable-schannel, which is used only for the min variant).
 # GPL-only (for --enable-gpl):
 pacman -S --needed \
   mingw-w64-x86_64-x264 mingw-w64-x86_64-x265 mingw-w64-x86_64-xvidcore \

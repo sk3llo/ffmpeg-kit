@@ -44,7 +44,7 @@ echo "Building FFmpeg for ${FULL_ARCH:-$ARCH} (host=${HOST})..."
 FF_ENABLES=""
 
 # Always-on, dependency-free (system / native Windows) features.
-FF_ENABLES+=" --enable-zlib --enable-bzlib --enable-iconv --enable-schannel"
+FF_ENABLES+=" --enable-zlib --enable-bzlib --enable-iconv"
 FF_ENABLES+=" --enable-mediafoundation --enable-d3d11va --enable-dxva2"
 
 if [ -n "${BUILD_FULL}" ]; then
@@ -56,6 +56,15 @@ if [ -n "${BUILD_FULL}" ]; then
   FF_ENABLES+=" --enable-libdav1d --enable-libaom --enable-libopenjpeg --enable-libzimg"
   FF_ENABLES+=" --enable-libtwolame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libvo-amrwbenc"
   FF_ENABLES+=" --enable-libopenh264 --enable-libsrt --enable-sdl2 --enable-chromaprint --enable-libtesseract"
+  # gnutls (+gmp), kvazaar, libilbc and shine complete the canonical full-gpl
+  # external-library signature that FFmpegKit's Packages::getPackageName() checks
+  # (windows/src/Packages.cpp). gnutls is FFmpeg's TLS backend here. NOTE: FFmpeg
+  # rejects --enable-gnutls together with --enable-schannel, so schannel is used
+  # only for the min variant (below), not for full/full-gpl.
+  FF_ENABLES+=" --enable-gmp --enable-gnutls --enable-libkvazaar --enable-libilbc --enable-libshine"
+else
+  # min: native SChannel TLS (no external gnutls/gmp dependency).
+  FF_ENABLES+=" --enable-schannel"
 fi
 
 if [ "${GPL_ENABLED}" == "yes" ]; then
