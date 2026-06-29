@@ -110,10 +110,39 @@ get_bundle_directory() {
   echo "bundle-windows"
 }
 
+# Resolve the recursive runtime DLL closure of every DLL in <bin_dir>: the av*
+# DLLs link SHARED against the MSYS2 codec DLLs (libx264-165.dll, libx265-216.dll,
+# libdav1d-7.dll, xvidcore.dll, …) plus the MinGW runtime (libgcc/libstdc++/
+# libwinpthread), so the install bin/ alone is not self-contained. Walk imports
+# with objdump and copy in every imported DLL that lives under the MinGW bin dir;
+# anything else (kernel32, …) is a Windows system DLL present on the target.
+gather_windows_dll_closure() {
+  local bin_dir="$1"
+  local mingw_bin
+  mingw_bin="$(dirname "$(command -v x86_64-w64-mingw32-gcc 2>/dev/null || command -v gcc 2>/dev/null)")"
+  if [ -z "${mingw_bin}" ] || [ ! -d "${mingw_bin}" ]; then
+    echo "WARNING: MinGW bin dir not found; skipping DLL closure for ${bin_dir}" 1>>"${BASEDIR}"/build.log 2>&1
+    return 0
+  fi
+  local changed=1 dll dep
+  while [ "${changed}" -eq 1 ]; do
+    changed=0
+    for dll in "${bin_dir}"/*.dll; do
+      [ -f "${dll}" ] || continue
+      while read -r dep; do
+        if [ -f "${mingw_bin}/${dep}" ] && [ ! -f "${bin_dir}/${dep}" ]; then
+          cp "${mingw_bin}/${dep}" "${bin_dir}/" 2>>"${BASEDIR}"/build.log && changed=1
+        fi
+      done < <(objdump -p "${dll}" 2>/dev/null | grep -i "DLL Name" | sed 's/.*DLL Name: //')
+    done
+  done
+}
+
 # Collect the per-arch FFmpeg install trees produced by main-windows.sh
 # (build/windows/<full-arch>/install) into prebuilt/bundle-windows/<full-arch>/
-# {bin,lib,include} so the result can be zipped and shipped. Bundles every arch
-# that actually built; returns non-zero if none did.
+# {bin,lib,include} so the result can be zipped and shipped. The bin/ is made
+# self-contained via gather_windows_dll_closure(). Bundles every arch that
+# actually built; returns non-zero if none did.
 create_windows_bundle() {
   local bundle_root="${BASEDIR}/prebuilt/$(get_bundle_directory)"
   local built=0 arch_dir full_arch dest
@@ -126,6 +155,9 @@ create_windows_bundle() {
     cp -r "${arch_dir}/bin"     "${dest}/" 2>>"${BASEDIR}"/build.log || true   # runtime DLLs
     cp -r "${arch_dir}/lib"     "${dest}/" 2>>"${BASEDIR}"/build.log || true   # import libs + pkgconfig
     cp -r "${arch_dir}/include" "${dest}/" 2>>"${BASEDIR}"/build.log || true   # headers
+    # Pull in the shared codec + MinGW runtime DLLs the av* DLLs import, so the
+    # bundle runs without /mingw64/bin on PATH.
+    gather_windows_dll_closure "${dest}/bin"
     built=$((built+1))
   done
   if [ "${built}" -eq 0 ]; then
