@@ -1,9 +1,11 @@
 # Windows build (MSYS2 / MinGW) — FFmpeg 8.1.1
 
 Windows isn't officially supported by ffmpeg-kit; this is a custom path. External
-libraries come from **MSYS2 packages** (not built from source). This iteration
-builds **FFmpeg 8.1.1 shared DLLs**; the FFmpegKit wrapper (`libffmpegkit`) is a
-later step once FFmpeg compiles cleanly on your machine.
+libraries come from **MSYS2 packages** (not built from source). `windows.sh`
+builds **FFmpeg 8.1.1 shared DLLs** and then the **FFmpegKit wrapper**
+(`libffmpegkit.dll` — the `FFmpegKitConfig`/session API the Flutter plugin calls)
+via `scripts/windows-ffmpeg-kit.sh`. Set `SKIP_FFMPEGKIT_WRAPPER=1` to build only
+FFmpeg.
 
 ## 1. Environment
 Install **MSYS2** (https://www.msys2.org/) and open the **“MSYS2 MinGW x64”** shell
@@ -64,19 +66,20 @@ ls build/windows/x86_64/install/bin/*.dll
 build/windows/x86_64/install/bin/avcodec-*.dll  # version in the name (8.1.1 -> avcodec-62)
 ```
 
-> NOTE: the av* DLLs link **shared** against the MSYS2 codec DLLs (libx264-165.dll,
-> libx265-216.dll, libdav1d-7.dll, xvidcore.dll, …). They must be on `PATH`
-> (`/mingw64/bin`) at runtime; `create_windows_bundle` does not yet gather that
-> dependency closure, so the bundle is not standalone.
+The av* DLLs and `libffmpegkit.dll` link **shared** against the MSYS2 codec DLLs
+(libx264-165.dll, libx265-216.dll, libdav1d-7.dll, xvidcore.dll, …) plus the MinGW
+runtime. `create_windows_bundle` gathers that full dependency closure (objdump
+walk) into `prebuilt/bundle-windows/x86_64/bin/`, so the bundle is **self-contained**
+(runs without `/mingw64/bin` on `PATH`).
 
-## What to report back
-- Whether `configure` succeeds (and any “ERROR: <lib> not found” lines).
-- Whether `make` finishes and the `*.dll` files appear.
-Paste the tail of `build.log` on failure. Next iteration adds the FFmpegKit
-wrapper once FFmpeg itself builds.
-
-## Notes / known gaps
+## Notes
 - TLS uses native **SChannel** (no openssl/gnutls dependency on Windows).
-- The **FFmpegKit wrapper** (`libffmpegkit`, the `FFmpegKitConfig`/session API the
-  Flutter plugin calls) is **not built yet** — this milestone is FFmpeg itself.
+- The **FFmpegKit wrapper** (`libffmpegkit.dll`) is built from `windows/src/`
+  against the FFmpeg install (internal headers from `src/ffmpeg`, generated
+  `config.h` from the out-of-tree FFmpeg build dir). The vendored `fftools_*` were
+  ported to the FFmpeg 8.x APIs (frame/stream flag accessors, packet-side-data
+  model, removed `ticks_per_frame`/`pkt_size`/`pkt_pos`), the non-local exit uses
+  `__builtin_setjmp`/`__builtin_longjmp` (C `longjmp` SEH-unwinds and faults on
+  Win64), and `prepare_app_arguments()` is a no-op (it must not replace the
+  session's argv with the host process command line).
 - x86 / arm64 would need their own mingw cross-toolchains; only x86_64 is wired.

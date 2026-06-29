@@ -104,4 +104,16 @@ make install
 cd - > /dev/null
 
 echo "FFmpeg for ${FULL_ARCH:-$ARCH} installed to ${FFMPEG_PREFIX}"
-echo "NOTE: FFmpegKit wrapper (libffmpegkit) build is a separate step — see PUBLISHING-WINDOWS.md."
+
+# Build the FFmpegKit wrapper (libffmpegkit) against the FFmpeg install just
+# produced, unless explicitly skipped. It is installed alongside FFmpeg in
+# ${FFMPEG_PREFIX} so create_windows_bundle picks it up.
+if [ "${SKIP_FFMPEGKIT_WRAPPER:-0}" != "1" ] && [ -d "${BASEDIR}/windows/src" ]; then
+  export ARCH CROSS_PREFIX BUILD_DIR FFMPEG_PREFIX BASEDIR
+  if ! bash "${BASEDIR}/scripts/windows-ffmpeg-kit.sh"; then
+    echo "ERROR: FFmpegKit wrapper build failed for ${FULL_ARCH:-$ARCH}." >&2
+    exit 1
+  fi
+else
+  echo "NOTE: skipping FFmpegKit wrapper (SKIP_FFMPEGKIT_WRAPPER=1 or windows/src missing)."
+fi
