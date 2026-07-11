@@ -98,4 +98,18 @@ make install
 cd - > /dev/null
 
 echo "FFmpeg for ${FULL_ARCH:-$ARCH} installed to ${FFMPEG_PREFIX}"
-echo "NOTE: FFmpegKit wrapper (libffmpegkit) build is a separate step — see PUBLISHING-WINDOWS.md."
+
+# ---------------------------------------------------------------------------
+# FFmpegKit wrapper: build libffmpegkit.dll (windows/src = the Windows-adapted
+# C++ API + c_api ABI the Flutter plugin loads at runtime, plus the FFmpeg
+# 8.x-correct fftools copies) against the FFmpeg just installed above.
+# ---------------------------------------------------------------------------
+echo "Building FFmpegKit wrapper (libffmpegkit.dll) for ${FULL_ARCH:-$ARCH}..."
+make -C "${BASEDIR}/windows" -j"$(nproc)" install \
+  OUT="${BUILD_DIR}/ffmpegkit-build" \
+  FFMPEG_PREFIX="${FFMPEG_PREFIX}" \
+  FFMPEG_BUILD="${BUILD_DIR}/ffmpeg-build" \
+  FFMPEG_SRC="${FFMPEG_SRC}"
+
+[ -f "${FFMPEG_PREFIX}/bin/libffmpegkit.dll" ] || { echo "ERROR: libffmpegkit.dll missing after wrapper build."; exit 1; }
+echo "FFmpegKit wrapper installed: ${FFMPEG_PREFIX}/bin/libffmpegkit.dll"

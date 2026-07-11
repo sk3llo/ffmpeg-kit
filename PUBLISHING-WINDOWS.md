@@ -1,9 +1,17 @@
-# Windows build (MSYS2 / MinGW) — FFmpeg 8.1.1
+# Windows build (MSYS2 / MinGW) — FFmpeg 8.1.1 + FFmpegKit wrapper
 
 Windows isn't officially supported by ffmpeg-kit; this is a custom path. External
-libraries come from **MSYS2 packages** (not built from source). This iteration
-builds **FFmpeg 8.1.1 shared DLLs**; the FFmpegKit wrapper (`libffmpegkit`) is a
-later step once FFmpeg compiles cleanly on your machine.
+libraries come from **MSYS2 packages** (not built from source). The build produces
+**FFmpeg 8.1.1 shared DLLs AND `libffmpegkit.dll`** (the FFmpegKit wrapper the
+Flutter plugin loads at runtime via `LoadLibraryA` + `GetProcAddress` of the
+`ffmpegkit_*` C API).
+
+Wrapper sources live in `windows/src/`: the Windows-adapted C++ API + `ffmpegkit_c_api`
+(originally ported in the plugin repo's `windows/src`) combined with the FFmpeg
+**8.x-correct** `fftools_*` copies shared with `linux/src` (the plugin repo's fftools
+were stale pre-7.x sources using removed APIs — do not resync from there).
+`windows/Makefile` builds the DLL; `scripts/main-windows.sh` invokes it right after
+the FFmpeg install, so `./windows.sh` yields a complete bundle.
 
 ## 1. Environment
 Install **MSYS2** (https://www.msys2.org/) and open the **“MSYS2 MinGW x64”** shell
@@ -53,24 +61,38 @@ cd /path/to/ffmpeg-kit-6.0.LTS
 ```
 
 ## 4. Output
-- Per-arch FFmpeg install: `build/windows/windows-x86_64/install/{bin,lib,include}`
-  (`bin/*.dll` are the runtime DLLs; `lib/*.dll.a` are import libs).
+- Per-arch install: `build/windows/windows-x86_64/install/{bin,lib,include}` —
+  `bin/` holds the av* runtime DLLs **and `libffmpegkit.dll`**; `lib/` the import
+  libs; `include/ffmpegkit/` the wrapper headers.
 - Bundled for shipping: `prebuilt/bundle-windows/windows-x86_64/{bin,lib,include}`.
 
 Verify it compiled:
 ```bash
-ls build/windows/windows-x86_64/install/bin/*.dll
-build/windows/windows-x86_64/install/bin/avcodec-*.dll  # version in the name
+ls build/windows/windows-x86_64/install/bin/*.dll        # av* + libffmpegkit.dll
+build/windows/windows-x86_64/install/bin/avcodec-*.dll   # version in the name
+```
+
+## 5. Package for the plugin
+The Flutter plugin's `windows/CMakeLists.txt` downloads
+`ffmpeg-kit-windows-x86_64-<variant>-8.1.1.zip` from the `8.1.1-<variant>` release
+and expects **`bin/` at the zip root** (it checks `bin/libffmpegkit.dll`). Zip from
+inside the bundle dir:
+```bash
+cd prebuilt/bundle-windows/windows-x86_64
+zip -r ../../../ffmpeg-kit-windows-x86_64-full-gpl-8.1.1.zip bin include
+gh release upload 8.1.1-full-gpl ../../../ffmpeg-kit-windows-x86_64-full-gpl-8.1.1.zip \
+  --repo sk3llo/ffmpeg_kit_flutter --clobber
 ```
 
 ## What to report back
-- Whether `configure` succeeds (and any “ERROR: <lib> not found” lines).
-- Whether `make` finishes and the `*.dll` files appear.
-Paste the tail of `build.log` on failure. Next iteration adds the FFmpegKit
-wrapper once FFmpeg itself builds.
+- Whether FFmpeg `configure`/`make` succeed (any “ERROR: <lib> not found” lines).
+- Whether the wrapper compiles and `bin/libffmpegkit.dll` appears — compile/link
+  errors from `windows/src` are expected on the first Windows run (this port was
+  assembled and symbol-checked on macOS but cannot be compiled there); paste them
+  and they'll be fixed quickly.
 
-## Notes / known gaps
+## Notes
 - TLS uses native **SChannel** (no openssl/gnutls dependency on Windows).
-- The **FFmpegKit wrapper** (`libffmpegkit`, the `FFmpegKitConfig`/session API the
-  Flutter plugin calls) is **not built yet** — this milestone is FFmpeg itself.
 - x86 / arm64 would need their own mingw cross-toolchains; only x86_64 is wired.
+- The wrapper links the FFmpeg import libs from this build and keeps libgcc/libstdc++
+  static so no extra MinGW runtime DLLs are required beyond what FFmpeg needs.
