@@ -77,8 +77,34 @@ runtime. `create_windows_bundle` gathers that full dependency closure (objdump
 walk) into `prebuilt/bundle-windows/x86_64/bin/`, so the bundle is **self-contained**
 (runs without `/mingw64/bin` on `PATH`).
 
+## 5. Package & publish
+The Flutter plugin's `windows/CMakeLists.txt` downloads
+`ffmpeg-kit-windows-x86_64-<variant>-<version>.zip` from the
+`sk3llo/ffmpeg_kit_flutter` release tagged `<version>-<variant>` (the same tag
+that carries the iOS/macOS assets). The zip must contain `bin/` and `include/`
+at its root with **forward-slash** entries — use bsdtar (`tar.exe` on Windows
+ships bsdtar); PowerShell `Compress-Archive` writes backslash entries that break
+CMake's `tar xf` and must NOT be used.
+
+```bash
+cd prebuilt/bundle-windows/x86_64
+# make sure nothing extra leaked into bin/ (test outputs, .recall/, ...)
+tar -a -c -f ../../ffmpeg-kit-windows-x86_64-full-gpl-8.1.1.zip bin include
+gh release upload 8.1.1-full-gpl ../../ffmpeg-kit-windows-x86_64-full-gpl-8.1.1.zip \
+  --repo sk3llo/ffmpeg_kit_flutter --clobber
+```
+
+Before uploading, smoke-test the bundle: load `bin/libffmpegkit.dll` with
+`LoadLibraryA` from inside `bin/` and check `ffmpegkit_get_package_name()`
+reports the intended variant and a transcode succeeds (see `build/smoke/` if
+present). Other variants: build with `FFMPEGKIT_VARIANT=<variant>` (plus
+`--enable-gpl` for `*-gpl`, `--full` for `full*`) and substitute the variant
+name in the zip/tag.
+
 ## Notes
-- TLS uses native **SChannel** (no openssl/gnutls dependency on Windows).
+- TLS: the `https*` and `full*` variants use **gnutls** (its DLL closure is
+  gathered into the bundle); `min`, `min-gpl`, `audio` and `video` use native
+  **SChannel** (no TLS library dependency).
 - The **FFmpegKit wrapper** (`libffmpegkit.dll`) is built from `windows/src/`
   against the FFmpeg install (internal headers from `src/ffmpeg`, generated
   `config.h` from the out-of-tree FFmpeg build dir). The vendored `fftools_*` were
