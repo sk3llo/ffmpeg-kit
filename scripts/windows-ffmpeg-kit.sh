@@ -35,6 +35,12 @@ rm -rf "${OBJ_DIR}"; mkdir -p "${OBJ_DIR}"
 INCS="-I${WRAP_SRC} -I${FFMPEG_BUILD} -I${INSTALL}/include -I${SRC_FFMPEG} -I/mingw64/include"
 [ -f "${FFMPEG_BUILD}/config.h" ] || echo "WARNING: ${FFMPEG_BUILD}/config.h not found — fftools need FFmpeg's generated config.h."
 DEFS="-DWIN32 -D_WIN32_WINNT=0x0A00 -DFFMPEGKIT_EXPORTS -D__STDC_CONSTANT_MACROS -DFFMPEG_KIT_BUILD_DATE=$(date +%Y%m%d)"
+# Arch define consumed by ArchDetect::getArch() (windows/src/ArchDetect.cpp).
+case "${ARCH}" in
+  x86_64) DEFS+=" -DFFMPEG_KIT_X86_64=1" ;;
+  x86)    DEFS+=" -DFFMPEG_KIT_I386=1" ;;
+  arm64)  DEFS+=" -DFFMPEG_KIT_ARM64=1" ;;
+esac
 COMMON="-O2 -fPIC ${DEFS} ${INCS}"
 
 objs=()
