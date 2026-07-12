@@ -200,7 +200,9 @@ fi
 if [[ -n ${BUILD_FULL} ]]; then
   # Assuming a similar range of libraries as linux
   for library in {0..91}; do
-    if [ "${GPL_ENABLED}" == "yes" ] || [[ $(is_gpl_licensed $library) -ne 1 ]]; then
+    # is_gpl_licensed returns 0 for GPL libraries, 1 for non-GPL (same contract
+    # as linux.sh/android.sh): plain --full must enable the NON-GPL set only.
+    if [ "${GPL_ENABLED}" == "yes" ] || [[ $(is_gpl_licensed $library) -eq 1 ]]; then
         enable_library "$(get_library_name $library)" 1
     fi
   done
