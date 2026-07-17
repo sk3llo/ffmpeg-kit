@@ -43,6 +43,29 @@ fi
 
 echo -n -e "\n${LIB_NAME}: "
 
+# WORKAROUND (#148/#105): autoconf's "checking whether we are cross compiling"
+# EXECUTES a conftest binary unless it can decide cross_compiling=yes purely
+# from the --build/--host aliases. On this machine those conftests (iOS-platform
+# binaries, or ones whose static initialisers deadlock, e.g. x265) can wedge in
+# an uninterruptible kernel wait, hanging configure forever. Passing an explicit
+# --build alias that differs from the --host alias makes autoconf set
+# cross_compiling=yes immediately and never run any test binary. The real
+# per-slice toolchain (CC/--host/sysroot) is unchanged.
+BUILD_TRIPLET_FLAG=""
+case "${FFMPEG_KIT_BUILD_TYPE}" in
+  macos)
+    case "${HOST}" in
+      arm64-apple-darwin*)  BUILD_TRIPLET_FLAG="--build=x86_64-apple-darwin" ;;
+      x86_64-apple-darwin*) BUILD_TRIPLET_FLAG="--build=arm64-apple-darwin" ;;
+    esac
+    ;;
+  ios|tvos)
+    # HOST is e.g. arm64-ios-darwin / x86_64-ios-darwin; the true build-machine
+    # alias always differs, so this reliably declares a cross build.
+    BUILD_TRIPLET_FLAG="--build=aarch64-apple-darwin"
+    ;;
+esac
+
 make distclean 2>/dev/null 1>/dev/null
 
 rm -f "${BASEDIR}"/apple/src/libffmpegkit* 1>>"${BASEDIR}"/build.log 2>&1
@@ -72,6 +95,7 @@ fi
   ${VIDEOTOOLBOX_SUPPORT_FLAG} \
   --disable-fast-install \
   --disable-maintainer-mode \
+  ${BUILD_TRIPLET_FLAG} \
   --host="${HOST}" 1>>"${BASEDIR}"/build.log 2>&1
 
 # WORKAROUND FOR clang: warning: using sysroot for 'MacOSX' but targeting 'iPhone'
