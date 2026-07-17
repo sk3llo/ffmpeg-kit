@@ -49,14 +49,26 @@ ALL_VARIANTS="min min-gpl https https-gpl audio video full full-gpl"
 usage() { sed -n '2,40p' "$0" | sed 's/^# \{0,1\}//'; exit "${1:-0}"; }
 
 # --- per-variant flag sets -------------------------------------------------
-# Apple (ios.sh and macos.sh share the same flags).
+# Apple (ios.sh and macos.sh share the same flags). $2 = platform (ios|macos),
+# used to pick the platform-specific built-in Apple framework tokens.
+# VideoToolbox + AVFoundation are free Apple SDK frameworks (no patent-encumbered
+# codecs), enabled for min/min-gpl so those variants get HW H.264/HEVC encode
+# while staying LGPL/patent-clean (#148). full/full-gpl already get them via --full.
 apple_flags() {
+  local vt="" zl=""
+  case "$2" in
+    ios)   vt="--enable-ios-videotoolbox --enable-ios-avfoundation"; zl="--enable-ios-zlib" ;;
+    macos) vt="--enable-macos-videotoolbox --enable-macos-avfoundation"; zl="--enable-macos-zlib" ;;
+  esac
+  # zlib is added to min/min-gpl/audio because FFmpeg's PNG/APNG decoders depend
+  # on it; without zlib configure silently drops them (#105). The other variants
+  # already get zlib transitively (gnutls/libwebp) or via --full.
   case "$1" in
-    min)        echo "" ;;
-    min-gpl)    echo "--enable-gpl --enable-libvidstab --enable-x264 --enable-x265 --enable-xvidcore" ;;
+    min)        echo "$vt $zl" ;;
+    min-gpl)    echo "--enable-gpl --enable-libvidstab --enable-x264 --enable-x265 --enable-xvidcore $vt $zl" ;;
     https)      echo "--enable-gmp --enable-gnutls" ;;
     https-gpl)  echo "--enable-gpl --enable-gmp --enable-gnutls --enable-libvidstab --enable-x264 --enable-x265 --enable-xvidcore" ;;
-    audio)      echo "--enable-twolame --enable-lame --enable-libilbc --enable-libvorbis --enable-opencore-amr --enable-opus --enable-shine --enable-soxr --enable-speex --enable-vo-amrwbenc" ;;
+    audio)      echo "--enable-twolame --enable-lame --enable-libilbc --enable-libvorbis --enable-opencore-amr --enable-opus --enable-shine --enable-soxr --enable-speex --enable-vo-amrwbenc $zl" ;;
     video)      echo "--enable-dav1d --enable-fontconfig --enable-freetype --enable-fribidi --enable-kvazaar --enable-libass --enable-ios-libiconv --enable-libtheora --enable-libvpx --enable-libwebp --enable-snappy --enable-zimg" ;;
     full)       echo "--full" ;;
     full-gpl)   echo "--full --enable-gpl" ;;
@@ -67,12 +79,14 @@ apple_flags() {
 # Android (android.sh). Always adds --enable-android-media-codec.
 android_flags() {
   local base
+  # --enable-android-zlib on min/min-gpl/audio: required for the PNG/APNG
+  # decoders (#105); other variants get zlib transitively.
   case "$1" in
-    min)        base="" ;;
-    min-gpl)    base="--enable-gpl --enable-libvidstab --enable-x264 --enable-x265 --enable-xvidcore" ;;
+    min)        base="--enable-android-zlib" ;;
+    min-gpl)    base="--enable-gpl --enable-libvidstab --enable-x264 --enable-x265 --enable-xvidcore --enable-android-zlib" ;;
     https)      base="--enable-gmp --enable-gnutls" ;;
     https-gpl)  base="--enable-gpl --enable-gmp --enable-gnutls --enable-libvidstab --enable-x264 --enable-x265 --enable-xvidcore" ;;
-    audio)      base="--enable-twolame --enable-lame --enable-libilbc --enable-libvorbis --enable-opencore-amr --enable-opus --enable-shine --enable-soxr --enable-speex --enable-vo-amrwbenc" ;;
+    audio)      base="--enable-twolame --enable-lame --enable-libilbc --enable-libvorbis --enable-opencore-amr --enable-opus --enable-shine --enable-soxr --enable-speex --enable-vo-amrwbenc --enable-android-zlib" ;;
     video)      base="--enable-dav1d --enable-fontconfig --enable-freetype --enable-fribidi --enable-kvazaar --enable-libass --enable-libiconv --enable-libtheora --enable-libvpx --enable-libwebp --enable-snappy --enable-zimg" ;;
     full)       base="--enable-dav1d --enable-fontconfig --enable-freetype --enable-fribidi --enable-gmp --enable-gnutls --enable-kvazaar --enable-lame --enable-libass --enable-libiconv --enable-libilbc --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libxml2 --enable-opencore-amr --enable-opus --enable-shine --enable-snappy --enable-soxr --enable-speex --enable-twolame --enable-vo-amrwbenc --enable-zimg" ;;
     full-gpl)   base="--full --enable-gpl" ;;
@@ -158,7 +172,7 @@ run_variant() {
   local platform="$1" variant="$2" flags rc
   case "$platform" in
     ios|macos)
-      flags="$(apple_flags "$variant")" || { echo "  SKIP $variant (unknown)"; return 0; }
+      flags="$(apple_flags "$variant" "$platform")" || { echo "  SKIP $variant (unknown)"; return 0; }
       reset_apple_ffmpeg_script
       case "$variant" in https|https-gpl) ensure_apple_gnutls ;; esac
       echo ">>> [$platform/$variant] $SUDO ./$platform.sh $flags"
