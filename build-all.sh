@@ -6,7 +6,7 @@
 # Usage:
 #   ./build-all.sh <platform> [variant ...]
 #
-#   platform : ios | macos | android | windows
+#   platform : ios | macos | android | linux | windows
 #   variant  : any of: min min-gpl https https-gpl audio video full full-gpl
 #              (default: all of them)
 #
@@ -93,6 +93,34 @@ android_flags() {
     *) return 1 ;;
   esac
   echo "${base} --enable-android-media-codec ${ANDROID_DISABLE_ABIS}"
+}
+
+# Linux (linux.sh). Two flavours of dependency here, unlike the other platforms:
+# libraries with a scripts/linux/*.sh recipe are built from source and take a
+# bare token (x264, dav1d, kvazaar, zimg, libilbc, openh264, openssl, srt,
+# libaom, chromaprint); everything else is taken from the distro and takes a
+# --enable-linux-<lib> token, which the build maps onto the matching FFmpeg
+# --enable-lib<x> and resolves with pkg-config. The container must therefore
+# provide the corresponding -dev packages.
+# zlib is requested for every variant: FFmpeg silently drops the PNG/APNG
+# decoders without it (same trap as #105 on the other platforms).
+linux_flags() {
+  local gpl="--enable-gpl --enable-linux-libvidstab --enable-x264 --enable-linux-x265 --enable-linux-xvidcore"
+  local tls="--enable-linux-gmp --enable-linux-gnutls"
+  local audio="--enable-linux-twolame --enable-linux-lame --enable-libilbc --enable-linux-libvorbis --enable-linux-opencore-amr --enable-linux-opus --enable-linux-shine --enable-linux-soxr --enable-linux-speex --enable-linux-vo-amrwbenc"
+  local video="--enable-dav1d --enable-linux-fontconfig --enable-linux-freetype --enable-linux-fribidi --enable-kvazaar --enable-linux-libass --enable-linux-libiconv --enable-linux-libtheora --enable-linux-libvpx --enable-linux-libwebp --enable-linux-snappy --enable-zimg"
+  local zlib="--enable-linux-zlib"
+  case "$1" in
+    min)        echo "$zlib" ;;
+    min-gpl)    echo "$gpl $zlib" ;;
+    https)      echo "$tls $zlib" ;;
+    https-gpl)  echo "$gpl $tls $zlib" ;;
+    audio)      echo "$audio $zlib" ;;
+    video)      echo "$video $zlib" ;;
+    full)       echo "$video $audio $tls --enable-linux-libxml2 $zlib" ;;
+    full-gpl)   echo "$video $audio $tls --enable-linux-libxml2 $gpl $zlib" ;;
+    *) return 1 ;;
+  esac
 }
 
 # Windows (windows.sh) — only min / full / full-gpl are exercised here.
@@ -185,6 +213,10 @@ run_variant() {
       else
         ANDROID_SDK_ROOT="$ANDROID_SDK_ROOT" ANDROID_NDK_ROOT="$ANDROID_NDK_ROOT" ./android.sh $flags
       fi ;;
+    linux)
+      flags="$(linux_flags "$variant")" || { echo "  SKIP $variant (unknown)"; return 0; }
+      echo ">>> [linux/$variant] ./linux.sh $flags"
+      ./linux.sh $flags ;;
     windows)
       flags="$(windows_flags "$variant")"; rc=$?
       [ "$rc" = "2" ] && { echo "  SKIP $variant (windows: only min/full/full-gpl are scripted here)"; return 0; }
@@ -197,7 +229,7 @@ run_variant() {
 # --- main ------------------------------------------------------------------
 [ $# -lt 1 ] && usage 1
 PLATFORM="$1"; shift
-case "$PLATFORM" in ios|macos|android|windows) ;; -h|--help) usage 0 ;; *) echo "Unknown platform: $PLATFORM"; usage 1 ;; esac
+case "$PLATFORM" in ios|macos|android|linux|windows) ;; -h|--help) usage 0 ;; *) echo "Unknown platform: $PLATFORM"; usage 1 ;; esac
 
 VARIANTS="${*:-$ALL_VARIANTS}"
 echo "Platform: $PLATFORM   Variants: $VARIANTS"

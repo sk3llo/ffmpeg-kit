@@ -1,0 +1,133 @@
+name: linux variant builds
+
+# Builds the per-variant Linux native libraries (libffmpegkit.so + FFmpeg .so)
+# that ffmpeg_kit_flutter consumes, and uploads them as workflow artifacts.
+#
+# Why this is separate from linux-build-scripts.yml: that workflow is a smoke
+# test. It runs a bare `./linux.sh -d` with no --enable-* flags and installs no
+# codec -dev packages, so it only ever exercises the no-external-library build.
+# This workflow drives build-all.sh's linux_flags(), which mixes source-built
+# libraries (x264, dav1d, kvazaar, zimg, libilbc) with distro ones
+# (--enable-linux-<lib>, resolved by pkg-config) and therefore needs the -dev
+# packages below.
+#
+# Runner note: ubuntu-22.04 is x86_64 and gives a glibc 2.35 floor
+# (Ubuntu 22.04+, Debian 12+, Fedora 36+). The upstream Linux build supports
+# x86_64 ONLY - enable_default_linux_architectures() sets ARCH_X86_64 and there
+# is no aarch64 support anywhere in linux.sh / scripts/function-linux.sh, so
+# there is deliberately no arm64 job here.
+#
+# Each matrix leg gets a clean runner, so unlike a local sequential run the
+# variants cannot clobber each other's prebuilt/ and src/ state.
+
+on:
+  workflow_dispatch:
+    inputs:
+      variants:
+        description: 'Space-separated variants (default: all 8)'
+        required: false
+        default: 'min min-gpl https https-gpl audio video full full-gpl'
+      version:
+        description: 'FFmpegKit version used in artifact names'
+        required: false
+        default: '8.1.2'
+
+jobs:
+  resolve:
+    name: resolve variant matrix
+    runs-on: ubuntu-22.04
+    outputs:
+      matrix: ${{ steps.set.outputs.matrix }}
+    steps:
+      - id: set
+        # Block scalar: the jq filter contains ": ", which YAML would otherwise
+        # read as a mapping.
+        run: |
+          echo "matrix=$(jq -cn --arg v "$VARIANTS" '{variant: ($v | split(" "))}')" >> "$GITHUB_OUTPUT"
+        env:
+          VARIANTS: ${{ github.event.inputs.variants }}
+
+  build:
+    name: linux ${{ matrix.variant }}
+    needs: resolve
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.resolve.outputs.matrix) }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      # The FFmpeg build plus source-built libraries can approach the runner's
+      # free-space limit on the larger variants.
+      - name: reclaim runner disk
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
+                      /usr/local/share/boost "$AGENT_TOOLSDIRECTORY" || true
+          df -h / | tail -1
+
+      # First line matches linux-build-scripts.yml exactly (the Linux target
+      # mandates the LLVM toolchain: clang, llvm-config, llvm-as, llvm-ar,
+      # ld.lld, llvm-ranlib). The rest are the distro libraries that
+      # --enable-linux-<lib> resolves through pkg-config.
+      - name: prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            clang llvm llvm-dev lld libclang-14-dev libstdc++6 nasm yasm \
+            autoconf automake libtool pkg-config curl git doxygen rapidjson-dev \
+            cmake meson ninja-build texinfo gperf bison flex ragel gettext autopoint \
+            libmp3lame-dev libass-dev libtheora-dev libvorbis-dev libogg-dev \
+            libvpx-dev libwebp-dev libxml2-dev libopus-dev \
+            libopencore-amrnb-dev libopencore-amrwb-dev libvo-amrwbenc-dev \
+            librubberband-dev libsdl2-dev libshine-dev libsnappy-dev libsoxr-dev \
+            libspeex-dev libtwolame-dev libtesseract-dev libleptonica-dev \
+            libx265-dev libxvidcore-dev libvidstab-dev \
+            libfontconfig1-dev libfreetype6-dev libfribidi-dev libharfbuzz-dev \
+            libgmp-dev libgnutls28-dev zlib1g-dev libbz2-dev \
+            libasound2-dev libv4l-dev libva-dev ocl-icd-opencl-dev
+
+      - name: build ${{ matrix.variant }}
+        run: SUDO= ./build-all.sh linux ${{ matrix.variant }}
+
+      - name: package bundle
+        id: pack
+        run: |
+          test -d prebuilt/bundle-linux || { echo "no prebuilt/bundle-linux"; exit 1; }
+          NAME="ffmpeg-kit-linux-x86_64-${{ matrix.variant }}-${{ github.event.inputs.version }}.tar.gz"
+          tar czf "../$NAME" -C prebuilt/bundle-linux .
+          mv "../$NAME" .
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          ls -lh "$NAME"
+
+      # Sanity-check what actually shipped, mirroring the checks used for the
+      # Apple/Android artifacts: the wrapper must be present, and zlib must be
+      # enabled or FFmpeg silently drops the PNG/APNG decoders (see #105).
+      - name: verify bundle
+        run: |
+          tar tzf "${{ steps.pack.outputs.name }}" | grep -q 'libffmpegkit\.so' \
+            || { echo 'libffmpegkit.so missing'; exit 1; }
+          strings prebuilt/bundle-linux/ffmpeg-kit/lib/libavutil.so* 2>/dev/null \
+            | grep -m1 -- --prefix= | tr ' ' '\n' | grep -qx -- --enable-zlib \
+            || { echo 'WARNING: zlib not enabled - PNG/APNG decoders will be absent'; exit 1; }
+          echo "bundle OK"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ffmpeg-kit-linux-x86_64-${{ matrix.variant }}
+          path: ${{ steps.pack.outputs.name }}
+          if-no-files-found: error
+
+      - name: build log
+        if: ${{ always() }}
+        run: tail -200 build.log || true
+
+      - name: ffmpeg config log
+        if: ${{ failure() }}
+        run: '[[ -f ./src/ffmpeg/ffbuild/config.log ]] && tail -60 ./src/ffmpeg/ffbuild/config.log'
+
+      - name: ffmpeg-kit config log
+        if: ${{ failure() }}
+        run: '[[ -f ./linux/config.log ]] && tail -60 ./linux/config.log'
