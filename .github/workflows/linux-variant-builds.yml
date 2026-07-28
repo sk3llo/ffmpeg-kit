@@ -105,14 +105,31 @@ jobs:
       # Sanity-check what actually shipped, mirroring the checks used for the
       # Apple/Android artifacts: the wrapper must be present, and zlib must be
       # enabled or FFmpeg silently drops the PNG/APNG decoders (see #105).
+      # Intermediate output is written to files rather than piped. `grep -q` and
+      # `grep -m1` exit as soon as they match, which SIGPIPEs the producer
+      # upstream of them (tar / strings); this job's shell runs with -o pipefail,
+      # so that surfaces as a failure of the whole pipeline and a perfectly good
+      # bundle gets reported as broken.
       - name: verify bundle
         run: |
-          tar tzf "${{ steps.pack.outputs.name }}" | grep -q 'libffmpegkit\.so' \
-            || { echo 'libffmpegkit.so missing'; exit 1; }
-          strings prebuilt/bundle-linux/ffmpeg-kit/lib/libavutil.so* 2>/dev/null \
-            | grep -m1 -- --prefix= | tr ' ' '\n' | grep -qx -- --enable-zlib \
-            || { echo 'WARNING: zlib not enabled - PNG/APNG decoders will be absent'; exit 1; }
-          echo "bundle OK"
+          tar tzf "${{ steps.pack.outputs.name }}" > bundle.list
+          grep -q 'libffmpegkit\.so' bundle.list \
+            || { echo "libffmpegkit.so missing from bundle"; sed -n '1,40p' bundle.list; exit 1; }
+
+          strings prebuilt/bundle-linux/ffmpeg-kit/lib/libavutil.so* > avutil.strings 2>/dev/null || true
+          CONFIG_LINE="$(grep -m1 -- '--prefix=' avutil.strings || true)"
+          echo "FFmpeg configuration: ${CONFIG_LINE:-<not found>}"
+
+          # Printed above before asserting, so a failure here is diagnosable from
+          # the log in one run instead of needing another build to inspect it.
+          case " ${CONFIG_LINE} " in
+            *" --enable-zlib "*)
+              echo "zlib: enabled" ;;
+            *)
+              echo "zlib NOT enabled - PNG/APNG decoders would be absent (see #105)"
+              exit 1 ;;
+          esac
+          echo "bundle OK ($(wc -l < bundle.list) entries)"
 
       - uses: actions/upload-artifact@v4
         with:
