@@ -236,7 +236,10 @@ echo "Platform: $PLATFORM   Variants: $VARIANTS"
 [ "$PLATFORM" = android ] && echo "SDK=$ANDROID_SDK_ROOT  NDK=$ANDROID_NDK_ROOT  DISABLE_ABIS='${ANDROID_DISABLE_ABIS:-<none, all ABIs>}'"
 echo
 
-declare -a OK_LIST FAIL_LIST
+# Assign empty explicitly: under `set -u` bash treats an array that was
+# declared but never assigned as unset, so the ${#FAIL_LIST[@]} test at the end
+# aborts the script on a run where nothing failed.
+declare -a OK_LIST=() FAIL_LIST=()
 for v in $VARIANTS; do
   echo "=================================================================="
   reset_ffmpeg_source
