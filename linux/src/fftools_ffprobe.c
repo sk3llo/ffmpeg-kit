@@ -247,7 +247,7 @@ typedef enum {
     SECTION_ID_SUBTITLE,
 } SectionID;
 
-__thread static struct section sections[] = {
+static __thread struct section sections[] = {
     [SECTION_ID_CHAPTERS] =           { SECTION_ID_CHAPTERS, "chapters", SECTION_FLAG_IS_ARRAY, { SECTION_ID_CHAPTER, -1 } },
     [SECTION_ID_CHAPTER] =            { SECTION_ID_CHAPTER, "chapter", 0, { SECTION_ID_CHAPTER_TAGS, -1 } },
     [SECTION_ID_CHAPTER_TAGS] =       { SECTION_ID_CHAPTER_TAGS, "tags", SECTION_FLAG_HAS_VARIABLE_FIELDS, { -1 }, .element_name = "tag", .unique_name = "chapter_tags" },
@@ -2270,12 +2270,14 @@ static void print_dynamic_hdr_vivid(WriterContext *w, const AVDynamicHDRVivid *m
                     print_int("3Spline_num", tm_params->three_Spline_num);
 
                     for (int j = 0; j < tm_params->three_Spline_num; j++) {
-                        print_int("3Spline_TH_mode", tm_params->three_spline[j].th_mode);
-                        print_q("3Spline_TH_enable_MB", tm_params->three_spline[j].th_enable_mb, '/');
-                        print_q("3Spline_TH_enable", tm_params->three_spline[j].th_enable, '/');
-                        print_q("3Spline_TH_Delta1", tm_params->three_spline[j].th_delta1, '/');
-                        print_q("3Spline_TH_Delta2", tm_params->three_spline[j].th_delta2, '/');
-                        print_q("3Spline_enable_Strength", tm_params->three_spline[j].enable_strength, '/');
+                        const AVHDRVivid3SplineParams *three_spline = &tm_params->three_spline[j];
+                        print_int("3Spline_TH_mode", three_spline->th_mode);
+                        if (three_spline->th_mode == 0 || three_spline->th_mode == 2)
+                            print_q("3Spline_TH_enable_MB", three_spline->th_enable_mb, '/');
+                        print_q("3Spline_TH_enable", three_spline->th_enable, '/');
+                        print_q("3Spline_TH_Delta1", three_spline->th_delta1, '/');
+                        print_q("3Spline_TH_Delta2", three_spline->th_delta2, '/');
+                        print_q("3Spline_enable_Strength", three_spline->enable_strength, '/');
                     }
                 }
             }
@@ -2619,6 +2621,9 @@ static void show_frame(WriterContext *w, AVFrame *frame, AVStream *stream,
 #endif
     print_duration_ts  ("duration",          frame->duration);
     print_duration_time("duration_time",     frame->duration, &stream->time_base);
+    /* FFmpeg 8 removed AVFrame.pkt_pos / pkt_size; no longer available here. */
+    print_str_opt("pkt_pos", "N/A");
+    print_str_opt("pkt_size", "N/A");
 
     switch (stream->codecpar->codec_type) {
         AVRational sar;
@@ -3186,7 +3191,11 @@ static int show_stream(WriterContext *w, AVFormatContext *fmt_ctx, int stream_id
     if (do_show_stream_tags)
         ret = show_tags(w, stream->metadata, in_program ? SECTION_ID_PROGRAM_STREAM_TAGS : SECTION_ID_STREAM_TAGS);
 
-    /* Stream side data disabled - AVStream side data API removed in FFmpeg 7.x */
+    if (stream->codecpar->nb_coded_side_data) {
+        print_pkt_side_data(w, stream->codecpar, stream->codecpar->coded_side_data, stream->codecpar->nb_coded_side_data,
+                            SECTION_ID_STREAM_SIDE_DATA_LIST,
+                            SECTION_ID_STREAM_SIDE_DATA);
+    }
 
     writer_print_section_footer(w);
     av_bprint_finalize(&pbuf, NULL);

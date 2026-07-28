@@ -705,6 +705,9 @@ static int configure_output_audio_filter(FilterGraph *fg, OutputFilter *ofilter,
     int ret;
 
     snprintf(name, sizeof(name), "out_%d_%d", ost->file_index, ost->index);
+    /* all_channel_counts must be set at creation time: since FFmpeg 8.x it is
+     * not a runtime option, and setting it after init fails filtergraph reinit
+     * ("Option 'all_channel_counts' is not a runtime option..."). */
     ret = avfilter_graph_create_filter(&ofilter->filter,
                                        avfilter_get_by_name("abuffersink"),
                                        name, "all_channel_counts=1", NULL, fg->graph);
@@ -950,9 +953,12 @@ static int configure_input_video_filter(FilterGraph *fg, InputFilter *ifilter,
         int32_t *displaymatrix = ifilter->displaymatrix;
         double theta;
 
-        /* av_stream_get_side_data removed in FFmpeg 7.x - only use ifilter->displaymatrix if available */
         if (!displaymatrix) {
-            displaymatrix = NULL; /* Stream side data API removed */
+            const AVPacketSideData *sd = av_packet_side_data_get(ist->st->codecpar->coded_side_data,
+                                                                 ist->st->codecpar->nb_coded_side_data,
+                                                                 AV_PKT_DATA_DISPLAYMATRIX);
+            if (sd)
+                displaymatrix = (int32_t *)sd->data;
         }
         theta = get_rotation(displaymatrix);
 
