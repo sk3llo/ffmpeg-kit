@@ -111,12 +111,18 @@ void register_exit(void (*cb)(int ret));
  *       library functions can return both, so call this only
  *       with AVERROR(EFOO) of your own.
  */
-void report_and_exit(int ret) av_noreturn;
+/* av_noreturn is written in prefix position deliberately. FFmpeg 8.x's
+   attributes.h expands it to [[noreturn]] whenever the standard attribute is
+   available, which C++11 and later require to precede the declaration; only
+   the older __attribute__((noreturn)) spelling tolerates trailing position.
+   This header is included from FFmpegKitConfig.cpp, so the trailing form fails
+   to compile there. Prefix position is valid for all three expansions. */
+av_noreturn void report_and_exit(int ret);
 
 /**
  * Wraps exit with a program-specific cleanup routine.
  */
-void exit_program(int ret) av_noreturn;
+av_noreturn void exit_program(int ret);
 
 /**
  * Initialize dynamic library loading
