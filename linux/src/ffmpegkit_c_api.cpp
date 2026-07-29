@@ -455,7 +455,7 @@ extern "C" FFMPEGKIT_API int ffmpegkit_messages_in_transmit(long session_id) {
 }
 
 extern "C" FFMPEGKIT_API char* ffmpegkit_get_platform() {
-    return alloc_string("windows");
+    return alloc_string("linux");
 }
 
 extern "C" FFMPEGKIT_API int ffmpegkit_write_to_pipe(const char* input_path, const char* pipe_path) {
