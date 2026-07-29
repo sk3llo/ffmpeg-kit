@@ -124,11 +124,17 @@ linux_flags() {
 }
 
 # Windows (windows.sh) — only min / full / full-gpl are exercised here.
+#
+# zlib is requested explicitly for every variant, including the --full ones:
+# FFmpeg's PNG/APNG decoders depend on it and configure silently drops them
+# without it (#105). --full does not cover it on its own, because until the
+# accompanying scripts/function.sh fix "windows-zlib" resolved to no library
+# index at all, so both --full and --enable-windows-zlib were silently ignored.
 windows_flags() {
   case "$1" in
-    min)      echo "" ;;
-    full)     echo "--full" ;;
-    full-gpl) echo "--full --enable-gpl" ;;
+    min)      echo "--enable-windows-zlib" ;;
+    full)     echo "--full --enable-windows-zlib" ;;
+    full-gpl) echo "--full --enable-gpl --enable-windows-zlib" ;;
     *) return 2 ;;  # 2 = unsupported on this platform
   esac
 }
