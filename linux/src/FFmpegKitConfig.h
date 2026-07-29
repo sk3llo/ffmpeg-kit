@@ -28,7 +28,7 @@
 #include "Level.h"
 #include "LogCallback.h"
 #include "MediaInformationSession.h"
-#include "Signal.h"
+#include "FFmpegKitSignal.h"
 #include "StatisticsCallback.h"
 #include <map>
 
