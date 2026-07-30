@@ -109,6 +109,8 @@ get_library_name() {
       echo "macos-zlib"
     elif [[ ${FFMPEG_KIT_BUILD_TYPE} == "tvos" ]]; then
       echo "tvos-zlib"
+    elif [[ ${FFMPEG_KIT_BUILD_TYPE} == "windows" ]]; then
+      echo "windows-zlib"
     fi
     ;;
   51) echo "linux-alsa" ;;
@@ -265,7 +267,7 @@ from_library_name() {
   libsamplerate) echo 47 ;;
   harfbuzz) echo 48 ;;
   cpu-features) echo 49 ;;
-  android-zlib | ios-zlib | linux-zlib | macos-zlib | tvos-zlib) echo 50 ;;
+  android-zlib | ios-zlib | linux-zlib | macos-zlib | tvos-zlib | windows-zlib) echo 50 ;;
   linux-alsa) echo 51 ;;
   android-media-codec) echo 52 ;;
   ios-audiotoolbox | macos-audiotoolbox | tvos-audiotoolbox) echo 53 ;;
@@ -1046,7 +1048,7 @@ set_library() {
   fi
 
   case $1 in
-  android-zlib | ios-zlib | linux-zlib | macos-zlib | tvos-zlib)
+  android-zlib | ios-zlib | linux-zlib | macos-zlib | tvos-zlib | windows-zlib)
     ENABLED_LIBRARIES[LIBRARY_SYSTEM_ZLIB]=$2
     ;;
   linux-alsa)
