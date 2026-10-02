@@ -1,0 +1,316 @@
+variant	dll	sha256	package	version	source_base	licenses
+min	libbz2-1.dll	b79cd3a7102e359ef6324e98966a67939e58ec2b651ae2847cae84a4dfa453f7	mingw-w64-x86_64-bzip2	1.0.8-3	mingw-w64-bzip2	custom
+min	libgcc_s_seh-1.dll	278f1101f2371c58b6b412a3206718e22343940a5164aceb4fb75f2bf3b38ed4	mingw-w64-x86_64-gcc-libs	16.1.0-5	mingw-w64-gcc	spdx:GPL-3.0-or-later WITH GCC-exception-3.1 AND LGPL-2.1-or-later
+min	libiconv-2.dll	ff31fa811f9c07cc7fdaa68c9e8bca3a7b4fdf6e0a079a58175ea58ba139c7ae	mingw-w64-x86_64-libiconv	1.18-1	mingw-w64-libiconv	spdx:LGPL-2.1-or-later documentation:spdx:GPL-3.0-or-later
+min	liblzma-5.dll	9b5d2cdcdb2bf2f89b44166ba115276b2dcd7a3349692e46f922578eaa4d6a03	mingw-w64-x86_64-xz	5.8.1-2	mingw-w64-xz	spdx:0BSD AND LGPL-2.1-or-later AND GPL-2.0-or-later
+min	libstdc++-6.dll	3529d11c422b2aaf0bbad7221bf62ba7b5a39f854e89a015bb58b6b55a677da1	mingw-w64-x86_64-gcc-libs	16.1.0-5	mingw-w64-gcc	spdx:GPL-3.0-or-later WITH GCC-exception-3.1 AND LGPL-2.1-or-later
+min	libva.dll	b31d70355988a9de985900a53cb8a5a4df5bae713759a3c45987fd72814e162f	mingw-w64-x86_64-libva	2.23.0-1	mingw-w64-libva	spdx:MIT
+min	libva_win32.dll	7e77ca54027daa4f69c36a28989a7807105d3671d2bfca37336d53bf781a4342	mingw-w64-x86_64-libva	2.23.0-1	mingw-w64-libva	spdx:MIT
+min	libwinpthread-1.dll	3357473705d91b39f1e17201dc5f7a2638aa345f02e903f6c94f1d52c27f3a71	mingw-w64-x86_64-libwinpthread	14.0.0.r147.g31bd54ab7-1	mingw-w64-winpthreads	spdx:MIT AND BSD-3-Clause-Clear
+min	zlib1.dll	cb7ab3788d10940df874acd97b1821bbb5ee4a91f3eec11982bb5bf7a3c96443	mingw-w64-x86_64-zlib	1.3.1-1	mingw-w64-zlib	spdx:Zlib
+min-gpl	libbz2-1.dll	b79cd3a7102e359ef6324e98966a67939e58ec2b651ae2847cae84a4dfa453f7	mingw-w64-x86_64-bzip2	1.0.8-3	mingw-w64-bzip2	custom
+min-gpl	libfftw3-3.dll	3cf91e10bd0c715e9e2a8a595d653dfa27252f587861ffbdc321806e1b259c89	mingw-w64-x86_64-fftw	3.3.11-1	mingw-w64-fftw	spdx:GPL-2.0-or-later
+min-gpl	libgcc_s_seh-1.dll	278f1101f2371c58b6b412a3206718e22343940a5164aceb4fb75f2bf3b38ed4	mingw-w64-x86_64-gcc-libs	16.1.0-5	mingw-w64-gcc	spdx:GPL-3.0-or-later WITH GCC-exception-3.1 AND LGPL-2.1-or-later
+min-gpl	libgomp-1.dll	d40d5850b92e3dddc488781b7e04ea1ca531c728ce003657329cfd319eb6efd1	mingw-w64-x86_64-gcc-libs	16.1.0-5	mingw-w64-gcc	spdx:GPL-3.0-or-later WITH GCC-exception-3.1 AND LGPL-2.1-or-later
+min-gpl	libiconv-2.dll	ff31fa811f9c07cc7fdaa68c9e8bca3a7b4fdf6e0a079a58175ea58ba139c7ae	mingw-w64-x86_64-libiconv	1.18-1	mingw-w64-libiconv	spdx:LGPL-2.1-or-later documentation:spdx:GPL-3.0-or-later
+min-gpl	liblzma-5.dll	9b5d2cdcdb2bf2f89b44166ba115276b2dcd7a3349692e46f922578eaa4d6a03	mingw-w64-x86_64-xz	5.8.1-2	mingw-w64-xz	spdx:0BSD AND LGPL-2.1-or-later AND GPL-2.0-or-later
+min-gpl	librubberband-2.dll	f15b59010dfbebadce5741932a39966ecdf87f9422d2082356c7ddc64928153e	mingw-w64-x86_64-rubberband	3.3.0-1	mingw-w64-rubberband	spdx:GPL-2.0-or-later
+min-gpl	libsamplerate-0.dll	1e08aeb1fecade2cf2d7a83463a1b375e13d5f2f008cdeea7409a3eff7ed9a0e	mingw-w64-x86_64-libsamplerate	0.2.2-1	mingw-w64-libsamplerate	spdx:BSD-2-Clause
+min-gpl	libstdc++-6.dll	3529d11c422b2aaf0bbad7221bf62ba7b5a39f854e89a015bb58b6b55a677da1	mingw-w64-x86_64-gcc-libs	16.1.0-5	mingw-w64-gcc	spdx:GPL-3.0-or-later WITH GCC-exception-3.1 AND LGPL-2.1-or-later
+min-gpl	libva.dll	b31d70355988a9de985900a53cb8a5a4df5bae713759a3c45987fd72814e162f	mingw-w64-x86_64-libva	2.23.0-1	mingw-w64-libva	spdx:MIT
+min-gpl	libva_win32.dll	7e77ca54027daa4f69c36a28989a7807105d3671d2bfca37336d53bf781a4342	mingw-w64-x86_64-libva	2.23.0-1	mingw-w64-libva	spdx:MIT
+min-gpl	libvidstab.dll	8f286dcb096c736360340f3020d84a4b49782796c9da445de275546a7f640835	mingw-w64-x86_64-vid.stab	1.1.1-1	mingw-w64-vid.stab	spdx:GPL-2.0-or-later
+min-gpl	libwinpthread-1.dll	3357473705d91b39f1e17201dc5f7a2638aa345f02e903f6c94f1d52c27f3a71	mingw-w64-x86_64-libwinpthread	14.0.0.r147.g31bd54ab7-1	mingw-w64-winpthreads	spdx:MIT AND BSD-3-Clause-Clear
+min-gpl	libx264-165.dll	3cda80e1c872fe1aae0bc8cd62cec6bb729a0bac6365697488783ab48e7651d7	mingw-w64-x86_64-libx264	0.165.r3222.b35605a-2	mingw-w64-x264	custom
+min-gpl	libx265-216.dll	d7e95aae91fb40a1d90eddf8cd39465b04bd008221f83f95f50e5dc9670cb9ec	mingw-w64-x86_64-x265	4.2-2	mingw-w64-x265	GPL
+min-gpl	xvidcore.dll	1c19803a7d0d8fe21064459dd51725ffdefb07a96079967417bf597178b4db33	mingw-w64-x86_64-xvidcore	1.3.7-5	mingw-w64-xvidcore	GPL
+min-gpl	zlib1.dll	cb7ab3788d10940df874acd97b1821bbb5ee4a91f3eec11982bb5bf7a3c96443	mingw-w64-x86_64-zlib	1.3.1-1	mingw-w64-zlib	spdx:Zlib
+https	libbrotlicommon.dll	276a12fc7249af3fdd604609d4a46386082f760324afbd83008f72edf304880a	mingw-w64-x86_64-brotli	1.1.0-5	mingw-w64-brotli	spdx:MIT
+https	libbrotlidec.dll	368fa8da7478a441e07ff1c6ab2d20adc8e16b2dfe4dc9231c51f600e914ed92	mingw-w64-x86_64-brotli	1.1.0-5	mingw-w64-brotli	spdx:MIT
+https	libbrotlienc.dll	505730ac0a25745bb822205d1e8f40205b99f2b97899a8582f393b57b1a6ae81	mingw-w64-x86_64-brotli	1.1.0-5	mingw-w64-brotli	spdx:MIT
+https	libbz2-1.dll	b79cd3a7102e359ef6324e98966a67939e58ec2b651ae2847cae84a4dfa453f7	mingw-w64-x86_64-bzip2	1.0.8-3	mingw-w64-bzip2	custom
+https	libffi-8.dll	99e4b68e06f6cd0fef759ff5137bd1ec8fa83364702e91a8feaacf60899f95a5	mingw-w64-x86_64-libffi	3.5.1-1	mingw-w64-libffi	spdx:MIT
+https	libgcc_s_seh-1.dll	278f1101f2371c58b6b412a3206718e22343940a5164aceb4fb75f2bf3b38ed4	mingw-w64-x86_64-gcc-libs	16.1.0-5	mingw-w64-gcc	spdx:GPL-3.0-or-later WITH GCC-exception-3.1 AND LGPL-2.1-or-later
+https	libgmp-10.dll	37248cda33845e7c5c35a574e57da762dd0a8268f0270d179f30a33746809681	mingw-w64-x86_64-gmp	6.3.0-2	mingw-w64-gmp	LGPL3 GPL
+https	libgnutls-30.dll	cde27f40b92ebc5389dcd79a0d693d4d069610db780dc9ea341343ef18464305	mingw-w64-x86_64-gnutls	3.8.13-2	mingw-w64-gnutls	spdx:GPL-3.0-or-later spdx:LGPL-2.1-or-later
+https	libhogweed-6.dll	cc3a8a5ecbc172aba4ad72423979ca115c1ef8e21ba3fa2afc9e5e7e5b785b8e	mingw-w64-x86_64-nettle	3.10.2-1	mingw-w64-nettle	spdx:GPL-2.0-or-later spdx:LGPL-3.0-or-later
+https	libiconv-2.dll	ff31fa811f9c07cc7fdaa68c9e8bca3a7b4fdf6e0a079a58175ea58ba139c7ae	mingw-w64-x86_64-libiconv	1.18-1	mingw-w64-libiconv	spdx:LGPL-2.1-or-later documentation:spdx:GPL-3.0-or-later
+https	libidn2-0.dll	250c5f755d35a56189c7d557f1ea3b2827f26ff83c563df8a6cedb0114777fc0	mingw-w64-x86_64-libidn2	2.3.8-2	mingw-w64-libidn2	spdx:GPL-2.0-or-later spdx:LGPL-3.0-or-later
+https	libintl-8.dll	17bdd3de3329156e032949abcf3f0f9163febd0fb9299864b7eff7f31e7c15d4	mingw-w64-x86_64-gettext-runtime	0.26-1	mingw-w64-gettext	spdx:GPL-3.0-or-later AND LGPL-2.1-or-later
+https	liblzma-5.dll	9b5d2cdcdb2bf2f89b44166ba115276b2dcd7a3349692e46f922578eaa4d6a03	mingw-w64-x86_64-xz	5.8.1-2	mingw-w64-xz	spdx:0BSD AND LGPL-2.1-or-later AND GPL-2.0-or-later
+https	libnettle-8.dll	0dad1e4809abe704b2cf57fc32b494b35da2ac35d1c478a78d150cd40f1a41fc	mingw-w64-x86_64-nettle	3.10.2-1	mingw-w64-nettle	spdx:GPL-2.0-or-later spdx:LGPL-3.0-or-later
+https	libp11-kit-0.dll	f59bf47c701ca691e1ebb35f66ef16d3806fd1351e0df056e09c1a2270a1a934	mingw-w64-x86_64-p11-kit	0.25.5-1	mingw-w64-p11-kit	spdx:BSD-3-Clause
+https	libstdc++-6.dll	3529d11c422b2aaf0bbad7221bf62ba7b5a39f854e89a015bb58b6b55a677da1	mingw-w64-x86_64-gcc-libs	16.1.0-5	mingw-w64-gcc	spdx:GPL-3.0-or-later WITH GCC-exception-3.1 AND LGPL-2.1-or-later
+https	libtasn1-6.dll	e69598aaed5f4ae9fa6f3803831665296c8677e8f0cf865840fa28b88f2c093e	mingw-w64-x86_64-libtasn1	4.20.0-1	mingw-w64-libtasn1	GPL3, LGPL
+https	libunistring-5.dll	70813b4aaa82f8b0999d8c2fdd4c49c6d31035f17325f5f138f39f7273449adf	mingw-w64-x86_64-libunistring	1.3-1	mingw-w64-libunistring	spdx:LGPL-3.0-or-later OR GPL-3.0-or-later
+https	libva.dll	b31d70355988a9de985900a53cb8a5a4df5bae713759a3c45987fd72814e162f	mingw-w64-x86_64-libva	2.23.0-1	mingw-w64-libva	spdx:MIT
+https	libva_win32.dll	7e77ca54027daa4f69c36a28989a7807105d3671d2bfca37336d53bf781a4342	mingw-w64-x86_64-libva	2.23.0-1	mingw-w64-libva	spdx:MIT
+https	libwinpthread-1.dll	3357473705d91b39f1e17201dc5f7a2638aa345f02e903f6c94f1d52c27f3a71	mingw-w64-x86_64-libwinpthread	14.0.0.r147.g31bd54ab7-1	mingw-w64-winpthreads	spdx:MIT AND BSD-3-Clause-Clear
+https	libzstd.dll	b13d4f30b93c96823473d742dda0075f7334cba03a40c33d8a7dc282e37b1500	mingw-w64-x86_64-zstd	1.5.7-1	mingw-w64-zstd	spdx:BSD-3-Clause OR GPL-2.0-or-later
+https	zlib1.dll	cb7ab3788d10940df874acd97b1821bbb5ee4a91f3eec11982bb5bf7a3c96443	mingw-w64-x86_64-zlib	1.3.1-1	mingw-w64-zlib	spdx:Zlib
+https-gpl	libbrotlicommon.dll	276a12fc7249af3fdd604609d4a46386082f760324afbd83008f72edf304880a	mingw-w64-x86_64-brotli	1.1.0-5	mingw-w64-brotli	spdx:MIT
+https-gpl	libbrotlidec.dll	368fa8da7478a441e07ff1c6ab2d20adc8e16b2dfe4dc9231c51f600e914ed92	mingw-w64-x86_64-brotli	1.1.0-5	mingw-w64-brotli	spdx:MIT
+https-gpl	libbrotlienc.dll	505730ac0a25745bb822205d1e8f40205b99f2b97899a8582f393b57b1a6ae81	mingw-w64-x86_64-brotli	1.1.0-5	mingw-w64-brotli	spdx:MIT
+https-gpl	libbz2-1.dll	b79cd3a7102e359ef6324e98966a67939e58ec2b651ae2847cae84a4dfa453f7	mingw-w64-x86_64-bzip2	1.0.8-3	mingw-w64-bzip2	custom
+https-gpl	libffi-8.dll	99e4b68e06f6cd0fef759ff5137bd1ec8fa83364702e91a8feaacf60899f95a5	mingw-w64-x86_64-libffi	3.5.1-1	mingw-w64-libffi	spdx:MIT
+https-gpl	libfftw3-3.dll	3cf91e10bd0c715e9e2a8a595d653dfa27252f587861ffbdc321806e1b259c89	mingw-w64-x86_64-fftw	3.3.11-1	mingw-w64-fftw	spdx:GPL-2.0-or-later
+https-gpl	libgcc_s_seh-1.dll	278f1101f2371c58b6b412a3206718e22343940a5164aceb4fb75f2bf3b38ed4	mingw-w64-x86_64-gcc-libs	16.1.0-5	mingw-w64-gcc	spdx:GPL-3.0-or-later WITH GCC-exception-3.1 AND LGPL-2.1-or-later
+https-gpl	libgmp-10.dll	37248cda33845e7c5c35a574e57da762dd0a8268f0270d179f30a33746809681	mingw-w64-x86_64-gmp	6.3.0-2	mingw-w64-gmp	LGPL3 GPL
+https-gpl	libgnutls-30.dll	cde27f40b92ebc5389dcd79a0d693d4d069610db780dc9ea341343ef18464305	mingw-w64-x86_64-gnutls	3.8.13-2	mingw-w64-gnutls	spdx:GPL-3.0-or-later spdx:LGPL-2.1-or-later
+https-gpl	libgomp-1.dll	d40d5850b92e3dddc488781b7e04ea1ca531c728ce003657329cfd319eb6efd1	mingw-w64-x86_64-gcc-libs	16.1.0-5	mingw-w64-gcc	spdx:GPL-3.0-or-later WITH GCC-exception-3.1 AND LGPL-2.1-or-later
+https-gpl	libhogweed-6.dll	cc3a8a5ecbc172aba4ad72423979ca115c1ef8e21ba3fa2afc9e5e7e5b785b8e	mingw-w64-x86_64-nettle	3.10.2-1	mingw-w64-nettle	spdx:GPL-2.0-or-later spdx:LGPL-3.0-or-later
+https-gpl	libiconv-2.dll	ff31fa811f9c07cc7fdaa68c9e8bca3a7b4fdf6e0a079a58175ea58ba139c7ae	mingw-w64-x86_64-libiconv	1.18-1	mingw-w64-libiconv	spdx:LGPL-2.1-or-later documentation:spdx:GPL-3.0-or-later
+https-gpl	libidn2-0.dll	250c5f755d35a56189c7d557f1ea3b2827f26ff83c563df8a6cedb0114777fc0	mingw-w64-x86_64-libidn2	2.3.8-2	mingw-w64-libidn2	spdx:GPL-2.0-or-later spdx:LGPL-3.0-or-later
+https-gpl	libintl-8.dll	17bdd3de3329156e032949abcf3f0f9163febd0fb9299864b7eff7f31e7c15d4	mingw-w64-x86_64-gettext-runtime	0.26-1	mingw-w64-gettext	spdx:GPL-3.0-or-later AND LGPL-2.1-or-later
+https-gpl	liblzma-5.dll	9b5d2cdcdb2bf2f89b44166ba115276b2dcd7a3349692e46f922578eaa4d6a03	mingw-w64-x86_64-xz	5.8.1-2	mingw-w64-xz	spdx:0BSD AND LGPL-2.1-or-later AND GPL-2.0-or-later
+https-gpl	libnettle-8.dll	0dad1e4809abe704b2cf57fc32b494b35da2ac35d1c478a78d150cd40f1a41fc	mingw-w64-x86_64-nettle	3.10.2-1	mingw-w64-nettle	spdx:GPL-2.0-or-later spdx:LGPL-3.0-or-later
+https-gpl	libp11-kit-0.dll	f59bf47c701ca691e1ebb35f66ef16d3806fd1351e0df056e09c1a2270a1a934	mingw-w64-x86_64-p11-kit	0.25.5-1	mingw-w64-p11-kit	spdx:BSD-3-Clause
+https-gpl	librubberband-2.dll	f15b59010dfbebadce5741932a39966ecdf87f9422d2082356c7ddc64928153e	mingw-w64-x86_64-rubberband	3.3.0-1	mingw-w64-rubberband	spdx:GPL-2.0-or-later
+https-gpl	libsamplerate-0.dll	1e08aeb1fecade2cf2d7a83463a1b375e13d5f2f008cdeea7409a3eff7ed9a0e	mingw-w64-x86_64-libsamplerate	0.2.2-1	mingw-w64-libsamplerate	spdx:BSD-2-Clause
+https-gpl	libstdc++-6.dll	3529d11c422b2aaf0bbad7221bf62ba7b5a39f854e89a015bb58b6b55a677da1	mingw-w64-x86_64-gcc-libs	16.1.0-5	mingw-w64-gcc	spdx:GPL-3.0-or-later WITH GCC-exception-3.1 AND LGPL-2.1-or-later
+https-gpl	libtasn1-6.dll	e69598aaed5f4ae9fa6f3803831665296c8677e8f0cf865840fa28b88f2c093e	mingw-w64-x86_64-libtasn1	4.20.0-1	mingw-w64-libtasn1	GPL3, LGPL
+https-gpl	libunistring-5.dll	70813b4aaa82f8b0999d8c2fdd4c49c6d31035f17325f5f138f39f7273449adf	mingw-w64-x86_64-libunistring	1.3-1	mingw-w64-libunistring	spdx:LGPL-3.0-or-later OR GPL-3.0-or-later
+https-gpl	libva.dll	b31d70355988a9de985900a53cb8a5a4df5bae713759a3c45987fd72814e162f	mingw-w64-x86_64-libva	2.23.0-1	mingw-w64-libva	spdx:MIT
+https-gpl	libva_win32.dll	7e77ca54027daa4f69c36a28989a7807105d3671d2bfca37336d53bf781a4342	mingw-w64-x86_64-libva	2.23.0-1	mingw-w64-libva	spdx:MIT
+https-gpl	libvidstab.dll	8f286dcb096c736360340f3020d84a4b49782796c9da445de275546a7f640835	mingw-w64-x86_64-vid.stab	1.1.1-1	mingw-w64-vid.stab	spdx:GPL-2.0-or-later
+https-gpl	libwinpthread-1.dll	3357473705d91b39f1e17201dc5f7a2638aa345f02e903f6c94f1d52c27f3a71	mingw-w64-x86_64-libwinpthread	14.0.0.r147.g31bd54ab7-1	mingw-w64-winpthreads	spdx:MIT AND BSD-3-Clause-Clear
+https-gpl	libx264-165.dll	3cda80e1c872fe1aae0bc8cd62cec6bb729a0bac6365697488783ab48e7651d7	mingw-w64-x86_64-libx264	0.165.r3222.b35605a-2	mingw-w64-x264	custom
+https-gpl	libx265-216.dll	d7e95aae91fb40a1d90eddf8cd39465b04bd008221f83f95f50e5dc9670cb9ec	mingw-w64-x86_64-x265	4.2-2	mingw-w64-x265	GPL
+https-gpl	libzstd.dll	b13d4f30b93c96823473d742dda0075f7334cba03a40c33d8a7dc282e37b1500	mingw-w64-x86_64-zstd	1.5.7-1	mingw-w64-zstd	spdx:BSD-3-Clause OR GPL-2.0-or-later
+https-gpl	xvidcore.dll	1c19803a7d0d8fe21064459dd51725ffdefb07a96079967417bf597178b4db33	mingw-w64-x86_64-xvidcore	1.3.7-5	mingw-w64-xvidcore	GPL
+https-gpl	zlib1.dll	cb7ab3788d10940df874acd97b1821bbb5ee4a91f3eec11982bb5bf7a3c96443	mingw-w64-x86_64-zlib	1.3.1-1	mingw-w64-zlib	spdx:Zlib
+audio	libbz2-1.dll	b79cd3a7102e359ef6324e98966a67939e58ec2b651ae2847cae84a4dfa453f7	mingw-w64-x86_64-bzip2	1.0.8-3	mingw-w64-bzip2	custom
+audio	libgcc_s_seh-1.dll	278f1101f2371c58b6b412a3206718e22343940a5164aceb4fb75f2bf3b38ed4	mingw-w64-x86_64-gcc-libs	16.1.0-5	mingw-w64-gcc	spdx:GPL-3.0-or-later WITH GCC-exception-3.1 AND LGPL-2.1-or-later
+audio	libgomp-1.dll	d40d5850b92e3dddc488781b7e04ea1ca531c728ce003657329cfd319eb6efd1	mingw-w64-x86_64-gcc-libs	16.1.0-5	mingw-w64-gcc	spdx:GPL-3.0-or-later WITH GCC-exception-3.1 AND LGPL-2.1-or-later
+audio	libiconv-2.dll	ff31fa811f9c07cc7fdaa68c9e8bca3a7b4fdf6e0a079a58175ea58ba139c7ae	mingw-w64-x86_64-libiconv	1.18-1	mingw-w64-libiconv	spdx:LGPL-2.1-or-later documentation:spdx:GPL-3.0-or-later
+audio	libilbc.dll	3d15f8b5d7e01d4dd64462f38316521ed4fb3a9dd1839b54c619ae8e78a5ad25	mingw-w64-x86_64-libilbc	3.0.4-2	mingw-w64-libilbc	BSD
+audio	liblzma-5.dll	9b5d2cdcdb2bf2f89b44166ba115276b2dcd7a3349692e46f922578eaa4d6a03	mingw-w64-x86_64-xz	5.8.1-2	mingw-w64-xz	spdx:0BSD AND LGPL-2.1-or-later AND GPL-2.0-or-later
+audio	libmp3lame-0.dll	f40c566b56a97e32036f3d5263fd7dc2dafa6fc7ded326045dd637dd55d68c24	mingw-w64-x86_64-lame	3.100-3	mingw-w64-lame	LGPL
+audio	libogg-0.dll	3038ce8d161324a6349bf7c83b78493857ff6a3501e3adb3d541c6a07bd94a57	mingw-w64-x86_64-libogg	1.3.6-1	mingw-w64-libogg	spdx:BSD-3-Clause
+audio	libopencore-amrnb-0.dll	8f9b1fd5fec2042a3b6af15eae54474210569c75bcc482fe702b45dcb3e96397	mingw-w64-x86_64-opencore-amr	0.1.6-1	mingw-w64-opencore-amr	Apache
+audio	libopencore-amrwb-0.dll	7482267efad926b69c8304ec631fd531a2fc5d99b481b59cb5b34d8540a38dc2	mingw-w64-x86_64-opencore-amr	0.1.6-1	mingw-w64-opencore-amr	Apache
+audio	libopus-0.dll	90aa25a0a6525d7da48a7ae8dd3306e45b0c28ce09a73d2a02b56cd95418d5be	mingw-w64-x86_64-opus	1.6.1-1	mingw-w64-opus	spdx:BSD-3-Clause
+audio	libshine-3.dll	4d91b3dd821be02a6a1849ff035ca1b9cd14b891650ad26cf5f2725be3ea26b4	mingw-w64-x86_64-shine	3.1.1-2	mingw-w64-shine	GPL2
+audio	libsoxr.dll	5bb8f922b12995b0322b73bd94e2e6dadfeac58abc8beb4d0f69ca5f4747917d	mingw-w64-x86_64-libsoxr	0.1.3-5	mingw-w64-libsoxr	LGPL
+audio	libspeex-1.dll	3cd8b5e812022307d8ba09747b648a7402fc4caa44b50e328b3424102ab98f3a	mingw-w64-x86_64-speex	1.2.1-1	mingw-w64-speex	BSD
+audio	libstdc++-6.dll	3529d11c422b2aaf0bbad7221bf62ba7b5a39f854e89a015bb58b6b55a677da1	mingw-w64-x86_64-gcc-libs	16.1.0-5	mingw-w64-gcc	spdx:GPL-3.0-or-later WITH GCC-exception-3.1 AND LGPL-2.1-or-later
+audio	libtwolame-0.dll	5bab0822df202e1eaebf25f3c93009f7156711f17b0d297974706606761bfffd	mingw-w64-x86_64-twolame	0.4.0-3	mingw-w64-twolame	LGPL
+audio	libva.dll	b31d70355988a9de985900a53cb8a5a4df5bae713759a3c45987fd72814e162f	mingw-w64-x86_64-libva	2.23.0-1	mingw-w64-libva	spdx:MIT
+audio	libva_win32.dll	7e77ca54027daa4f69c36a28989a7807105d3671d2bfca37336d53bf781a4342	mingw-w64-x86_64-libva	2.23.0-1	mingw-w64-libva	spdx:MIT
+audio	libvo-amrwbenc-0.dll	03f99fb57eb5b0f8fcd867db597418cd501a800ae74fe44ba13d3632e9136891	mingw-w64-x86_64-vo-amrwbenc	0.1.3-2	mingw-w64-vo-amrwbenc	spdx:Apache-2.0
+audio	libvorbis-0.dll	73db4516d49e0571f80d0f802f7bc0477f8a14067d1da00f340332f6c0303a08	mingw-w64-x86_64-libvorbis	1.3.7-2	mingw-w64-libvorbis	custom
+audio	libvorbisenc-2.dll	f7bbf43700c26bdadccb838e44bee13690c01142797cdb69ff3b9bf58b9b90d1	mingw-w64-x86_64-libvorbis	1.3.7-2	mingw-w64-libvorbis	custom
+audio	libwinpthread-1.dll	3357473705d91b39f1e17201dc5f7a2638aa345f02e903f6c94f1d52c27f3a71	mingw-w64-x86_64-libwinpthread	14.0.0.r147.g31bd54ab7-1	mingw-w64-winpthreads	spdx:MIT AND BSD-3-Clause-Clear
+audio	zlib1.dll	cb7ab3788d10940df874acd97b1821bbb5ee4a91f3eec11982bb5bf7a3c96443	mingw-w64-x86_64-zlib	1.3.1-1	mingw-w64-zlib	spdx:Zlib
+video	libass-9.dll	d7e21a7fa952033ff5bbacd2564b343671bf0ad4ae9338613935f2709861b9d2	mingw-w64-x86_64-libass	0.17.5-1	mingw-w64-libass	spdx:ISC
+video	libbrotlicommon.dll	276a12fc7249af3fdd604609d4a46386082f760324afbd83008f72edf304880a	mingw-w64-x86_64-brotli	1.1.0-5	mingw-w64-brotli	spdx:MIT
+video	libbrotlidec.dll	368fa8da7478a441e07ff1c6ab2d20adc8e16b2dfe4dc9231c51f600e914ed92	mingw-w64-x86_64-brotli	1.1.0-5	mingw-w64-brotli	spdx:MIT
+video	libbz2-1.dll	b79cd3a7102e359ef6324e98966a67939e58ec2b651ae2847cae84a4dfa453f7	mingw-w64-x86_64-bzip2	1.0.8-3	mingw-w64-bzip2	custom
+video	libcryptopp.dll	215fae14c0d06a486769f1c6adee4b1edd51ed18449625f5ff5a82eb1d32950b	mingw-w64-x86_64-crypto++	8.9.0-2	mingw-w64-crypto++	spdx:BSL-1.0
+video	libdav1d-7.dll	f6fe8f2a22501c06963e3bf18a16a2d3d222f00ac11e7ec9ff32ac0623cb2a32	mingw-w64-x86_64-dav1d	1.5.3-1	mingw-w64-dav1d	spdx:BSD-2-Clause
+video	libexpat-1.dll	fa6b1cc24bdc46d787579493ddb50c34f8cb6c50a874ed537e2fb705bc53b3b5	mingw-w64-x86_64-expat	2.7.1-2	mingw-w64-expat	spdx:MIT
+video	libfontconfig-1.dll	3cc4825d8e3899f998fcc3619bd6ade62e252117dc46efe7bfe11e24060518b7	mingw-w64-x86_64-fontconfig	2.18.1-1	mingw-w64-fontconfig	custom
+video	libfreetype-6.dll	bbb3e6390ee229c867ef31f10e42a49a61a92e434a11d40c6139a2608ebc6194	mingw-w64-x86_64-freetype	2.14.3-1	mingw-w64-freetype	spdx:GPL-2.0-or-later OR FTL
+video	libfribidi-0.dll	84930fd86a3b46b62794a3bbaff21fbbaeaade5ff7cdc70be7f717ad29af87ed	mingw-w64-x86_64-fribidi	1.0.16-1	mingw-w64-fribidi	spdx:LGPL-2.1-or-later
+video	libgcc_s_seh-1.dll	278f1101f2371c58b6b412a3206718e22343940a5164aceb4fb75f2bf3b38ed4	mingw-w64-x86_64-gcc-libs	16.1.0-5	mingw-w64-gcc	spdx:GPL-3.0-or-later WITH GCC-exception-3.1 AND LGPL-2.1-or-later
+video	libglib-2.0-0.dll	716845eedea56a2f5274e0b64a994a6291ebd5b8e7f0a22b6265dfde5508dc3a	mingw-w64-x86_64-glib2	2.88.1-1	mingw-w64-glib2	spdx:LGPL-2.1-or-later
+video	libgraphite2.dll	063a9ad34a5ec87d038b4646660957395224ecf2cf707917256b7d251a7c5f57	mingw-w64-x86_64-graphite2	1.3.15-1	mingw-w64-graphite2	spdx:LGPL-2.1-or-later
+video	libharfbuzz-0.dll	54fb644a1143b3b81d494684f299aca9ff4b72134f12a7b1cfb2bd0f8fa9cef7	mingw-w64-x86_64-harfbuzz	14.2.1-1	mingw-w64-harfbuzz	spdx:MIT
+video	libiconv-2.dll	ff31fa811f9c07cc7fdaa68c9e8bca3a7b4fdf6e0a079a58175ea58ba139c7ae	mingw-w64-x86_64-libiconv	1.18-1	mingw-w64-libiconv	spdx:LGPL-2.1-or-later documentation:spdx:GPL-3.0-or-later
+video	libintl-8.dll	17bdd3de3329156e032949abcf3f0f9163febd0fb9299864b7eff7f31e7c15d4	mingw-w64-x86_64-gettext-runtime	0.26-1	mingw-w64-gettext	spdx:GPL-3.0-or-later AND LGPL-2.1-or-later
+video	libkvazaar-7.dll	fe76b3e76e90ca86635d45dc41444cd7be389890a796e4dfc962f39a21baf538	mingw-w64-x86_64-kvazaar	2.3.2-1	mingw-w64-kvazaar	spdx:BSD-3-Clause
+video	liblzma-5.dll	9b5d2cdcdb2bf2f89b44166ba115276b2dcd7a3349692e46f922578eaa4d6a03	mingw-w64-x86_64-xz	5.8.1-2	mingw-w64-xz	spdx:0BSD AND LGPL-2.1-or-later AND GPL-2.0-or-later
+video	libogg-0.dll	3038ce8d161324a6349bf7c83b78493857ff6a3501e3adb3d541c6a07bd94a57	mingw-w64-x86_64-libogg	1.3.6-1	mingw-w64-libogg	spdx:BSD-3-Clause
+video	libpcre2-8-0.dll	a499fb8a7eff453d6e4f0842576bc5171d40a1505d8f7f13fff6cee51b738a62	mingw-w64-x86_64-pcre2	10.47-1	mingw-w64-pcre2	spdx:BSD-3-Clause
+video	libpng16-16.dll	3737838ee8d6b893df7bdabf7439775371a57dce7e17ee6b35586023c64bd9ab	mingw-w64-x86_64-libpng	1.6.58-1	mingw-w64-libpng	custom
+video	libsharpyuv-0.dll	ab0c9f61dc69b6bcdff1011e215f8d5fd6e5096aba9be3386ab87f217fbbeffe	mingw-w64-x86_64-libwebp	1.6.0-1	mingw-w64-libwebp	spdx:BSD-3-Clause
+video	libsnappy.dll	a0692c93212898f29d072d611184828ccaf7add78137fbe977a8504fcc278c21	mingw-w64-x86_64-snappy	1.2.2-2	mingw-w64-snappy	spdx:BSD-3-Clause
+video	libstdc++-6.dll	3529d11c422b2aaf0bbad7221bf62ba7b5a39f854e89a015bb58b6b55a677da1	mingw-w64-x86_64-gcc-libs	16.1.0-5	mingw-w64-gcc	spdx:GPL-3.0-or-later WITH GCC-exception-3.1 AND LGPL-2.1-or-later
+video	libtheoradec-2.dll	4f75e430b4e9a3e7c5e6d1da1f7999d8d75c5e505b8a34863cb4c6f82236a771	mingw-w64-x86_64-libtheora	1.2.0-1	mingw-w64-libtheora	spdx:BSD-3-Clause
+video	libtheoraenc-2.dll	c8119dcf51d98673cc55ec47fd54ab60e65fbf6191f0b6fc907afa3ebdc26bb9	mingw-w64-x86_64-libtheora	1.2.0-1	mingw-w64-libtheora	spdx:BSD-3-Clause
+video	libunibreak-7.dll	e146c2f36b2e36f620238f2bf0820ef9e74f5b39fbfb9ffe99183bb4a21809f0	mingw-w64-x86_64-libunibreak	7.0-1	mingw-w64-libunibreak	spdx:Zlib
+video	libva.dll	b31d70355988a9de985900a53cb8a5a4df5bae713759a3c45987fd72814e162f	mingw-w64-x86_64-libva	2.23.0-1	mingw-w64-libva	spdx:MIT
+video	libva_win32.dll	7e77ca54027daa4f69c36a28989a7807105d3671d2bfca37336d53bf781a4342	mingw-w64-x86_64-libva	2.23.0-1	mingw-w64-libva	spdx:MIT
+video	libvpx-1.dll	a91c5ff5c0316f417a8b7eea438c2a8cd5bd08323da40c6dab1fc46ea7697cd7	mingw-w64-x86_64-libvpx	1.16.0-1	mingw-w64-libvpx	spdx:BSD-3-Clause
+video	libwebp-7.dll	c6c21a10f8cfe13270832e64640b82709e1d87b956b5f15af435a6c25acd6bbf	mingw-w64-x86_64-libwebp	1.6.0-1	mingw-w64-libwebp	spdx:BSD-3-Clause
+video	libwebpmux-3.dll	2c8a2e9d7901ec65330f31f9989c2a07ef0506e903b485fcd8b241a6bab9b88f	mingw-w64-x86_64-libwebp	1.6.0-1	mingw-w64-libwebp	spdx:BSD-3-Clause
+video	libwinpthread-1.dll	3357473705d91b39f1e17201dc5f7a2638aa345f02e903f6c94f1d52c27f3a71	mingw-w64-x86_64-libwinpthread	14.0.0.r147.g31bd54ab7-1	mingw-w64-winpthreads	spdx:MIT AND BSD-3-Clause-Clear
+video	libzimg-2.dll	26ad6d01991171038ca5a4078a3854ea2f7765beb572e567a83ce15d495d75dc	mingw-w64-x86_64-zimg	3.0.6-3	mingw-w64-zimg	spdx:WTFPL
+video	zlib1.dll	cb7ab3788d10940df874acd97b1821bbb5ee4a91f3eec11982bb5bf7a3c96443	mingw-w64-x86_64-zlib	1.3.1-1	mingw-w64-zlib	spdx:Zlib
+full	libaom.dll	2c95d77057d2e9d0851fe352bc77d587e8cf2b5abee9aae6c660f11c7adf9507	mingw-w64-x86_64-aom	3.14.1-1	mingw-w64-aom	spdx:BSD-2-Clause
+full	libarchive-13.dll	80de4411a3523f484dd6d504b07eae2f6250c3210a3f917d5c425cc96e2f4c1a	mingw-w64-x86_64-libarchive	3.8.1-2	mingw-w64-libarchive	BSD
+full	libass-9.dll	d7e21a7fa952033ff5bbacd2564b343671bf0ad4ae9338613935f2709861b9d2	mingw-w64-x86_64-libass	0.17.5-1	mingw-w64-libass	spdx:ISC
+full	libb2-1.dll	7fb8418a1172042dab5227fcd466b1bf293737f5b5cf35359e851516227f109c	mingw-w64-x86_64-libb2	0.98.1-2	mingw-w64-libb2	custom:CC0
+full	libbrotlicommon.dll	276a12fc7249af3fdd604609d4a46386082f760324afbd83008f72edf304880a	mingw-w64-x86_64-brotli	1.1.0-5	mingw-w64-brotli	spdx:MIT
+full	libbrotlidec.dll	368fa8da7478a441e07ff1c6ab2d20adc8e16b2dfe4dc9231c51f600e914ed92	mingw-w64-x86_64-brotli	1.1.0-5	mingw-w64-brotli	spdx:MIT
+full	libbrotlienc.dll	505730ac0a25745bb822205d1e8f40205b99f2b97899a8582f393b57b1a6ae81	mingw-w64-x86_64-brotli	1.1.0-5	mingw-w64-brotli	spdx:MIT
+full	libbz2-1.dll	b79cd3a7102e359ef6324e98966a67939e58ec2b651ae2847cae84a4dfa453f7	mingw-w64-x86_64-bzip2	1.0.8-3	mingw-w64-bzip2	custom
+full	libchromaprint.dll	cfe2a56538092944efdbc8e321248dbaca2bd1163e44b0439071dc559a34b38d	mingw-w64-x86_64-chromaprint	1.6.0-1	mingw-w64-chromaprint	LGPL
+full	libcrypto-3-x64.dll	60904c0255240c0e1fdb054375ddeeddd4b58e22bbd4197584d23dea560993c1	mingw-w64-x86_64-openssl	3.5.2-1	mingw-w64-openssl	spdx:Apache-2.0
+full	libcryptopp.dll	215fae14c0d06a486769f1c6adee4b1edd51ed18449625f5ff5a82eb1d32950b	mingw-w64-x86_64-crypto++	8.9.0-2	mingw-w64-crypto++	spdx:BSL-1.0
+full	libcurl-4.dll	99bee76aa567d9ba76d9db5ffc1f2a37ff517fee2432002c0b2b4448a4ee9d3a	mingw-w64-x86_64-curl	8.15.0-1	mingw-w64-curl	spdx:MIT
+full	libdav1d-7.dll	f6fe8f2a22501c06963e3bf18a16a2d3d222f00ac11e7ec9ff32ac0623cb2a32	mingw-w64-x86_64-dav1d	1.5.3-1	mingw-w64-dav1d	spdx:BSD-2-Clause
+full	libdeflate.dll	3f3fc3a73bc3623dc93b37bb321c484d3731d93006fd01c0495d15711826eb44	mingw-w64-x86_64-libdeflate	1.25-1	mingw-w64-libdeflate	spdx:MIT
+full	libexpat-1.dll	fa6b1cc24bdc46d787579493ddb50c34f8cb6c50a874ed537e2fb705bc53b3b5	mingw-w64-x86_64-expat	2.7.1-2	mingw-w64-expat	spdx:MIT
+full	libffi-8.dll	99e4b68e06f6cd0fef759ff5137bd1ec8fa83364702e91a8feaacf60899f95a5	mingw-w64-x86_64-libffi	3.5.1-1	mingw-w64-libffi	spdx:MIT
+full	libfontconfig-1.dll	3cc4825d8e3899f998fcc3619bd6ade62e252117dc46efe7bfe11e24060518b7	mingw-w64-x86_64-fontconfig	2.18.1-1	mingw-w64-fontconfig	custom
+full	libfreetype-6.dll	bbb3e6390ee229c867ef31f10e42a49a61a92e434a11d40c6139a2608ebc6194	mingw-w64-x86_64-freetype	2.14.3-1	mingw-w64-freetype	spdx:GPL-2.0-or-later OR FTL
+full	libfribidi-0.dll	84930fd86a3b46b62794a3bbaff21fbbaeaade5ff7cdc70be7f717ad29af87ed	mingw-w64-x86_64-fribidi	1.0.16-1	mingw-w64-fribidi	spdx:LGPL-2.1-or-later
+full	libgcc_s_seh-1.dll	278f1101f2371c58b6b412a3206718e22343940a5164aceb4fb75f2bf3b38ed4	mingw-w64-x86_64-gcc-libs	16.1.0-5	mingw-w64-gcc	spdx:GPL-3.0-or-later WITH GCC-exception-3.1 AND LGPL-2.1-or-later
+full	libgif-7.dll	5b3d837ccaab84683dd93fbaddf2d98e1a9f90e0ddb8ea73dc70157adb4d26f1	mingw-w64-x86_64-giflib	6.1.3-1	mingw-w64-giflib	spdx:MIT
+full	libglib-2.0-0.dll	716845eedea56a2f5274e0b64a994a6291ebd5b8e7f0a22b6265dfde5508dc3a	mingw-w64-x86_64-glib2	2.88.1-1	mingw-w64-glib2	spdx:LGPL-2.1-or-later
+full	libgmp-10.dll	37248cda33845e7c5c35a574e57da762dd0a8268f0270d179f30a33746809681	mingw-w64-x86_64-gmp	6.3.0-2	mingw-w64-gmp	LGPL3 GPL
+full	libgnutls-30.dll	cde27f40b92ebc5389dcd79a0d693d4d069610db780dc9ea341343ef18464305	mingw-w64-x86_64-gnutls	3.8.13-2	mingw-w64-gnutls	spdx:GPL-3.0-or-later spdx:LGPL-2.1-or-later
+full	libgomp-1.dll	d40d5850b92e3dddc488781b7e04ea1ca531c728ce003657329cfd319eb6efd1	mingw-w64-x86_64-gcc-libs	16.1.0-5	mingw-w64-gcc	spdx:GPL-3.0-or-later WITH GCC-exception-3.1 AND LGPL-2.1-or-later
+full	libgraphite2.dll	063a9ad34a5ec87d038b4646660957395224ecf2cf707917256b7d251a7c5f57	mingw-w64-x86_64-graphite2	1.3.15-1	mingw-w64-graphite2	spdx:LGPL-2.1-or-later
+full	libharfbuzz-0.dll	54fb644a1143b3b81d494684f299aca9ff4b72134f12a7b1cfb2bd0f8fa9cef7	mingw-w64-x86_64-harfbuzz	14.2.1-1	mingw-w64-harfbuzz	spdx:MIT
+full	libhogweed-6.dll	cc3a8a5ecbc172aba4ad72423979ca115c1ef8e21ba3fa2afc9e5e7e5b785b8e	mingw-w64-x86_64-nettle	3.10.2-1	mingw-w64-nettle	spdx:GPL-2.0-or-later spdx:LGPL-3.0-or-later
+full	libiconv-2.dll	ff31fa811f9c07cc7fdaa68c9e8bca3a7b4fdf6e0a079a58175ea58ba139c7ae	mingw-w64-x86_64-libiconv	1.18-1	mingw-w64-libiconv	spdx:LGPL-2.1-or-later documentation:spdx:GPL-3.0-or-later
+full	libidn2-0.dll	250c5f755d35a56189c7d557f1ea3b2827f26ff83c563df8a6cedb0114777fc0	mingw-w64-x86_64-libidn2	2.3.8-2	mingw-w64-libidn2	spdx:GPL-2.0-or-later spdx:LGPL-3.0-or-later
+full	libilbc.dll	3d15f8b5d7e01d4dd64462f38316521ed4fb3a9dd1839b54c619ae8e78a5ad25	mingw-w64-x86_64-libilbc	3.0.4-2	mingw-w64-libilbc	BSD
+full	libintl-8.dll	17bdd3de3329156e032949abcf3f0f9163febd0fb9299864b7eff7f31e7c15d4	mingw-w64-x86_64-gettext-runtime	0.26-1	mingw-w64-gettext	spdx:GPL-3.0-or-later AND LGPL-2.1-or-later
+full	libjbig-0.dll	275a827ba6839d47cfdbe059db1b1b403a92ff26e2b76a29362915487868bef2	mingw-w64-x86_64-jbigkit	2.1-5	mingw-w64-jbigkit	spdx:GPL-2.0
+full	libjpeg-8.dll	3d3a35baa905c540ea3ce59b57e1b2632eabf145c9921c8382334e7425431924	mingw-w64-x86_64-libjpeg-turbo	3.1.4.1-3	mingw-w64-libjpeg-turbo	custom:BSD-like
+full	libkvazaar-7.dll	fe76b3e76e90ca86635d45dc41444cd7be389890a796e4dfc962f39a21baf538	mingw-w64-x86_64-kvazaar	2.3.2-1	mingw-w64-kvazaar	spdx:BSD-3-Clause
+full	libleptonica-6.dll	1869b44e3d46fd830620b042477e5d60a950779582f38f60291547efb27792f1	mingw-w64-x86_64-leptonica	1.87.0-1	mingw-w64-leptonica	spdx:BSD-2-Clause
+full	libLerc.dll	c129a59106023b93405d022d8b08e898b89b92c39b44796cf3cbc284f903b840	mingw-w64-x86_64-lerc	4.1.0-1	mingw-w64-lerc	spdx:Apache-2.0
+full	liblz4.dll	35f917274bca8f19677ba66f1b3cc3c83568c3249fc43215fc16e76439c8e856	mingw-w64-x86_64-lz4	1.10.0-1	mingw-w64-lz4	BSD GPL2
+full	liblzma-5.dll	9b5d2cdcdb2bf2f89b44166ba115276b2dcd7a3349692e46f922578eaa4d6a03	mingw-w64-x86_64-xz	5.8.1-2	mingw-w64-xz	spdx:0BSD AND LGPL-2.1-or-later AND GPL-2.0-or-later
+full	libmp3lame-0.dll	f40c566b56a97e32036f3d5263fd7dc2dafa6fc7ded326045dd637dd55d68c24	mingw-w64-x86_64-lame	3.100-3	mingw-w64-lame	LGPL
+full	libnettle-8.dll	0dad1e4809abe704b2cf57fc32b494b35da2ac35d1c478a78d150cd40f1a41fc	mingw-w64-x86_64-nettle	3.10.2-1	mingw-w64-nettle	spdx:GPL-2.0-or-later spdx:LGPL-3.0-or-later
+full	libnghttp2-14.dll	80c021e49f2e6fbd3ca43eda218444a7a8bb33dc2a37036224f957af293dbed1	mingw-w64-x86_64-nghttp2	1.66.0-1	mingw-w64-nghttp2	spdx:MIT
+full	libnghttp3-9.dll	c00a3ca068351ef2c229271cd43ce3f26c5d2e508db4c58868451f884a980af2	mingw-w64-x86_64-nghttp3	1.11.0-1	mingw-w64-nghttp3	spdx:MIT
+full	libngtcp2_crypto_ossl.dll	6fa790090b8c8a44cd2478d068664d028e028b16a82223ac50931685a1fd64b4	mingw-w64-x86_64-ngtcp2	1.14.0-1	mingw-w64-ngtcp2	spdx:MIT
+full	libngtcp2-16.dll	4d11bbb406a7972f660dccad767ac849643031b1ac7ef17a31291d5dd317728a	mingw-w64-x86_64-ngtcp2	1.14.0-1	mingw-w64-ngtcp2	spdx:MIT
+full	libogg-0.dll	3038ce8d161324a6349bf7c83b78493857ff6a3501e3adb3d541c6a07bd94a57	mingw-w64-x86_64-libogg	1.3.6-1	mingw-w64-libogg	spdx:BSD-3-Clause
+full	libopencore-amrnb-0.dll	8f9b1fd5fec2042a3b6af15eae54474210569c75bcc482fe702b45dcb3e96397	mingw-w64-x86_64-opencore-amr	0.1.6-1	mingw-w64-opencore-amr	Apache
+full	libopencore-amrwb-0.dll	7482267efad926b69c8304ec631fd531a2fc5d99b481b59cb5b34d8540a38dc2	mingw-w64-x86_64-opencore-amr	0.1.6-1	mingw-w64-opencore-amr	Apache
+full	libopenh264-7.dll	4ac3e61bd10b696abf4b20391bf1cc682c393a0a27f0e96daf020dc1adf6e973	mingw-w64-x86_64-openh264	2.6.0-1	mingw-w64-openh264	spdx:BSD-2-Clause
+full	libopenjp2-7.dll	123587086cb1a25d2a338fb9b7c1d6bda10bf9062625b4f08c6a92b3d9cafe47	mingw-w64-x86_64-openjpeg2	2.5.4-2	mingw-w64-openjpeg2	spdx:BSD-2-Clause
+full	libopus-0.dll	90aa25a0a6525d7da48a7ae8dd3306e45b0c28ce09a73d2a02b56cd95418d5be	mingw-w64-x86_64-opus	1.6.1-1	mingw-w64-opus	spdx:BSD-3-Clause
+full	libp11-kit-0.dll	f59bf47c701ca691e1ebb35f66ef16d3806fd1351e0df056e09c1a2270a1a934	mingw-w64-x86_64-p11-kit	0.25.5-1	mingw-w64-p11-kit	spdx:BSD-3-Clause
+full	libpcre2-8-0.dll	a499fb8a7eff453d6e4f0842576bc5171d40a1505d8f7f13fff6cee51b738a62	mingw-w64-x86_64-pcre2	10.47-1	mingw-w64-pcre2	spdx:BSD-3-Clause
+full	libpng16-16.dll	3737838ee8d6b893df7bdabf7439775371a57dce7e17ee6b35586023c64bd9ab	mingw-w64-x86_64-libpng	1.6.58-1	mingw-w64-libpng	custom
+full	libpsl-5.dll	b31fc70eda598a39b65fe2736d815518db0652d641346f75eac40c2a0499b058	mingw-w64-x86_64-libpsl	0.21.5-3	mingw-w64-libpsl	spdx:MIT
+full	libsharpyuv-0.dll	ab0c9f61dc69b6bcdff1011e215f8d5fd6e5096aba9be3386ab87f217fbbeffe	mingw-w64-x86_64-libwebp	1.6.0-1	mingw-w64-libwebp	spdx:BSD-3-Clause
+full	libshine-3.dll	4d91b3dd821be02a6a1849ff035ca1b9cd14b891650ad26cf5f2725be3ea26b4	mingw-w64-x86_64-shine	3.1.1-2	mingw-w64-shine	GPL2
+full	libsnappy.dll	a0692c93212898f29d072d611184828ccaf7add78137fbe977a8504fcc278c21	mingw-w64-x86_64-snappy	1.2.2-2	mingw-w64-snappy	spdx:BSD-3-Clause
+full	libsoxr.dll	5bb8f922b12995b0322b73bd94e2e6dadfeac58abc8beb4d0f69ca5f4747917d	mingw-w64-x86_64-libsoxr	0.1.3-5	mingw-w64-libsoxr	LGPL
+full	libspeex-1.dll	3cd8b5e812022307d8ba09747b648a7402fc4caa44b50e328b3424102ab98f3a	mingw-w64-x86_64-speex	1.2.1-1	mingw-w64-speex	BSD
+full	libsrt.dll	f422904f9f032b051bfe42547a531158dabc28aa3cf4e35fd41363bf3401f60e	mingw-w64-x86_64-srt	1.5.5-1	mingw-w64-srt	spdx:MPL-2.0
+full	libssh2-1.dll	176d01497ed5abfedd82db3889a0f8f60a8e254fe841d95cda94de20e0dd4b42	mingw-w64-x86_64-libssh2	1.11.1-1	mingw-w64-libssh2	spdx:BSD-3-Clause
+full	libssl-3-x64.dll	c5d4f9950d87cd54e9864e449984b54fa5868d9f07cdafeacc36f0cf790c7667	mingw-w64-x86_64-openssl	3.5.2-1	mingw-w64-openssl	spdx:Apache-2.0
+full	libstdc++-6.dll	3529d11c422b2aaf0bbad7221bf62ba7b5a39f854e89a015bb58b6b55a677da1	mingw-w64-x86_64-gcc-libs	16.1.0-5	mingw-w64-gcc	spdx:GPL-3.0-or-later WITH GCC-exception-3.1 AND LGPL-2.1-or-later
+full	libtasn1-6.dll	e69598aaed5f4ae9fa6f3803831665296c8677e8f0cf865840fa28b88f2c093e	mingw-w64-x86_64-libtasn1	4.20.0-1	mingw-w64-libtasn1	GPL3, LGPL
+full	libtesseract-5.5.dll	e311f92e5d194bcec89b4fa8ff783803c3c2b0ae4c56f488eba358ef90180bcb	mingw-w64-x86_64-tesseract-ocr	5.5.2-1	mingw-w64-tesseract-ocr	spdx:Apache-2.0
+full	libtheoradec-2.dll	4f75e430b4e9a3e7c5e6d1da1f7999d8d75c5e505b8a34863cb4c6f82236a771	mingw-w64-x86_64-libtheora	1.2.0-1	mingw-w64-libtheora	spdx:BSD-3-Clause
+full	libtheoraenc-2.dll	c8119dcf51d98673cc55ec47fd54ab60e65fbf6191f0b6fc907afa3ebdc26bb9	mingw-w64-x86_64-libtheora	1.2.0-1	mingw-w64-libtheora	spdx:BSD-3-Clause
+full	libtiff-6.dll	3a72d25c439ed511a6dc9e20cac5ac49eaa5e040b22b5272006d825cb206baca	mingw-w64-x86_64-libtiff	4.7.1-1	mingw-w64-libtiff	spdx:MIT
+full	libtwolame-0.dll	5bab0822df202e1eaebf25f3c93009f7156711f17b0d297974706606761bfffd	mingw-w64-x86_64-twolame	0.4.0-3	mingw-w64-twolame	LGPL
+full	libunibreak-7.dll	e146c2f36b2e36f620238f2bf0820ef9e74f5b39fbfb9ffe99183bb4a21809f0	mingw-w64-x86_64-libunibreak	7.0-1	mingw-w64-libunibreak	spdx:Zlib
+full	libunistring-5.dll	70813b4aaa82f8b0999d8c2fdd4c49c6d31035f17325f5f138f39f7273449adf	mingw-w64-x86_64-libunistring	1.3-1	mingw-w64-libunistring	spdx:LGPL-3.0-or-later OR GPL-3.0-or-later
+full	libva.dll	b31d70355988a9de985900a53cb8a5a4df5bae713759a3c45987fd72814e162f	mingw-w64-x86_64-libva	2.23.0-1	mingw-w64-libva	spdx:MIT
+full	libva_win32.dll	7e77ca54027daa4f69c36a28989a7807105d3671d2bfca37336d53bf781a4342	mingw-w64-x86_64-libva	2.23.0-1	mingw-w64-libva	spdx:MIT
+full	libvo-amrwbenc-0.dll	03f99fb57eb5b0f8fcd867db597418cd501a800ae74fe44ba13d3632e9136891	mingw-w64-x86_64-vo-amrwbenc	0.1.3-2	mingw-w64-vo-amrwbenc	spdx:Apache-2.0
+full	libvorbis-0.dll	73db4516d49e0571f80d0f802f7bc0477f8a14067d1da00f340332f6c0303a08	mingw-w64-x86_64-libvorbis	1.3.7-2	mingw-w64-libvorbis	custom
+full	libvorbisenc-2.dll	f7bbf43700c26bdadccb838e44bee13690c01142797cdb69ff3b9bf58b9b90d1	mingw-w64-x86_64-libvorbis	1.3.7-2	mingw-w64-libvorbis	custom
+full	libvpx-1.dll	a91c5ff5c0316f417a8b7eea438c2a8cd5bd08323da40c6dab1fc46ea7697cd7	mingw-w64-x86_64-libvpx	1.16.0-1	mingw-w64-libvpx	spdx:BSD-3-Clause
+full	libwebp-7.dll	c6c21a10f8cfe13270832e64640b82709e1d87b956b5f15af435a6c25acd6bbf	mingw-w64-x86_64-libwebp	1.6.0-1	mingw-w64-libwebp	spdx:BSD-3-Clause
+full	libwebpmux-3.dll	2c8a2e9d7901ec65330f31f9989c2a07ef0506e903b485fcd8b241a6bab9b88f	mingw-w64-x86_64-libwebp	1.6.0-1	mingw-w64-libwebp	spdx:BSD-3-Clause
+full	libwinpthread-1.dll	3357473705d91b39f1e17201dc5f7a2638aa345f02e903f6c94f1d52c27f3a71	mingw-w64-x86_64-libwinpthread	14.0.0.r147.g31bd54ab7-1	mingw-w64-winpthreads	spdx:MIT AND BSD-3-Clause-Clear
+full	libxml2-16.dll	beb148bc5c12cdccf7a28767981c9c3da8b3f2d607f03a1a3458d128fd650089	mingw-w64-x86_64-libxml2	2.15.3-1	mingw-w64-libxml2	spdx:MIT
+full	libzimg-2.dll	26ad6d01991171038ca5a4078a3854ea2f7765beb572e567a83ce15d495d75dc	mingw-w64-x86_64-zimg	3.0.6-3	mingw-w64-zimg	spdx:WTFPL
+full	libzstd.dll	b13d4f30b93c96823473d742dda0075f7334cba03a40c33d8a7dc282e37b1500	mingw-w64-x86_64-zstd	1.5.7-1	mingw-w64-zstd	spdx:BSD-3-Clause OR GPL-2.0-or-later
+full	zlib1.dll	cb7ab3788d10940df874acd97b1821bbb5ee4a91f3eec11982bb5bf7a3c96443	mingw-w64-x86_64-zlib	1.3.1-1	mingw-w64-zlib	spdx:Zlib
+full-gpl	libaom.dll	2c95d77057d2e9d0851fe352bc77d587e8cf2b5abee9aae6c660f11c7adf9507	mingw-w64-x86_64-aom	3.14.1-1	mingw-w64-aom	spdx:BSD-2-Clause
+full-gpl	libarchive-13.dll	80de4411a3523f484dd6d504b07eae2f6250c3210a3f917d5c425cc96e2f4c1a	mingw-w64-x86_64-libarchive	3.8.1-2	mingw-w64-libarchive	BSD
+full-gpl	libass-9.dll	d7e21a7fa952033ff5bbacd2564b343671bf0ad4ae9338613935f2709861b9d2	mingw-w64-x86_64-libass	0.17.5-1	mingw-w64-libass	spdx:ISC
+full-gpl	libb2-1.dll	7fb8418a1172042dab5227fcd466b1bf293737f5b5cf35359e851516227f109c	mingw-w64-x86_64-libb2	0.98.1-2	mingw-w64-libb2	custom:CC0
+full-gpl	libbrotlicommon.dll	276a12fc7249af3fdd604609d4a46386082f760324afbd83008f72edf304880a	mingw-w64-x86_64-brotli	1.1.0-5	mingw-w64-brotli	spdx:MIT
+full-gpl	libbrotlidec.dll	368fa8da7478a441e07ff1c6ab2d20adc8e16b2dfe4dc9231c51f600e914ed92	mingw-w64-x86_64-brotli	1.1.0-5	mingw-w64-brotli	spdx:MIT
+full-gpl	libbrotlienc.dll	505730ac0a25745bb822205d1e8f40205b99f2b97899a8582f393b57b1a6ae81	mingw-w64-x86_64-brotli	1.1.0-5	mingw-w64-brotli	spdx:MIT
+full-gpl	libbz2-1.dll	b79cd3a7102e359ef6324e98966a67939e58ec2b651ae2847cae84a4dfa453f7	mingw-w64-x86_64-bzip2	1.0.8-3	mingw-w64-bzip2	custom
+full-gpl	libchromaprint.dll	cfe2a56538092944efdbc8e321248dbaca2bd1163e44b0439071dc559a34b38d	mingw-w64-x86_64-chromaprint	1.6.0-1	mingw-w64-chromaprint	LGPL
+full-gpl	libcrypto-3-x64.dll	60904c0255240c0e1fdb054375ddeeddd4b58e22bbd4197584d23dea560993c1	mingw-w64-x86_64-openssl	3.5.2-1	mingw-w64-openssl	spdx:Apache-2.0
+full-gpl	libcryptopp.dll	215fae14c0d06a486769f1c6adee4b1edd51ed18449625f5ff5a82eb1d32950b	mingw-w64-x86_64-crypto++	8.9.0-2	mingw-w64-crypto++	spdx:BSL-1.0
+full-gpl	libcurl-4.dll	99bee76aa567d9ba76d9db5ffc1f2a37ff517fee2432002c0b2b4448a4ee9d3a	mingw-w64-x86_64-curl	8.15.0-1	mingw-w64-curl	spdx:MIT
+full-gpl	libdav1d-7.dll	f6fe8f2a22501c06963e3bf18a16a2d3d222f00ac11e7ec9ff32ac0623cb2a32	mingw-w64-x86_64-dav1d	1.5.3-1	mingw-w64-dav1d	spdx:BSD-2-Clause
+full-gpl	libdeflate.dll	3f3fc3a73bc3623dc93b37bb321c484d3731d93006fd01c0495d15711826eb44	mingw-w64-x86_64-libdeflate	1.25-1	mingw-w64-libdeflate	spdx:MIT
+full-gpl	libexpat-1.dll	fa6b1cc24bdc46d787579493ddb50c34f8cb6c50a874ed537e2fb705bc53b3b5	mingw-w64-x86_64-expat	2.7.1-2	mingw-w64-expat	spdx:MIT
+full-gpl	libffi-8.dll	99e4b68e06f6cd0fef759ff5137bd1ec8fa83364702e91a8feaacf60899f95a5	mingw-w64-x86_64-libffi	3.5.1-1	mingw-w64-libffi	spdx:MIT
+full-gpl	libfftw3-3.dll	3cf91e10bd0c715e9e2a8a595d653dfa27252f587861ffbdc321806e1b259c89	mingw-w64-x86_64-fftw	3.3.11-1	mingw-w64-fftw	spdx:GPL-2.0-or-later
+full-gpl	libfontconfig-1.dll	3cc4825d8e3899f998fcc3619bd6ade62e252117dc46efe7bfe11e24060518b7	mingw-w64-x86_64-fontconfig	2.18.1-1	mingw-w64-fontconfig	custom
+full-gpl	libfreetype-6.dll	bbb3e6390ee229c867ef31f10e42a49a61a92e434a11d40c6139a2608ebc6194	mingw-w64-x86_64-freetype	2.14.3-1	mingw-w64-freetype	spdx:GPL-2.0-or-later OR FTL
+full-gpl	libfribidi-0.dll	84930fd86a3b46b62794a3bbaff21fbbaeaade5ff7cdc70be7f717ad29af87ed	mingw-w64-x86_64-fribidi	1.0.16-1	mingw-w64-fribidi	spdx:LGPL-2.1-or-later
+full-gpl	libgcc_s_seh-1.dll	278f1101f2371c58b6b412a3206718e22343940a5164aceb4fb75f2bf3b38ed4	mingw-w64-x86_64-gcc-libs	16.1.0-5	mingw-w64-gcc	spdx:GPL-3.0-or-later WITH GCC-exception-3.1 AND LGPL-2.1-or-later
+full-gpl	libgif-7.dll	5b3d837ccaab84683dd93fbaddf2d98e1a9f90e0ddb8ea73dc70157adb4d26f1	mingw-w64-x86_64-giflib	6.1.3-1	mingw-w64-giflib	spdx:MIT
+full-gpl	libglib-2.0-0.dll	716845eedea56a2f5274e0b64a994a6291ebd5b8e7f0a22b6265dfde5508dc3a	mingw-w64-x86_64-glib2	2.88.1-1	mingw-w64-glib2	spdx:LGPL-2.1-or-later
+full-gpl	libgmp-10.dll	37248cda33845e7c5c35a574e57da762dd0a8268f0270d179f30a33746809681	mingw-w64-x86_64-gmp	6.3.0-2	mingw-w64-gmp	LGPL3 GPL
+full-gpl	libgnutls-30.dll	cde27f40b92ebc5389dcd79a0d693d4d069610db780dc9ea341343ef18464305	mingw-w64-x86_64-gnutls	3.8.13-2	mingw-w64-gnutls	spdx:GPL-3.0-or-later spdx:LGPL-2.1-or-later
+full-gpl	libgomp-1.dll	d40d5850b92e3dddc488781b7e04ea1ca531c728ce003657329cfd319eb6efd1	mingw-w64-x86_64-gcc-libs	16.1.0-5	mingw-w64-gcc	spdx:GPL-3.0-or-later WITH GCC-exception-3.1 AND LGPL-2.1-or-later
+full-gpl	libgraphite2.dll	063a9ad34a5ec87d038b4646660957395224ecf2cf707917256b7d251a7c5f57	mingw-w64-x86_64-graphite2	1.3.15-1	mingw-w64-graphite2	spdx:LGPL-2.1-or-later
+full-gpl	libharfbuzz-0.dll	54fb644a1143b3b81d494684f299aca9ff4b72134f12a7b1cfb2bd0f8fa9cef7	mingw-w64-x86_64-harfbuzz	14.2.1-1	mingw-w64-harfbuzz	spdx:MIT
+full-gpl	libhogweed-6.dll	cc3a8a5ecbc172aba4ad72423979ca115c1ef8e21ba3fa2afc9e5e7e5b785b8e	mingw-w64-x86_64-nettle	3.10.2-1	mingw-w64-nettle	spdx:GPL-2.0-or-later spdx:LGPL-3.0-or-later
+full-gpl	libiconv-2.dll	ff31fa811f9c07cc7fdaa68c9e8bca3a7b4fdf6e0a079a58175ea58ba139c7ae	mingw-w64-x86_64-libiconv	1.18-1	mingw-w64-libiconv	spdx:LGPL-2.1-or-later documentation:spdx:GPL-3.0-or-later
+full-gpl	libidn2-0.dll	250c5f755d35a56189c7d557f1ea3b2827f26ff83c563df8a6cedb0114777fc0	mingw-w64-x86_64-libidn2	2.3.8-2	mingw-w64-libidn2	spdx:GPL-2.0-or-later spdx:LGPL-3.0-or-later
+full-gpl	libilbc.dll	3d15f8b5d7e01d4dd64462f38316521ed4fb3a9dd1839b54c619ae8e78a5ad25	mingw-w64-x86_64-libilbc	3.0.4-2	mingw-w64-libilbc	BSD
+full-gpl	libintl-8.dll	17bdd3de3329156e032949abcf3f0f9163febd0fb9299864b7eff7f31e7c15d4	mingw-w64-x86_64-gettext-runtime	0.26-1	mingw-w64-gettext	spdx:GPL-3.0-or-later AND LGPL-2.1-or-later
+full-gpl	libjbig-0.dll	275a827ba6839d47cfdbe059db1b1b403a92ff26e2b76a29362915487868bef2	mingw-w64-x86_64-jbigkit	2.1-5	mingw-w64-jbigkit	spdx:GPL-2.0
+full-gpl	libjpeg-8.dll	3d3a35baa905c540ea3ce59b57e1b2632eabf145c9921c8382334e7425431924	mingw-w64-x86_64-libjpeg-turbo	3.1.4.1-3	mingw-w64-libjpeg-turbo	custom:BSD-like
+full-gpl	libkvazaar-7.dll	fe76b3e76e90ca86635d45dc41444cd7be389890a796e4dfc962f39a21baf538	mingw-w64-x86_64-kvazaar	2.3.2-1	mingw-w64-kvazaar	spdx:BSD-3-Clause
+full-gpl	libleptonica-6.dll	1869b44e3d46fd830620b042477e5d60a950779582f38f60291547efb27792f1	mingw-w64-x86_64-leptonica	1.87.0-1	mingw-w64-leptonica	spdx:BSD-2-Clause
+full-gpl	libLerc.dll	c129a59106023b93405d022d8b08e898b89b92c39b44796cf3cbc284f903b840	mingw-w64-x86_64-lerc	4.1.0-1	mingw-w64-lerc	spdx:Apache-2.0
+full-gpl	liblz4.dll	35f917274bca8f19677ba66f1b3cc3c83568c3249fc43215fc16e76439c8e856	mingw-w64-x86_64-lz4	1.10.0-1	mingw-w64-lz4	BSD GPL2
+full-gpl	liblzma-5.dll	9b5d2cdcdb2bf2f89b44166ba115276b2dcd7a3349692e46f922578eaa4d6a03	mingw-w64-x86_64-xz	5.8.1-2	mingw-w64-xz	spdx:0BSD AND LGPL-2.1-or-later AND GPL-2.0-or-later
+full-gpl	libmp3lame-0.dll	f40c566b56a97e32036f3d5263fd7dc2dafa6fc7ded326045dd637dd55d68c24	mingw-w64-x86_64-lame	3.100-3	mingw-w64-lame	LGPL
+full-gpl	libnettle-8.dll	0dad1e4809abe704b2cf57fc32b494b35da2ac35d1c478a78d150cd40f1a41fc	mingw-w64-x86_64-nettle	3.10.2-1	mingw-w64-nettle	spdx:GPL-2.0-or-later spdx:LGPL-3.0-or-later
+full-gpl	libnghttp2-14.dll	80c021e49f2e6fbd3ca43eda218444a7a8bb33dc2a37036224f957af293dbed1	mingw-w64-x86_64-nghttp2	1.66.0-1	mingw-w64-nghttp2	spdx:MIT
+full-gpl	libnghttp3-9.dll	c00a3ca068351ef2c229271cd43ce3f26c5d2e508db4c58868451f884a980af2	mingw-w64-x86_64-nghttp3	1.11.0-1	mingw-w64-nghttp3	spdx:MIT
+full-gpl	libngtcp2_crypto_ossl.dll	6fa790090b8c8a44cd2478d068664d028e028b16a82223ac50931685a1fd64b4	mingw-w64-x86_64-ngtcp2	1.14.0-1	mingw-w64-ngtcp2	spdx:MIT
+full-gpl	libngtcp2-16.dll	4d11bbb406a7972f660dccad767ac849643031b1ac7ef17a31291d5dd317728a	mingw-w64-x86_64-ngtcp2	1.14.0-1	mingw-w64-ngtcp2	spdx:MIT
+full-gpl	libogg-0.dll	3038ce8d161324a6349bf7c83b78493857ff6a3501e3adb3d541c6a07bd94a57	mingw-w64-x86_64-libogg	1.3.6-1	mingw-w64-libogg	spdx:BSD-3-Clause
+full-gpl	libopencore-amrnb-0.dll	8f9b1fd5fec2042a3b6af15eae54474210569c75bcc482fe702b45dcb3e96397	mingw-w64-x86_64-opencore-amr	0.1.6-1	mingw-w64-opencore-amr	Apache
+full-gpl	libopencore-amrwb-0.dll	7482267efad926b69c8304ec631fd531a2fc5d99b481b59cb5b34d8540a38dc2	mingw-w64-x86_64-opencore-amr	0.1.6-1	mingw-w64-opencore-amr	Apache
+full-gpl	libopenh264-7.dll	4ac3e61bd10b696abf4b20391bf1cc682c393a0a27f0e96daf020dc1adf6e973	mingw-w64-x86_64-openh264	2.6.0-1	mingw-w64-openh264	spdx:BSD-2-Clause
+full-gpl	libopenjp2-7.dll	123587086cb1a25d2a338fb9b7c1d6bda10bf9062625b4f08c6a92b3d9cafe47	mingw-w64-x86_64-openjpeg2	2.5.4-2	mingw-w64-openjpeg2	spdx:BSD-2-Clause
+full-gpl	libopus-0.dll	90aa25a0a6525d7da48a7ae8dd3306e45b0c28ce09a73d2a02b56cd95418d5be	mingw-w64-x86_64-opus	1.6.1-1	mingw-w64-opus	spdx:BSD-3-Clause
+full-gpl	libp11-kit-0.dll	f59bf47c701ca691e1ebb35f66ef16d3806fd1351e0df056e09c1a2270a1a934	mingw-w64-x86_64-p11-kit	0.25.5-1	mingw-w64-p11-kit	spdx:BSD-3-Clause
+full-gpl	libpcre2-8-0.dll	a499fb8a7eff453d6e4f0842576bc5171d40a1505d8f7f13fff6cee51b738a62	mingw-w64-x86_64-pcre2	10.47-1	mingw-w64-pcre2	spdx:BSD-3-Clause
+full-gpl	libpng16-16.dll	3737838ee8d6b893df7bdabf7439775371a57dce7e17ee6b35586023c64bd9ab	mingw-w64-x86_64-libpng	1.6.58-1	mingw-w64-libpng	custom
+full-gpl	libpsl-5.dll	b31fc70eda598a39b65fe2736d815518db0652d641346f75eac40c2a0499b058	mingw-w64-x86_64-libpsl	0.21.5-3	mingw-w64-libpsl	spdx:MIT
+full-gpl	librubberband-2.dll	f15b59010dfbebadce5741932a39966ecdf87f9422d2082356c7ddc64928153e	mingw-w64-x86_64-rubberband	3.3.0-1	mingw-w64-rubberband	spdx:GPL-2.0-or-later
+full-gpl	libsamplerate-0.dll	1e08aeb1fecade2cf2d7a83463a1b375e13d5f2f008cdeea7409a3eff7ed9a0e	mingw-w64-x86_64-libsamplerate	0.2.2-1	mingw-w64-libsamplerate	spdx:BSD-2-Clause
+full-gpl	libsharpyuv-0.dll	ab0c9f61dc69b6bcdff1011e215f8d5fd6e5096aba9be3386ab87f217fbbeffe	mingw-w64-x86_64-libwebp	1.6.0-1	mingw-w64-libwebp	spdx:BSD-3-Clause
+full-gpl	libshine-3.dll	4d91b3dd821be02a6a1849ff035ca1b9cd14b891650ad26cf5f2725be3ea26b4	mingw-w64-x86_64-shine	3.1.1-2	mingw-w64-shine	GPL2
+full-gpl	libsnappy.dll	a0692c93212898f29d072d611184828ccaf7add78137fbe977a8504fcc278c21	mingw-w64-x86_64-snappy	1.2.2-2	mingw-w64-snappy	spdx:BSD-3-Clause
+full-gpl	libsoxr.dll	5bb8f922b12995b0322b73bd94e2e6dadfeac58abc8beb4d0f69ca5f4747917d	mingw-w64-x86_64-libsoxr	0.1.3-5	mingw-w64-libsoxr	LGPL
+full-gpl	libspeex-1.dll	3cd8b5e812022307d8ba09747b648a7402fc4caa44b50e328b3424102ab98f3a	mingw-w64-x86_64-speex	1.2.1-1	mingw-w64-speex	BSD
+full-gpl	libsrt.dll	f422904f9f032b051bfe42547a531158dabc28aa3cf4e35fd41363bf3401f60e	mingw-w64-x86_64-srt	1.5.5-1	mingw-w64-srt	spdx:MPL-2.0
+full-gpl	libssh2-1.dll	176d01497ed5abfedd82db3889a0f8f60a8e254fe841d95cda94de20e0dd4b42	mingw-w64-x86_64-libssh2	1.11.1-1	mingw-w64-libssh2	spdx:BSD-3-Clause
+full-gpl	libssl-3-x64.dll	c5d4f9950d87cd54e9864e449984b54fa5868d9f07cdafeacc36f0cf790c7667	mingw-w64-x86_64-openssl	3.5.2-1	mingw-w64-openssl	spdx:Apache-2.0
+full-gpl	libstdc++-6.dll	3529d11c422b2aaf0bbad7221bf62ba7b5a39f854e89a015bb58b6b55a677da1	mingw-w64-x86_64-gcc-libs	16.1.0-5	mingw-w64-gcc	spdx:GPL-3.0-or-later WITH GCC-exception-3.1 AND LGPL-2.1-or-later
+full-gpl	libtasn1-6.dll	e69598aaed5f4ae9fa6f3803831665296c8677e8f0cf865840fa28b88f2c093e	mingw-w64-x86_64-libtasn1	4.20.0-1	mingw-w64-libtasn1	GPL3, LGPL
+full-gpl	libtesseract-5.5.dll	e311f92e5d194bcec89b4fa8ff783803c3c2b0ae4c56f488eba358ef90180bcb	mingw-w64-x86_64-tesseract-ocr	5.5.2-1	mingw-w64-tesseract-ocr	spdx:Apache-2.0
+full-gpl	libtheoradec-2.dll	4f75e430b4e9a3e7c5e6d1da1f7999d8d75c5e505b8a34863cb4c6f82236a771	mingw-w64-x86_64-libtheora	1.2.0-1	mingw-w64-libtheora	spdx:BSD-3-Clause
+full-gpl	libtheoraenc-2.dll	c8119dcf51d98673cc55ec47fd54ab60e65fbf6191f0b6fc907afa3ebdc26bb9	mingw-w64-x86_64-libtheora	1.2.0-1	mingw-w64-libtheora	spdx:BSD-3-Clause
+full-gpl	libtiff-6.dll	3a72d25c439ed511a6dc9e20cac5ac49eaa5e040b22b5272006d825cb206baca	mingw-w64-x86_64-libtiff	4.7.1-1	mingw-w64-libtiff	spdx:MIT
+full-gpl	libtwolame-0.dll	5bab0822df202e1eaebf25f3c93009f7156711f17b0d297974706606761bfffd	mingw-w64-x86_64-twolame	0.4.0-3	mingw-w64-twolame	LGPL
+full-gpl	libunibreak-7.dll	e146c2f36b2e36f620238f2bf0820ef9e74f5b39fbfb9ffe99183bb4a21809f0	mingw-w64-x86_64-libunibreak	7.0-1	mingw-w64-libunibreak	spdx:Zlib
+full-gpl	libunistring-5.dll	70813b4aaa82f8b0999d8c2fdd4c49c6d31035f17325f5f138f39f7273449adf	mingw-w64-x86_64-libunistring	1.3-1	mingw-w64-libunistring	spdx:LGPL-3.0-or-later OR GPL-3.0-or-later
+full-gpl	libva.dll	b31d70355988a9de985900a53cb8a5a4df5bae713759a3c45987fd72814e162f	mingw-w64-x86_64-libva	2.23.0-1	mingw-w64-libva	spdx:MIT
+full-gpl	libva_win32.dll	7e77ca54027daa4f69c36a28989a7807105d3671d2bfca37336d53bf781a4342	mingw-w64-x86_64-libva	2.23.0-1	mingw-w64-libva	spdx:MIT
+full-gpl	libvidstab.dll	8f286dcb096c736360340f3020d84a4b49782796c9da445de275546a7f640835	mingw-w64-x86_64-vid.stab	1.1.1-1	mingw-w64-vid.stab	spdx:GPL-2.0-or-later
+full-gpl	libvo-amrwbenc-0.dll	03f99fb57eb5b0f8fcd867db597418cd501a800ae74fe44ba13d3632e9136891	mingw-w64-x86_64-vo-amrwbenc	0.1.3-2	mingw-w64-vo-amrwbenc	spdx:Apache-2.0
+full-gpl	libvorbis-0.dll	73db4516d49e0571f80d0f802f7bc0477f8a14067d1da00f340332f6c0303a08	mingw-w64-x86_64-libvorbis	1.3.7-2	mingw-w64-libvorbis	custom
+full-gpl	libvorbisenc-2.dll	f7bbf43700c26bdadccb838e44bee13690c01142797cdb69ff3b9bf58b9b90d1	mingw-w64-x86_64-libvorbis	1.3.7-2	mingw-w64-libvorbis	custom
+full-gpl	libvpx-1.dll	a91c5ff5c0316f417a8b7eea438c2a8cd5bd08323da40c6dab1fc46ea7697cd7	mingw-w64-x86_64-libvpx	1.16.0-1	mingw-w64-libvpx	spdx:BSD-3-Clause
+full-gpl	libwebp-7.dll	c6c21a10f8cfe13270832e64640b82709e1d87b956b5f15af435a6c25acd6bbf	mingw-w64-x86_64-libwebp	1.6.0-1	mingw-w64-libwebp	spdx:BSD-3-Clause
+full-gpl	libwebpmux-3.dll	2c8a2e9d7901ec65330f31f9989c2a07ef0506e903b485fcd8b241a6bab9b88f	mingw-w64-x86_64-libwebp	1.6.0-1	mingw-w64-libwebp	spdx:BSD-3-Clause
+full-gpl	libwinpthread-1.dll	3357473705d91b39f1e17201dc5f7a2638aa345f02e903f6c94f1d52c27f3a71	mingw-w64-x86_64-libwinpthread	14.0.0.r147.g31bd54ab7-1	mingw-w64-winpthreads	spdx:MIT AND BSD-3-Clause-Clear
+full-gpl	libx264-165.dll	3cda80e1c872fe1aae0bc8cd62cec6bb729a0bac6365697488783ab48e7651d7	mingw-w64-x86_64-libx264	0.165.r3222.b35605a-2	mingw-w64-x264	custom
+full-gpl	libx265-216.dll	d7e95aae91fb40a1d90eddf8cd39465b04bd008221f83f95f50e5dc9670cb9ec	mingw-w64-x86_64-x265	4.2-2	mingw-w64-x265	GPL
+full-gpl	libxml2-16.dll	beb148bc5c12cdccf7a28767981c9c3da8b3f2d607f03a1a3458d128fd650089	mingw-w64-x86_64-libxml2	2.15.3-1	mingw-w64-libxml2	spdx:MIT
+full-gpl	libzimg-2.dll	26ad6d01991171038ca5a4078a3854ea2f7765beb572e567a83ce15d495d75dc	mingw-w64-x86_64-zimg	3.0.6-3	mingw-w64-zimg	spdx:WTFPL
+full-gpl	libzstd.dll	b13d4f30b93c96823473d742dda0075f7334cba03a40c33d8a7dc282e37b1500	mingw-w64-x86_64-zstd	1.5.7-1	mingw-w64-zstd	spdx:BSD-3-Clause OR GPL-2.0-or-later
+full-gpl	xvidcore.dll	1c19803a7d0d8fe21064459dd51725ffdefb07a96079967417bf597178b4db33	mingw-w64-x86_64-xvidcore	1.3.7-5	mingw-w64-xvidcore	GPL
+full-gpl	zlib1.dll	cb7ab3788d10940df874acd97b1821bbb5ee4a91f3eec11982bb5bf7a3c96443	mingw-w64-x86_64-zlib	1.3.1-1	mingw-w64-zlib	spdx:Zlib
