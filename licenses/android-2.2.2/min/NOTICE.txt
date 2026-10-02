@@ -1,0 +1,33 @@
+FFmpegKit 8.1.2 for Android, "min" variant
+Maven: com.antonkarpenko:ffmpeg-kit-min:2.2.2
+  ffmpeg-kit-min-2.2.2.aar  sha256:f5272f7d5adf904897b4e0384981a7781e7c443ed4d6d2dc7692ebcfd7f7d2a0
+ABIs: arm64-v8a, armeabi-v7a (plus a NEON build), x86, x86_64. Minimum API 24.
+
+FFmpeg n8.1.2 (https://github.com/arthenica/FFmpeg/tree/n8.1.2, the same tag as
+the official n8.1.2 release), built as shared libraries with --enable-version3
+and no GPL components, so it is licensed LGPL-3.0-or-later. See FFmpeg/.
+FFmpeg contains one source modification: the FFmpegKit protocol code from
+tools/protocols/ (Android Storage Access Framework support) is appended to
+libavformat/file.c, libavutil/file.c and libavutil/file.h, and registered in
+libavformat/protocols.c. See patches/ffmpeg-n8.1.2-android.patch.
+FFmpegKit (the libffmpegkit native wrapper and the build scripts) is licensed
+LGPL-3.0. See ffmpeg-kit/LICENSE.
+
+Corresponding source: https://github.com/sk3llo/ffmpeg-kit/tree/android-apple-8.1.2
+(commit 984fa2d). FFmpeg source modifications made by the build scripts are in
+patches/, as a unified diff against n8.1.2.
+
+Build: SUDO= ./build-all.sh android min, with Android NDK r29 (29.0.13113456),
+API level 24. The Java wrapper and the packaged AAR come from
+https://github.com/sk3llo/ffmpeg_kit_flutter_android/tree/e2812e3 (branch min);
+the .so files committed there are byte-identical to the ones in the AAR.
+
+Bundled third-party code:
+
+cpu_features v0.8.0 (ndk_compat component), statically linked
+  License: Apache-2.0. See third-party/cpu_features/LICENSE.
+  Source: https://github.com/arthenica/cpu_features/tree/v0.8.0
+  (a fork of https://github.com/google/cpu_features)
+
+Not bundled (provided by the Android system at runtime): zlib (libz.so),
+liblog, libandroid, libc, libm, libdl.

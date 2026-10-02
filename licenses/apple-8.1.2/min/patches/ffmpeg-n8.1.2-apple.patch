@@ -1,0 +1,35 @@
+diff --git a/configure b/configure
+index 1759694..79c567f 100755
+--- a/configure
++++ b/configure
+@@ -6104,7 +6104,7 @@ case $target_os in
+         SLIBNAME_WITH_MAJOR='$(SLIBPREF)$(FULLNAME).$(LIBMAJOR)$(SLIBSUF)'
+         enabled x86_64 && objformat="macho64" || objformat="macho32"
+         enabled_any pic shared x86_64 ||
+-            { check_cflags -mdynamic-no-pic && add_asflags -mdynamic-no-pic; }
++            { check_cflags -mdynamic-no-pic; }
+         check_headers dispatch/dispatch.h &&
+             add_cppflags '-I\$(SRC_PATH)/compat/dispatch_semaphore'
+         if test -n "$sysroot"; then
+diff --git a/ffbuild/common.mak b/ffbuild/common.mak
+index 06d6f39..d68adc2 100644
+--- a/ffbuild/common.mak
++++ b/ffbuild/common.mak
+@@ -55,7 +55,7 @@ $(call PREPEND,CXXFLAGS, CPPFLAGS)
+ X86ASMFLAGS += $(IFLAGS:%=%/) -I$(<D)/ -Pconfig.asm
+ 
+ HOSTCCFLAGS = $(IFLAGS) $(HOSTCPPFLAGS) $(HOSTCFLAGS)
+-LDFLAGS    := $(ALLFFLIBS:%=$(LD_PATH)lib%) $(LDFLAGS)
++LDFLAGS    := $(ALLFFLIBS:%=-F ${FFMPEG_LIBRARY_PATH}/framework) $(LDFLAGS)
+ 
+ define COMPILE
+        $(call $(1)DEP,$(1))
+@@ -220,7 +220,7 @@ FFLIBS    := $($(NAME)_FFLIBS) $(FFLIBS-yes) $(FFLIBS)
+ TESTPROGS += $(TESTPROGS-yes)
+ 
+ LDLIBS       = $(FFLIBS:%=%$(BUILDSUF))
+-FFEXTRALIBS := $(LDLIBS:%=$(LD_LIB)) $(foreach lib,EXTRALIBS-$(NAME) $(FFLIBS:%=EXTRALIBS-%),$($(lib))) $(EXTRALIBS)
++FFEXTRALIBS := $(LDLIBS:%=-framework lib% ) $(foreach lib,EXTRALIBS-$(NAME) $(FFLIBS:%=EXTRALIBS-%),$($(lib))) $(EXTRALIBS)
+ 
+ OBJS      := $(sort $(OBJS:%=$(SUBDIR)%))
+ SHLIBOBJS := $(sort $(SHLIBOBJS:%=$(SUBDIR)%))
