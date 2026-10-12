@@ -22,6 +22,8 @@
 
 #ifdef _WIN32
 #include <windows.h>
+#include <process.h>
+#include <sddl.h>
 #include <direct.h>
 #include <io.h>
 #define WIN32_LEAN_AND_MEAN
@@ -53,6 +55,9 @@ extern "C" {
 #include <fstream>
 #include <algorithm>
 #include <thread>
+#include <random>
+#include <vector>
+#include <cstdio>
 
 extern "C" {
     void set_report_callback(void (*callback)(int, float, float, int64_t, double, double, double));
@@ -798,15 +803,415 @@ void ffmpegkit::FFmpegKitConfig::setFontDirectoryList(const std::list<std::strin
     }
 }
 
-std::shared_ptr<std::string> ffmpegkit::FFmpegKitConfig::registerNewFFmpegPipe() {
 #ifdef _WIN32
-    const char *parentDirectory = std::getenv("USERPROFILE");
-    if (parentDirectory == NULL) {
-        parentDirectory = std::getenv("TEMP");
-        if (parentDirectory == NULL) {
-            parentDirectory = ".";
+
+namespace {
+
+// A Windows named pipe connects each client to the server end, never two clients to each other.
+// Dart and ffmpeg both open a registered pipe by path, so a registered pipe is two server
+// instances plus a thread relaying bytes between their clients.
+//
+// Every pipe handle is overlapped: on a synchronous handle a pending ReadFile blocks all other
+// I/O on that handle, so relaying in both directions would deadlock.
+class FFmpegPipeRelay {
+public:
+    static std::shared_ptr<std::string> start(const std::string& pipeId);
+
+    ~FFmpegPipeRelay();
+
+    // Stops accepting clients without blocking. A transfer whose two clients are both connected
+    // still runs to completion, as after unlinking a FIFO.
+    void requestClose() {
+        SetEvent(closeEvent);
+    }
+
+private:
+    static constexpr DWORD BufferSize = 65536;
+
+    struct End {
+        HANDLE pipe = INVALID_HANDLE_VALUE;
+        OVERLAPPED connectIo{};
+        OVERLAPPED readIo{};
+        OVERLAPPED writeIo{};
+        bool listening = false;
+        bool connected = false;
+        bool reading = false;
+        bool writing = false;
+        bool hungUp = false;
+        bool failed = false;
+        bool sentData = false;
+        // Bytes read from this end's client that the other end's client has not been sent yet.
+        DWORD buffered = 0;
+        DWORD offset = 0;
+        char buffer[BufferSize];
+    };
+
+    struct Starting {
+        std::shared_ptr<FFmpegPipeRelay> relay;
+        std::promise<bool> listening;
+    };
+
+    explicit FFmpegPipeRelay(const std::string& path) : path(path) {}
+
+    static unsigned __stdcall runThread(void* starting);
+    bool create(const std::string& pipeName);
+    void run(std::promise<bool> listening);
+    bool listen(int i);
+    void stopListening(int i);
+    void startRead(int i);
+    void startWrite(int from);
+    void onConnected(int i);
+    void onRead(int i);
+    void onWritten(int from);
+    void onHangUp(int i);
+    bool finished() const;
+    void shutDown();
+
+    const std::string path;
+    End ends[2];
+    HANDLE closeEvent = NULL;
+    bool closeRequested = false;
+};
+
+std::mutex ffmpegPipeRelayMutex;
+std::map<std::string, std::shared_ptr<FFmpegPipeRelay>> ffmpegPipeRelays;
+
+// The default named pipe DACL grants read access to Everyone.
+PSECURITY_DESCRIPTOR createCurrentUserOnlySecurityDescriptor() {
+    HANDLE token = NULL;
+    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &token)) {
+        return NULL;
+    }
+    DWORD size = 0;
+    GetTokenInformation(token, TokenUser, NULL, 0, &size);
+    std::vector<BYTE> user(size);
+    const bool queried = size > 0 && GetTokenInformation(token, TokenUser, user.data(), size, &size);
+    CloseHandle(token);
+
+    LPSTR sid = NULL;
+    if (!queried || !ConvertSidToStringSidA(reinterpret_cast<TOKEN_USER*>(user.data())->User.Sid, &sid)) {
+        return NULL;
+    }
+    const std::string sddl = std::string("D:P(A;;GA;;;") + sid + ")";
+    LocalFree(sid);
+
+    PSECURITY_DESCRIPTOR descriptor = NULL;
+    if (!ConvertStringSecurityDescriptorToSecurityDescriptorA(sddl.c_str(), SDDL_REVISION_1, &descriptor, NULL)) {
+        return NULL;
+    }
+    return descriptor;
+}
+
+std::shared_ptr<std::string> FFmpegPipeRelay::start(const std::string& pipeId) {
+    // Dart's File API fails to open \\.\pipe\ paths with ERROR_BAD_NETPATH. The \\?\pipe\ form
+    // names the same pipe and opens from both Dart and ffmpeg.
+    auto path = std::make_shared<std::string>("\\\\?\\pipe\\" + pipeId);
+    std::shared_ptr<FFmpegPipeRelay> relay(new FFmpegPipeRelay(*path));
+    if (!relay->create("\\\\.\\pipe\\" + pipeId)) {
+        return nullptr;
+    }
+
+    {
+        std::lock_guard<std::mutex> lock(ffmpegPipeRelayMutex);
+        ffmpegPipeRelays[*path] = relay;
+    }
+
+    auto starting = new Starting{relay, std::promise<bool>()};
+    std::future<bool> ready = starting->listening.get_future();
+    // std::thread::detach leaks the thread's handle with the MSYS2 GCC 16 toolchain these
+    // bundles are built with. A _beginthreadex thread keeps running after CloseHandle.
+    HANDLE thread = reinterpret_cast<HANDLE>(_beginthreadex(NULL, 0, runThread, starting, 0, NULL));
+    if (thread == NULL) {
+        std::cout << "Failed to register new FFmpeg pipe " << *path << ". Error: " << errno << "." << std::endl;
+        delete starting;
+        std::lock_guard<std::mutex> lock(ffmpegPipeRelayMutex);
+        ffmpegPipeRelays.erase(*path);
+        return nullptr;
+    }
+    CloseHandle(thread);
+
+    if (!ready.get()) {
+        return nullptr;
+    }
+    return path;
+}
+
+unsigned __stdcall FFmpegPipeRelay::runThread(void* starting) {
+    std::unique_ptr<Starting> owned(static_cast<Starting*>(starting));
+    owned->relay->run(std::move(owned->listening));
+    return 0;
+}
+
+FFmpegPipeRelay::~FFmpegPipeRelay() {
+    for (End& end : ends) {
+        if (end.pipe != INVALID_HANDLE_VALUE) {
+            CloseHandle(end.pipe);
+        }
+        for (HANDLE event : {end.connectIo.hEvent, end.readIo.hEvent, end.writeIo.hEvent}) {
+            if (event != NULL) {
+                CloseHandle(event);
+            }
         }
     }
+    if (closeEvent != NULL) {
+        CloseHandle(closeEvent);
+    }
+}
+
+bool FFmpegPipeRelay::create(const std::string& pipeName) {
+    PSECURITY_DESCRIPTOR descriptor = createCurrentUserOnlySecurityDescriptor();
+    if (descriptor == NULL) {
+        std::cout << "Failed to register new FFmpeg pipe " << pipeName << ". Error: " << GetLastError() << "." << std::endl;
+        return false;
+    }
+    SECURITY_ATTRIBUTES attributes = {sizeof(attributes), descriptor, FALSE};
+
+    closeEvent = CreateEventA(NULL, TRUE, FALSE, NULL);
+    bool created = closeEvent != NULL;
+    for (int i = 0; created && i < 2; i++) {
+        End& end = ends[i];
+        end.connectIo.hEvent = CreateEventA(NULL, TRUE, FALSE, NULL);
+        end.readIo.hEvent = CreateEventA(NULL, TRUE, FALSE, NULL);
+        end.writeIo.hEvent = CreateEventA(NULL, TRUE, FALSE, NULL);
+        end.pipe = CreateNamedPipeA(
+            pipeName.c_str(),
+            PIPE_ACCESS_DUPLEX | FILE_FLAG_OVERLAPPED | (i == 0 ? FILE_FLAG_FIRST_PIPE_INSTANCE : 0),
+            PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT | PIPE_REJECT_REMOTE_CLIENTS,
+            2,
+            BufferSize,
+            BufferSize,
+            0,
+            &attributes);
+        created = end.pipe != INVALID_HANDLE_VALUE && end.connectIo.hEvent != NULL && end.readIo.hEvent != NULL && end.writeIo.hEvent != NULL;
+    }
+    const DWORD error = GetLastError();
+    LocalFree(descriptor);
+
+    if (!created) {
+        std::cout << "Failed to register new FFmpeg pipe " << pipeName << ". Error: " << error << "." << std::endl;
+    }
+    return created;
+}
+
+void FFmpegPipeRelay::run(std::promise<bool> listening) {
+    const bool ready = listen(0) && listen(1);
+    if (!ready) {
+        std::cout << "Failed to register new FFmpeg pipe " << path << ". Error: " << GetLastError() << "." << std::endl;
+    }
+    listening.set_value(ready);
+
+    while (ready && !finished()) {
+        if (closeRequested) {
+            stopListening(0);
+            stopListening(1);
+            if (finished()) {
+                break;
+            }
+        }
+
+        for (int i = 0; i < 2; i++) {
+            if (ends[i].connected && !ends[i].reading && ends[i].buffered == 0) {
+                startRead(i);
+            }
+            if (ends[i].buffered > 0 && ends[1 - i].connected && !ends[1 - i].writing) {
+                startWrite(i);
+            }
+        }
+        if (finished()) {
+            break;
+        }
+
+        // A source is -1 for the close request, otherwise end * 3 + (0 connect, 1 read, 2 write).
+        HANDLE events[7];
+        int sources[7];
+        DWORD count = 0;
+        if (!closeRequested) {
+            events[count] = closeEvent;
+            sources[count++] = -1;
+        }
+        for (int i = 0; i < 2; i++) {
+            if (ends[i].listening) {
+                events[count] = ends[i].connectIo.hEvent;
+                sources[count++] = i * 3;
+            }
+            if (ends[i].reading) {
+                events[count] = ends[i].readIo.hEvent;
+                sources[count++] = i * 3 + 1;
+            }
+            if (ends[i].writing) {
+                events[count] = ends[i].writeIo.hEvent;
+                sources[count++] = i * 3 + 2;
+            }
+        }
+        if (count == 0) {
+            break;
+        }
+
+        const DWORD signaled = WaitForMultipleObjects(count, events, FALSE, INFINITE);
+        if (signaled >= WAIT_OBJECT_0 + count) {
+            break;
+        }
+        const int source = sources[signaled - WAIT_OBJECT_0];
+        if (source < 0) {
+            closeRequested = true;
+        } else if (source % 3 == 0) {
+            onConnected(source / 3);
+        } else if (source % 3 == 1) {
+            onRead(source / 3);
+        } else {
+            onWritten(1 - source / 3);
+        }
+    }
+
+    shutDown();
+
+    std::lock_guard<std::mutex> lock(ffmpegPipeRelayMutex);
+    auto registered = ffmpegPipeRelays.find(path);
+    if (registered != ffmpegPipeRelays.end() && registered->second.get() == this) {
+        ffmpegPipeRelays.erase(registered);
+    }
+}
+
+bool FFmpegPipeRelay::listen(int i) {
+    End& end = ends[i];
+    end.connected = false;
+    end.listening = false;
+    if (ConnectNamedPipe(end.pipe, &end.connectIo)) {
+        end.connected = true;
+        return true;
+    }
+    switch (GetLastError()) {
+        case ERROR_IO_PENDING:
+            end.listening = true;
+            return true;
+        case ERROR_PIPE_CONNECTED:
+            end.connected = true;
+            return true;
+        default:
+            return false;
+    }
+}
+
+void FFmpegPipeRelay::stopListening(int i) {
+    End& end = ends[i];
+    if (end.listening) {
+        DWORD transferred = 0;
+        CancelIoEx(end.pipe, &end.connectIo);
+        end.listening = false;
+        end.connected = GetOverlappedResult(end.pipe, &end.connectIo, &transferred, TRUE) != 0;
+    }
+}
+
+void FFmpegPipeRelay::startRead(int i) {
+    End& end = ends[i];
+    if (ReadFile(end.pipe, end.buffer, BufferSize, NULL, &end.readIo) || GetLastError() == ERROR_IO_PENDING) {
+        end.reading = true;
+    } else {
+        onHangUp(i);
+    }
+}
+
+void FFmpegPipeRelay::startWrite(int from) {
+    End& source = ends[from];
+    End& target = ends[1 - from];
+    if (WriteFile(target.pipe, source.buffer + source.offset, source.buffered, NULL, &target.writeIo) || GetLastError() == ERROR_IO_PENDING) {
+        target.writing = true;
+    } else {
+        onHangUp(1 - from);
+    }
+}
+
+void FFmpegPipeRelay::onConnected(int i) {
+    End& end = ends[i];
+    DWORD transferred = 0;
+    end.listening = false;
+    end.connected = GetOverlappedResult(end.pipe, &end.connectIo, &transferred, FALSE) != 0;
+    end.failed = !end.connected;
+}
+
+void FFmpegPipeRelay::onRead(int i) {
+    End& end = ends[i];
+    DWORD transferred = 0;
+    end.reading = false;
+    if (!GetOverlappedResult(end.pipe, &end.readIo, &transferred, FALSE)) {
+        onHangUp(i);
+    } else if (transferred > 0) {
+        end.buffered = transferred;
+        end.offset = 0;
+        end.sentData = true;
+    }
+}
+
+void FFmpegPipeRelay::onWritten(int from) {
+    End& source = ends[from];
+    End& target = ends[1 - from];
+    DWORD transferred = 0;
+    target.writing = false;
+    if (GetOverlappedResult(target.pipe, &target.writeIo, &transferred, FALSE)) {
+        source.offset += transferred;
+        source.buffered -= transferred;
+    } else {
+        onHangUp(1 - from);
+    }
+}
+
+void FFmpegPipeRelay::onHangUp(int i) {
+    End& end = ends[i];
+    end.connected = false;
+    // A client that leaves before any data has flowed hands its instance to the next opener
+    // instead of ending the transfer. GetFileAttributes on the path, for one, connects and
+    // leaves at once.
+    if (!ends[0].sentData && !ends[1].sentData && !closeRequested) {
+        DisconnectNamedPipe(end.pipe);
+        end.failed = !listen(i);
+        return;
+    }
+    end.hungUp = true;
+}
+
+// A writer's hang-up is only seen once its pipe is drained and everything it sent has been
+// written to the reader, so either client hanging up ends the transfer without losing data.
+bool FFmpegPipeRelay::finished() const {
+    for (const End& end : ends) {
+        if (end.failed || end.hungUp) {
+            return true;
+        }
+    }
+    return closeRequested && !(ends[0].connected && ends[1].connected);
+}
+
+void FFmpegPipeRelay::shutDown() {
+    auto cancel = [](HANDLE pipe, OVERLAPPED& io, bool& pending) {
+        if (pending) {
+            DWORD transferred = 0;
+            CancelIoEx(pipe, &io);
+            GetOverlappedResult(pipe, &io, &transferred, TRUE);
+            pending = false;
+        }
+    };
+    for (End& end : ends) {
+        cancel(end.pipe, end.connectIo, end.listening);
+        cancel(end.pipe, end.readIo, end.reading);
+        cancel(end.pipe, end.writeIo, end.writing);
+    }
+    // CloseHandle, unlike DisconnectNamedPipe, leaves bytes the client has not read yet in the
+    // pipe, so the reader drains them before it sees end of file.
+    for (End& end : ends) {
+        CloseHandle(end.pipe);
+        end.pipe = INVALID_HANDLE_VALUE;
+    }
+}
+
+}
+
+#endif
+
+std::shared_ptr<std::string> ffmpegkit::FFmpegKitConfig::registerNewFFmpegPipe() {
+#ifdef _WIN32
+    std::random_device entropy;
+    char suffix[17];
+    snprintf(suffix, sizeof(suffix), "%08x%08x", entropy(), entropy());
+    return FFmpegPipeRelay::start(FFmpegKitNamedPipePrefix + std::to_string(GetCurrentProcessId()) + "_" + std::to_string(pipeIndexGenerator++) + "_" + suffix);
 #else
     const char *parentDirectory = std::getenv("HOME");
     if (parentDirectory == NULL) {
@@ -815,7 +1220,6 @@ std::shared_ptr<std::string> ffmpegkit::FFmpegKitConfig::registerNewFFmpegPipe()
             parentDirectory = ".";
         }
     }
-#endif
 
     std::string cacheDir = std::string(parentDirectory) + "/.cache";
     std::string ffmpegKitDir = cacheDir + "/ffmpegkit";
@@ -825,28 +1229,6 @@ std::shared_ptr<std::string> ffmpegkit::FFmpegKitConfig::registerNewFFmpegPipe()
         return nullptr;
     }
 
-#ifdef _WIN32
-    std::string pipeName = std::string("\\\\.\\pipe\\") + FFmpegKitNamedPipePrefix + std::to_string(pipeIndexGenerator++);
-    std::shared_ptr<std::string> newFFmpegPipePath = std::make_shared<std::string>(pipeName);
-
-    HANDLE hPipe = CreateNamedPipeA(
-        pipeName.c_str(),
-        PIPE_ACCESS_DUPLEX,
-        PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT,
-        1,
-        65536,
-        65536,
-        0,
-        NULL);
-
-    if (hPipe == INVALID_HANDLE_VALUE) {
-        std::cout << "Failed to register new FFmpeg pipe " << pipeName << ". Error: " << GetLastError() << "." << std::endl;
-        return nullptr;
-    }
-
-    CloseHandle(hPipe);
-    return newFFmpegPipePath;
-#else
     std::shared_ptr<std::string> newFFmpegPipePath = std::make_shared<std::string>(pipesDir + "/" + FFmpegKitNamedPipePrefix + std::to_string(pipeIndexGenerator++));
 
     ffmpegkit::FFmpegKitConfig::closeFFmpegPipe(newFFmpegPipePath->c_str());
@@ -862,7 +1244,21 @@ std::shared_ptr<std::string> ffmpegkit::FFmpegKitConfig::registerNewFFmpegPipe()
 }
 
 void ffmpegkit::FFmpegKitConfig::closeFFmpegPipe(const std::string& ffmpegPipePath) {
+#ifdef _WIN32
+    std::shared_ptr<FFmpegPipeRelay> relay;
+    {
+        std::lock_guard<std::mutex> lock(ffmpegPipeRelayMutex);
+        auto registered = ffmpegPipeRelays.find(ffmpegPipePath);
+        if (registered == ffmpegPipeRelays.end()) {
+            return;
+        }
+        relay = registered->second;
+        ffmpegPipeRelays.erase(registered);
+    }
+    relay->requestClose();
+#else
     std::remove(ffmpegPipePath.c_str());
+#endif
 }
 
 std::string ffmpegkit::FFmpegKitConfig::getFFmpegVersion() {
