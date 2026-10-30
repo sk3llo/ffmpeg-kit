@@ -288,7 +288,10 @@ static void avutil_log_format_line(void *avcl, int level, const char *fmt, va_li
 
 static void avutil_log_sanitize(char *line) {
     while(*line){
-        if(*line < 0x08 || (*line > 0x0D && *line < 0x20))
+        // Compare as unsigned: char is signed on x86, so every UTF-8 byte >= 0x80
+        // would be negative, pass the < 0x08 test and be replaced.
+        const unsigned char c = (unsigned char)*line;
+        if(c < 0x08 || (c > 0x0D && c < 0x20))
             *line='?';
         line++;
     }
