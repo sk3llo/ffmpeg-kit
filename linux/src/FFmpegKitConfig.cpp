@@ -1233,7 +1233,10 @@ std::shared_ptr<ffmpegkit::Session> ffmpegkit::FFmpegKitConfig::getLastSession()
     std::unique_lock<std::recursive_mutex> lock(sessionMutex, std::defer_lock);
     lock.lock();
 
-    return sessionHistoryList.front();
+    if (sessionHistoryList.empty()) {
+        return nullptr;
+    }
+    return sessionHistoryList.back();
 }
 
 std::shared_ptr<ffmpegkit::Session> ffmpegkit::FFmpegKitConfig::getLastCompletedSession() {
