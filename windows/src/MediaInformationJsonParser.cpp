@@ -44,6 +44,10 @@ std::shared_ptr<ffmpegkit::MediaInformation> ffmpegkit::MediaInformationJsonPars
 
     if (document->HasParseError()) {
         throw std::runtime_error(GetParseError_En(document->GetParseError()));
+    } else if (!document->IsObject()) {
+        // RAPIDJSON_ASSERT is compiled out above, so member access on a
+        // non-object root reads invalid memory instead of failing.
+        throw std::runtime_error("ffprobe output is not a JSON object");
     } else {
         std::shared_ptr<std::vector<std::shared_ptr<ffmpegkit::StreamInformation>>> streams = std::make_shared<std::vector<std::shared_ptr<ffmpegkit::StreamInformation>>>();
         std::shared_ptr<std::vector<std::shared_ptr<ffmpegkit::Chapter>>> chapters = std::make_shared<std::vector<std::shared_ptr<ffmpegkit::Chapter>>>();

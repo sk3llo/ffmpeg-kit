@@ -44,6 +44,10 @@ std::shared_ptr<ffmpegkit::MediaInformation> ffmpegkit::MediaInformationJsonPars
 
     if (document->HasParseError()) {
         throw std::runtime_error(GetParseError_En(document->GetParseError()));
+    } else if (!document->IsObject()) {
+        // RAPIDJSON_ASSERT is compiled out above, so member access on a
+        // non-object root reads invalid memory instead of failing.
+        throw std::runtime_error("ffprobe output is not a JSON object");
     } else {
         std::shared_ptr<std::vector<std::shared_ptr<ffmpegkit::StreamInformation>>> streams = std::make_shared<std::vector<std::shared_ptr<ffmpegkit::StreamInformation>>>();
         std::shared_ptr<std::vector<std::shared_ptr<ffmpegkit::Chapter>>> chapters = std::make_shared<std::vector<std::shared_ptr<ffmpegkit::Chapter>>>();
@@ -53,7 +57,10 @@ std::shared_ptr<ffmpegkit::MediaInformation> ffmpegkit::MediaInformationJsonPars
             if (streamArray.IsArray()) {
                 for (rapidjson::SizeType i = 0; i < streamArray.Size(); i++) {
                     auto stream = std::make_shared<rapidjson::Value>();
-                    *stream = streamArray[i];
+                    // CopyFrom, NOT operator= : rapidjson assignment is a move that
+                    // would null out the element inside the document, breaking the
+                    // full-document serialization used by ffmpegkit_get_media_information_json.
+                    stream->CopyFrom(streamArray[i], document->GetAllocator());
                     streams->push_back(std::make_shared<ffmpegkit::StreamInformation>(stream));
                 }
             }
@@ -64,7 +71,8 @@ std::shared_ptr<ffmpegkit::MediaInformation> ffmpegkit::MediaInformationJsonPars
             if (chapterArray.IsArray()) {
                 for (rapidjson::SizeType i = 0; i < chapterArray.Size(); i++) {
                     auto chapter = std::make_shared<rapidjson::Value>();
-                    *chapter = chapterArray[i];
+                    // CopyFrom, NOT operator= — see the streams loop above.
+                    chapter->CopyFrom(chapterArray[i], document->GetAllocator());
                     chapters->push_back(std::make_shared<ffmpegkit::Chapter>(chapter));
                 }
             }

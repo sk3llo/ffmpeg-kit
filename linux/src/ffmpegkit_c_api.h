@@ -17,6 +17,11 @@ extern "C" {
 
 #include <stdint.h>
 
+// No C++ exception crosses this API. A failed call returns the same value it
+// returns for an unknown session (NULL, -1 or 0) and ffmpegkit_get_last_error()
+// gives the reason. Strings returned here and log messages passed to the log
+// callback are valid UTF-8: invalid bytes from FFmpeg become U+FFFD.
+
 typedef void (*ffmpegkit_log_callback_t)(long session_id, int level, const char* message);
 typedef void (*ffmpegkit_statistics_callback_t)(long session_id, int video_frame_number,
     float video_fps, float video_quality, int64_t size, double time, double bitrate, double speed);
@@ -106,6 +111,11 @@ FFMPEGKIT_API void ffmpegkit_enable_statistics_callback(ffmpegkit_statistics_cal
 FFMPEGKIT_API void ffmpegkit_enable_ffmpeg_session_complete_callback(ffmpegkit_session_complete_callback_t callback);
 FFMPEGKIT_API void ffmpegkit_enable_ffprobe_session_complete_callback(ffmpegkit_session_complete_callback_t callback);
 FFMPEGKIT_API void ffmpegkit_enable_media_information_session_complete_callback(ffmpegkit_session_complete_callback_t callback);
+
+// The reason the last call on this thread failed, or NULL if it succeeded.
+// Every call except this one and ffmpegkit_free resets it. Free the result
+// with ffmpegkit_free.
+FFMPEGKIT_API char* ffmpegkit_get_last_error();
 
 // Memory management - must free all returned char* through this function
 FFMPEGKIT_API void ffmpegkit_free(void* ptr);
