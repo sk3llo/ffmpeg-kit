@@ -3186,7 +3186,11 @@ static int show_stream(WriterContext *w, AVFormatContext *fmt_ctx, int stream_id
     if (do_show_stream_tags)
         ret = show_tags(w, stream->metadata, in_program ? SECTION_ID_PROGRAM_STREAM_TAGS : SECTION_ID_STREAM_TAGS);
 
-    /* Stream side data disabled - AVStream side data API removed in FFmpeg 7.x */
+    if (stream->codecpar->nb_coded_side_data) {
+        print_pkt_side_data(w, stream->codecpar, stream->codecpar->coded_side_data, stream->codecpar->nb_coded_side_data,
+                            SECTION_ID_STREAM_SIDE_DATA_LIST,
+                            SECTION_ID_STREAM_SIDE_DATA);
+    }
 
     writer_print_section_footer(w);
     av_bprint_finalize(&pbuf, NULL);
