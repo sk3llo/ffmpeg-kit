@@ -1,6 +1,9 @@
 FFmpegKit 8.1.2 for iOS and macOS, "min" variant
 GitHub release 8.1.2-min (https://github.com/sk3llo/ffmpeg_kit_flutter/releases/tag/8.1.2-min):
-  ffmpeg-kit-ios-min-8.1.2.zip  sha256:7564f4715ce5d3eaad177a737d9f840b2cafcda41d621f950b1ee312c88939fa
+  ffmpeg-kit-ios-min-8.1.2.zip  sha256:de338cc8b98f32c6e8e35a60c913247f3f60fbc38634edcf7923259240803b9d
+    Re-uploaded 2026-10-05 without 245 AppleDouble ("._") metadata files.
+    Every other file is identical to the first upload, which was
+    sha256:7564f4715ce5d3eaad177a737d9f840b2cafcda41d621f950b1ee312c88939fa
   Swift Package Manager XCFrameworks (ios-arm64, ios-arm64_x86_64-simulator,
   macos-arm64_x86_64):
     ffmpegkit.xcframework.zip  sha256:3758f051a89f67442eeb17aa9f2e0aa3386a966338deb09dd2e6769aba4b7972
