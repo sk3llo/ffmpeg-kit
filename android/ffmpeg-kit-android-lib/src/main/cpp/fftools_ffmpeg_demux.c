@@ -572,12 +572,17 @@ static int guess_input_channel_layout(InputStream *ist)
     return 1;
 }
 
+/* Writes into st->codecpar, so it must run before add_input_streams() copies
+ * codecpar into the decoder context and ist->par: decoding (autorotate) and
+ * stream copy only see the matrix through those copies. */
 static void add_display_matrix_to_stream(const OptionsContext *o,
                                          AVFormatContext *ctx, AVStream *st)
 {
     double rotation = DBL_MAX;
     int hflip = -1, vflip = -1;
     int hflip_set = 0, vflip_set = 0, rotation_set = 0;
+    AVPacketSideData *sd;
+    int32_t *buf;
 
     MATCH_PER_STREAM_OPT(display_rotations, dbl, rotation, ctx, st);
     MATCH_PER_STREAM_OPT(display_hflips,    i,   hflip,    ctx, st);
@@ -587,13 +592,25 @@ static void add_display_matrix_to_stream(const OptionsContext *o,
     hflip_set    = hflip != -1;
     vflip_set    = vflip != -1;
 
-    /* Display matrix side data disabled - av_stream_new_side_data removed in FFmpeg 7.x */
     if (!rotation_set && !hflip_set && !vflip_set)
         return;
 
-    /* Display transformation would be applied here, but AVStream side data API was removed */
-    av_log(NULL, AV_LOG_WARNING, 
-           "Display transformation (rotation/flip) not supported with FFmpeg 7.x - AVStream side data API removed\n");
+    sd = av_packet_side_data_new(&st->codecpar->coded_side_data,
+                                 &st->codecpar->nb_coded_side_data,
+                                 AV_PKT_DATA_DISPLAYMATRIX,
+                                 sizeof(int32_t) * 9, 0);
+    if (!sd) {
+        av_log(NULL, AV_LOG_FATAL, "Failed to generate a display matrix!\n");
+        exit_program(1);
+    }
+
+    buf = (int32_t *)sd->data;
+    av_display_rotation_set(buf,
+                            rotation_set ? -(rotation) : -0.0f);
+
+    av_display_matrix_flip(buf,
+                           hflip_set ? hflip : 0,
+                           vflip_set ? vflip : 0);
 }
 
 /* Add all the streams from the given input file to the demuxer */
