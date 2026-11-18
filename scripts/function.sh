@@ -2,6 +2,11 @@
 
 source "${BASEDIR}"/scripts/source.sh
 
+# CMake 4 refuses to configure projects whose cmake_minimum_required predates
+# 3.5 (soxr, libjpeg-turbo and others still declare 2.8). This raises their
+# policy floor without editing the library sources.
+export CMAKE_POLICY_VERSION_MINIMUM=3.5
+
 get_arch_name() {
   case $1 in
   0) echo "arm-v7a" ;; # android
