@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# THE BUILD EDITS CMakeLists.txt; START FROM THE UPSTREAM FILE EVERY TIME
+git -C "${BASEDIR}"/src/"${LIB_NAME}" checkout source/CMakeLists.txt 1>>"${BASEDIR}"/build.log 2>&1 || return 1
+
 # SET BUILD OPTIONS
 ASM_OPTIONS=""
 case ${ARCH} in
