@@ -9,6 +9,13 @@ arm*)
 i386)
   ASM_OPTIONS="-DARCH_X86=1 -DENABLE_SSE=0 -DHAVE_SSE=0 -DENABLE_SSE3=0 -DHAVE_SSE3=0"
   ;;
+x86-64*)
+  # libaom writes its x86 assembly as Mach-O only when CMAKE_SYSTEM_NAME is
+  # Darwin. For iOS it writes ELF objects, and libaom.a is cut off at the first.
+  if [[ ${FFMPEG_KIT_BUILD_TYPE} != "macos" ]]; then
+    ASM_OPTIONS="-DAOM_TARGET_CPU=generic"
+  fi
+  ;;
 esac
 
 mkdir -p "${BUILD_DIR}" || return 1
