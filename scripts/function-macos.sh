@@ -50,10 +50,11 @@ When compilation ends, libraries are created under the prebuilt folder.\n"
 }
 
 enable_main_build() {
-  if [[ $(compare_versions "$DETECTED_MACOS_SDK_VERSION" "10.15") -le 0 ]]; then
+  # Current SDKs' libc++ supports macOS 11.0 and later; it rejects older targets.
+  if [[ $(compare_versions "$DETECTED_MACOS_SDK_VERSION" "11.0") -le 0 ]]; then
     export MACOS_MIN_VERSION=$DETECTED_MACOS_SDK_VERSION
   else
-    export MACOS_MIN_VERSION=10.15
+    export MACOS_MIN_VERSION=11.0
   fi
 }
 
