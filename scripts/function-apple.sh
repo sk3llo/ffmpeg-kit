@@ -1142,10 +1142,9 @@ c = '$CC'
 cpp = '$CXX'
 ar = '$AR'
 strip = '$STRIP'
-pkgconfig = 'pkg-config'
+pkg-config = 'pkg-config'
 
 [properties]
-sys_root = '$SDK_PATH'
 has_function_printf = true
 
 [host_machine]
