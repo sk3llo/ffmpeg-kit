@@ -40,9 +40,9 @@ get_library_source() {
     SOURCE_TYPE="TAG"
     ;;
   fontconfig)
-    SOURCE_REPO_URL="https://github.com/arthenica/fontconfig"
-    SOURCE_ID="2.18.3"
-    SOURCE_TYPE="TAG"
+    SOURCE_REPO_URL="https://gitlab.freedesktop.org/api/v4/projects/890/packages/generic/fontconfig/2.18.4/fontconfig-2.18.4.tar.xz"
+    SOURCE_ID="95013637eff5f81d4871dd16cd098c273264c16d0f9f0b27cc43b81b2794bee3"
+    SOURCE_TYPE="TARBALL"
     ;;
   freetype)
     SOURCE_REPO_URL="https://github.com/arthenica/freetype2"
