@@ -201,6 +201,8 @@ run_variant() {
   case "$platform" in
     ios|macos)
       flags="$(apple_flags "$variant" "$platform")" || { echo "  SKIP $variant (unknown)"; return 0; }
+      # The App Store rejects arm64e slices (#164), and the plugin strips them.
+      [ "$platform" = ios ] && flags="$flags --disable-arm64e"
       reset_apple_ffmpeg_script
       case "$variant" in https|https-gpl) ensure_apple_gnutls ;; esac
       echo ">>> [$platform/$variant] $SUDO ./$platform.sh $flags"
