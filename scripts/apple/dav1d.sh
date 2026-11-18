@@ -8,11 +8,12 @@ create_mason_cross_file "$CROSS_FILE" || return 1
 # ALWAYS CLEAN THE PREVIOUS BUILD
 rm -rf "${BUILD_DIR}" || return 1
 
-meson "${BUILD_DIR}" \
+meson setup "${BUILD_DIR}" \
   --cross-file="$CROSS_FILE" \
+  --buildtype=release \
   -Db_lto=false \
-  -Db_ndebug=false \
-  -Denable_asm=false \
+  -Db_ndebug=if-release \
+  -Denable_asm=true \
   -Denable_tools=false \
   -Denable_examples=false \
   -Denable_tests=false || return 1
