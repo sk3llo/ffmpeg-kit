@@ -18,7 +18,7 @@
 # Environment overrides:
 #   SUDO=                 run the platform scripts without sudo (default: sudo)
 #   ANDROID_SDK_ROOT=...  default: $HOME/Library/Android/sdk
-#   ANDROID_NDK_ROOT=...  default: $ANDROID_SDK_ROOT/ndk/29.0.13113456
+#   ANDROID_NDK_ROOT=...  default: $ANDROID_SDK_ROOT/ndk/29.0.14206865 (NDK r29)
 #   ANDROID_DISABLE_ABIS="--disable-arm-v7a --disable-arm-v7a-neon --disable-x86 --disable-x86-64"
 #                         restrict Android ABIs (default: empty = build all 4)
 #   NO_GNUTLS_TOGGLE=1    do not auto-uncomment gnutls in scripts/apple/ffmpeg.sh
@@ -42,7 +42,7 @@ BASEDIR="$(pwd)"
 ALL_VARIANTS="min min-gpl https https-gpl audio video full full-gpl"
 : "${SUDO=sudo}"   # use '=' not ':=' so an explicit empty SUDO= (run without sudo) is honored
 : "${ANDROID_SDK_ROOT:=$HOME/Library/Android/sdk}"
-: "${ANDROID_NDK_ROOT:=$ANDROID_SDK_ROOT/ndk/29.0.13113456}"
+: "${ANDROID_NDK_ROOT:=$ANDROID_SDK_ROOT/ndk/29.0.14206865}"
 : "${ANDROID_DISABLE_ABIS:=}"
 : "${NO_GNUTLS_TOGGLE:=}"
 
