@@ -338,13 +338,9 @@ for library in {0..61}; do
       CONFIGURE_POSTFIX+=" --enable-libx264"
       ;;
     x265)
-      if [ "$ARCH" = "x86-64" ]; then
-        echo "INFO: Skipping libx265 for x86_64 architecture."
-      else
-        FFMPEG_CFLAGS+=" $(pkg-config --cflags x265 2>>"${BASEDIR}"/build.log)"
-        FFMPEG_LDFLAGS+=" $(pkg-config --libs --static x265 2>>"${BASEDIR}"/build.log)"
-        CONFIGURE_POSTFIX+=" --enable-libx265"
-      fi
+      FFMPEG_CFLAGS+=" $(pkg-config --cflags x265 2>>"${BASEDIR}"/build.log)"
+      FFMPEG_LDFLAGS+=" $(pkg-config --libs --static x265 2>>"${BASEDIR}"/build.log)"
+      CONFIGURE_POSTFIX+=" --enable-libx265"
       ;;
     xvidcore)
       FFMPEG_CFLAGS+=" $(pkg-config --cflags xvidcore 2>>"${BASEDIR}"/build.log)"
