@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# UPDATE BUILD FLAGS
-export SNDFILE_CFLAGS="$(pkg-config --cflags sndfile)"
-export SNDFILE_LIBS="$(pkg-config --libs --static sndfile)"
-
 # ALWAYS CLEAN THE PREVIOUS BUILD
 make distclean 2>/dev/null 1>/dev/null
 

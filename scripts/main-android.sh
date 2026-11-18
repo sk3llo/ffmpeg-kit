@@ -131,7 +131,7 @@ while [ ${#enabled_library_list[@]} -gt $completed ]; do
       fi
       ;;
     rubberband)
-      if [[ $OK_libsndfile -eq 1 ]] && [[ $OK_libsamplerate -eq 1 ]]; then
+      if [[ $OK_libsamplerate -eq 1 ]]; then
         run=1
       fi
       ;;
@@ -147,11 +147,6 @@ while [ ${#enabled_library_list[@]} -gt $completed ]; do
       ;;
     tiff)
       if [[ $OK_jpeg -eq 1 ]]; then
-        run=1
-      fi
-      ;;
-    twolame)
-      if [[ $OK_libsndfile -eq 1 ]]; then
         run=1
       fi
       ;;
