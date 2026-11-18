@@ -1161,9 +1161,6 @@ set_library() {
     ENABLED_LIBRARIES[LIBRARY_LIBOGG]=$2
     set_library "libvorbis" $2
     ;;
-  libuuid)
-    ENABLED_LIBRARIES[LIBRARY_LIBUUID]=$2
-    ;;
   libvidstab)
     ENABLED_LIBRARIES[LIBRARY_LIBVIDSTAB]=$2
     ;;
@@ -1249,7 +1246,7 @@ set_library() {
   zimg)
     ENABLED_LIBRARIES[LIBRARY_ZIMG]=$2
     ;;
-  expat | giflib | jpeg | leptonica | libogg | libsamplerate | libsndfile)
+  expat | giflib | jpeg | leptonica | libogg | libsamplerate | libsndfile | libuuid)
     # THESE LIBRARIES ARE NOT ENABLED DIRECTLY
     ;;
   nettle)
