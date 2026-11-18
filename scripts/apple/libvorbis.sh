@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ALWAYS CLEAN THE PREVIOUS BUILD
-sudo make distclean 2>/dev/null 1>/dev/null
+make distclean 2>/dev/null 1>/dev/null
 
 # WORKAROUNDS
 # -mno-ieee-fp OPTION IS NOT COMPATIBLE WITH clang. REMOVING IT

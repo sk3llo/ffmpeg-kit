@@ -14,7 +14,7 @@ if [[ ${ARCH} == "arm-v7a" ]] || [[ ${ARCH} == "arm-v7a-neon" ]]; then
 fi
 
 # ALWAYS CLEAN THE PREVIOUS BUILD
-sudo make distclean 2>/dev/null 1>/dev/null
+make distclean 2>/dev/null 1>/dev/null
 
 # REGENERATE BUILD FILES IF NECESSARY OR REQUESTED
 if [[ ! -f "${BASEDIR}"/src/"${LIB_NAME}"/configure ]] || [[ ${RECONF_libtheora} -eq 1 ]]; then

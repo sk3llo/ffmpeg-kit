@@ -5,7 +5,7 @@
 #./gitsub.sh pull || return 1
 
 # ALWAYS CLEAN THE PREVIOUS BUILD
-sudo make distclean 2>/dev/null 1>/dev/null
+make distclean 2>/dev/null 1>/dev/null
 
 # REGENERATE BUILD FILES IF NECESSARY OR REQUESTED
 if [[ ! -f "${BASEDIR}"/src/"${LIB_NAME}"/configure ]] || [[ ${RECONF_libiconv} -eq 1 ]]; then
@@ -22,9 +22,9 @@ fi
   --disable-rpath \
   --host="${HOST}" || return 1
 
-sudo make -j$(get_cpu_count) || return 1
+make -j$(get_cpu_count) || return 1
 
-sudo make install || return 1
+make install || return 1
 
 # CREATE PACKAGE CONFIG MANUALLY
 create_libiconv_package_config "1.18" || return 1
