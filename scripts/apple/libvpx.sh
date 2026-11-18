@@ -19,7 +19,9 @@ arm64*)
   # --enable-neon-asm option not added because it causes the following error
   # vpx_dsp/arm/intrapred_neon_asm.asm.S:653:26: error: vector register expected
   #    vst1.64
-  ASM_OPTIONS="--disable-runtime-cpu-detect --enable-neon"
+  # libvpx's Apple CPU detection checks only for dotprod and i8mm, so SVE code
+  # would never run.
+  ASM_OPTIONS="--enable-runtime-cpu-detect --enable-neon --disable-sve --disable-sve2"
   ;;
 i386)
   TARGET="x86-iphonesimulator-gcc"
@@ -44,13 +46,17 @@ make distclean 2>/dev/null 1>/dev/null
 
 # NOTE THAT RECONFIGURE IS NOT SUPPORTED
 
+git checkout build/make/configure.sh 1>>"${BASEDIR}"/build.log 2>&1 || return 1
+
 # WORKAROUND TO FIX BUILD OPTIONS DEFINED IN configure.sh
 case ${ARCH} in
 x86-64-mac-catalyst)
   overwrite_file "${BASEDIR}"/tools/patch/make/libvpx/configure.x86_64_mac_catalyst.sh "${BASEDIR}"/src/"${LIB_NAME}"/build/make/configure.sh || return 1
   ;;
 *)
-  overwrite_file "${BASEDIR}"/tools/patch/make/libvpx/configure.sh "${BASEDIR}"/src/"${LIB_NAME}"/build/make/configure.sh || return 1
+  # libvpx's darwin targets add the iPhoneOS SDK, -arch and a minimum iOS
+  # version of their own; the patch removes them so CFLAGS pick the platform.
+  git apply "${BASEDIR}"/tools/patch/make/libvpx/apple-sdk-flags.patch || return 1
   ;;
 esac
 

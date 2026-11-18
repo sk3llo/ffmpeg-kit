@@ -37,8 +37,7 @@ make distclean 2>/dev/null 1>/dev/null
 
 # NOTE THAT RECONFIGURE IS NOT SUPPORTED
 
-# WORKAROUND TO FIX BUILD OPTIONS DEFINED IN configure.sh
-overwrite_file "${BASEDIR}"/tools/patch/make/libvpx/configure.sh "${BASEDIR}"/src/"${LIB_NAME}"/build/make/configure.sh || return 1
+git checkout build/make/configure.sh 1>>"${BASEDIR}"/build.log 2>&1 || return 1
 
 ./configure \
   --prefix="${LIB_INSTALL_PREFIX}" \
