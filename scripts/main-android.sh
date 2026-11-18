@@ -61,7 +61,7 @@ while [ ${#enabled_library_list[@]} -gt $completed ]; do
     let run=0
     case $library in
     fontconfig)
-      if [[ $OK_libuuid -eq 1 ]] && [[ $OK_expat -eq 1 ]] && [[ $OK_libiconv -eq 1 ]] && [[ $OK_freetype -eq 1 ]]; then
+      if [[ $OK_expat -eq 1 ]] && [[ $OK_libiconv -eq 1 ]] && [[ $OK_freetype -eq 1 ]]; then
         run=1
       fi
       ;;
@@ -86,7 +86,7 @@ while [ ${#enabled_library_list[@]} -gt $completed ]; do
       fi
       ;;
     libass)
-      if [[ $OK_libuuid -eq 1 ]] && [[ $OK_expat -eq 1 ]] && [[ $OK_libiconv -eq 1 ]] && [[ $OK_freetype -eq 1 ]] && [[ $OK_fribidi -eq 1 ]] && [[ $OK_fontconfig -eq 1 ]] && [[ $OK_libpng -eq 1 ]] && [[ $OK_harfbuzz -eq 1 ]]; then
+      if [[ $OK_expat -eq 1 ]] && [[ $OK_libiconv -eq 1 ]] && [[ $OK_freetype -eq 1 ]] && [[ $OK_fribidi -eq 1 ]] && [[ $OK_fontconfig -eq 1 ]] && [[ $OK_libpng -eq 1 ]] && [[ $OK_harfbuzz -eq 1 ]]; then
         run=1
       fi
       ;;
