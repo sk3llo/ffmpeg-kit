@@ -46,6 +46,7 @@ cmake -Wno-dev \
   ${ASM_OPTIONS} \
   -DENABLE_TESTS=0 \
   -DENABLE_EXAMPLES=0 \
+  -DENABLE_APPS=0 \
   -DENABLE_TOOLS=0 \
   -DCONFIG_UNIT_TESTS=0 \
   -DCMAKE_SYSTEM_PROCESSOR="$(get_target_cpu)" \
