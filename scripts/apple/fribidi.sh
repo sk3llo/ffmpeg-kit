@@ -20,7 +20,9 @@ fi
   --host="${HOST}" || return 1
 
 # WORKAROUND TO DISABLE BUILDING OF doc FOLDER (doc depends on c2man which is not available on all platforms)
-${SED_INLINE} 's/ doc / /g' "${BASEDIR}"/src/"${LIB_NAME}"/Makefile || return 1
+# bin/ builds the fribidi command-line tool, which isn't shipped. On a native
+# macOS build (arm64 on an arm64 Mac) it also runs help2man on that tool.
+${SED_INLINE} -e 's/ bin / /g' -e 's/ doc / /g' "${BASEDIR}"/src/"${LIB_NAME}"/Makefile || return 1
 
 make -j$(get_cpu_count) || return 1
 
