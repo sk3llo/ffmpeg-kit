@@ -97,13 +97,15 @@ i386)
   ;;
 x86-64)
   TARGET_CPU="x86-64"
-  TARGET_ARCH="x86-64"
+  # FFmpeg's configure knows this arch only as x86_64. Given x86-64 it warns
+  # "unknown architecture" and compiles none of its x86 code.
+  TARGET_ARCH="x86_64"
   ASM_OPTIONS=" --disable-neon --enable-asm"
   BITCODE_FLAGS=""
   ;;
 x86-64-mac-catalyst)
   TARGET_CPU="x86-64"
-  TARGET_ARCH="x86-64"
+  TARGET_ARCH="x86_64"
   ASM_OPTIONS=" --disable-neon --enable-asm"
   BITCODE_FLAGS="-fembed-bitcode -Wc,-fembed-bitcode"
   ;;
