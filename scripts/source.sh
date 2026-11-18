@@ -4,6 +4,9 @@
 # 1. library name
 # 2. source type 1/2/3
 #
+# SOURCE_TYPE is TAG, COMMIT or TARBALL. For TARBALL, SOURCE_REPO_URL is the
+# release tarball and SOURCE_ID its sha256; the download is refused on a mismatch.
+#
 get_library_source() {
   case $1 in
   config)
@@ -62,9 +65,9 @@ get_library_source() {
     SOURCE_TYPE="TAG"
     ;;
   gnutls)
-    SOURCE_REPO_URL="https://github.com/arthenica/gnutls"
-    SOURCE_ID="3.8.13"
-    SOURCE_TYPE="TAG"
+    SOURCE_REPO_URL="https://www.gnupg.org/ftp/gcrypt/gnutls/v3.8/gnutls-3.8.13.tar.xz"
+    SOURCE_ID="ffed8ec1bf09c2426d4f14aae377de4753b53e537d685e604e99a8b16ca9c97e"
+    SOURCE_TYPE="TARBALL"
     ;;
   harfbuzz)
     SOURCE_REPO_URL="https://github.com/arthenica/harfbuzz"
@@ -102,9 +105,9 @@ get_library_source() {
     SOURCE_TYPE="TAG"
     ;;
   libiconv)
-    SOURCE_REPO_URL="https://github.com/arthenica/libiconv"
-    SOURCE_ID="v1.19.1"
-    SOURCE_TYPE="TAG"
+    SOURCE_REPO_URL="https://ftp.gnu.org/gnu/libiconv/libiconv-1.19.1.tar.gz"
+    SOURCE_ID="9a06844846d664d7122161700c10a64480d7c7bcead3091925a785b38c91edab"
+    SOURCE_TYPE="TARBALL"
     ;;
   libilbc)
     SOURCE_REPO_URL="https://github.com/arthenica/libilbc"
@@ -167,9 +170,9 @@ get_library_source() {
     SOURCE_TYPE="TAG"
     ;;
   nettle)
-    SOURCE_REPO_URL="https://github.com/arthenica/nettle"
-    SOURCE_ID="nettle_3.10.2_release_20250626"
-    SOURCE_TYPE="TAG"
+    SOURCE_REPO_URL="https://ftp.gnu.org/gnu/nettle/nettle-3.10.2.tar.gz"
+    SOURCE_ID="fe9ff51cb1f2abb5e65a6b8c10a92da0ab5ab6eaf26e7fc2b675c45f1fb519b5"
+    SOURCE_TYPE="TARBALL"
     ;;
   opencore-amr)
     SOURCE_REPO_URL="https://github.com/arthenica/opencore-amr"

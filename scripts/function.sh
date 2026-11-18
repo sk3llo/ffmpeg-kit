@@ -2024,6 +2024,48 @@ clone_git_repository_with_tag() {
 }
 
 #
+# 1. <tarball url>
+# 2. <sha256 of the tarball>
+# 3. <local folder path>
+#
+download_tarball() {
+  local RC
+  local TARBALL
+
+  (mkdir -p "$3" 1>>"${BASEDIR}"/build.log 2>&1)
+
+  RC=$?
+
+  if [ ${RC} -ne 0 ]; then
+    echo -e "\nINFO: Failed to create local directory $3\n" 1>>"${BASEDIR}"/build.log 2>&1
+    rm -rf "$3" 1>>"${BASEDIR}"/build.log 2>&1
+    echo ${RC}
+    return
+  fi
+
+  TARBALL="$(dirname "$3")/.$(basename "$1")"
+
+  echo -e "INFO: Downloading $1 into local directory $3\n" 1>>"${BASEDIR}"/build.log 2>&1
+
+  (curl -fsSL -o "${TARBALL}" "$1" &&
+    echo "$2  ${TARBALL}" | shasum -a 256 -c - &&
+    tar -xf "${TARBALL}" -C "$3" --strip-components=1) 1>>"${BASEDIR}"/build.log 2>&1
+
+  RC=$?
+
+  rm -f "${TARBALL}" 1>>"${BASEDIR}"/build.log 2>&1
+
+  if [ ${RC} -ne 0 ]; then
+    echo -e "\nINFO: Failed to download, verify or unpack $1\n" 1>>"${BASEDIR}"/build.log 2>&1
+    rm -rf "$3" 1>>"${BASEDIR}"/build.log 2>&1
+    echo ${RC}
+    return
+  fi
+
+  echo ${RC}
+}
+
+#
 # 1. library index
 #
 is_gpl_licensed() {
@@ -2135,6 +2177,8 @@ download_library_source() {
 
   if [ "${SOURCE_TYPE}" == "TAG" ]; then
     DOWNLOAD_RC=$(clone_git_repository_with_tag "${SOURCE_REPO_URL}" "${SOURCE_ID}" "${LIB_LOCAL_PATH}")
+  elif [ "${SOURCE_TYPE}" == "TARBALL" ]; then
+    DOWNLOAD_RC=$(download_tarball "${SOURCE_REPO_URL}" "${SOURCE_ID}" "${LIB_LOCAL_PATH}")
   else
     DOWNLOAD_RC=$(clone_git_repository_with_commit_id "${SOURCE_REPO_URL}" "${LIB_LOCAL_PATH}" "${SOURCE_ID}")
   fi
