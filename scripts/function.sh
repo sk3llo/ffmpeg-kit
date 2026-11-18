@@ -1104,7 +1104,6 @@ set_library() {
     ENABLED_LIBRARIES[LIBRARY_FONTCONFIG]=$2
     ENABLED_LIBRARIES[LIBRARY_EXPAT]=$2
     set_virtual_library "libiconv" $2
-    set_virtual_library "libuuid" $2
     set_library "freetype" $2
     ;;
   freetype)
@@ -1141,7 +1140,6 @@ set_library() {
   libass)
     ENABLED_LIBRARIES[LIBRARY_LIBASS]=$2
     ENABLED_LIBRARIES[LIBRARY_EXPAT]=$2
-    set_virtual_library "libuuid" $2
     set_library "freetype" $2
     set_library "fribidi" $2
     set_library "fontconfig" $2

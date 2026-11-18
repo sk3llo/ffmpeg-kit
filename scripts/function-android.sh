@@ -545,7 +545,7 @@ cachedir=\${localstatedir}/cache/\${PACKAGE}
 Name: Fontconfig
 Description: Font configuration and customization library
 Version: ${FONTCONFIG_VERSION}
-Requires:  freetype2 >= 21.0.15, uuid, expat >= 2.2.0, libiconv
+Requires:  freetype2 >= 21.0.15, expat >= 2.2.0, libiconv
 Requires.private:
 Libs: -L\${libdir} -lfontconfig
 Libs.private:
