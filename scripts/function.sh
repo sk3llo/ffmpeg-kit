@@ -1786,10 +1786,12 @@ get_external_library_license_path() {
   19) echo "${BASEDIR}/src/$(get_library_name "$1")/$(get_library_name "$1")/LICENSE" ;;
   26) echo "${BASEDIR}/src/$(get_library_name "$1")/COPYING.LGPL" ;;
   28 | 38) echo "${BASEDIR}/src/$(get_library_name "$1")/LICENSE.md " ;;
-  30) echo "${BASEDIR}/src/$(get_library_name "$1")/COPYING.txt" ;;
-  43) echo "${BASEDIR}/src/$(get_library_name "$1")/COPYRIGHT" ;;
+  30) echo "${BASEDIR}/src/$(get_library_name "$1")/LICENSE.txt" ;;
+  43) echo "${BASEDIR}/src/$(get_library_name "$1")/LICENSE.md" ;;
   46) echo "${BASEDIR}/src/$(get_library_name "$1")/leptonica-license.txt" ;;
-  4 | 10 | 13 | 17 | 21 | 27 | 31 | 32 | 36 | 40 | 49) echo "${BASEDIR}/src/$(get_library_name "$1")/LICENSE" ;;
+  4) echo "${BASEDIR}/src/$(get_library_name "$1")/COPYING.LESSERv2" ;;
+  7) echo "${BASEDIR}/src/$(get_library_name "$1")/COPYING.LIB" ;;
+  10 | 13 | 17 | 21 | 27 | 31 | 32 | 36 | 40 | 49) echo "${BASEDIR}/src/$(get_library_name "$1")/LICENSE" ;;
   *) echo "${BASEDIR}/src/$(get_library_name "$1")/COPYING" ;;
   esac
 }
