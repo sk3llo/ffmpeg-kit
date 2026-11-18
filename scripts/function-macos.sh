@@ -175,7 +175,7 @@ get_app_specific_cflags() {
   soxr | snappy)
     APP_FLAGS="-std=gnu99 -Wno-unused-function -DPIC"
     ;;
-  openh264 | x265)
+  libvpx | openh264 | x265)
     APP_FLAGS="-Wno-unused-function"
     ;;
   *)
