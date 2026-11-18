@@ -6,9 +6,6 @@ case ${ARCH} in
 i386)
   HOST="x86-ios-darwin"
   ;;
-x86-64 | x86-64-mac-catalyst)
-  ASM_OPTIONS="--disable-asm"
-  ;;
 esac
 
 # ALWAYS CLEAN THE PREVIOUS BUILD

@@ -37,7 +37,7 @@ x86-64*)
     # CUSTOMIZED LIBVPX BUILD SCRIPTS (FOR tvOS, macOS) USE BUILD FLAGS SET BY FFMPEG KIT
     TARGET="x86_64-iphonesimulator-gcc"
   fi
-  ASM_OPTIONS="--enable-runtime-cpu-detect --disable-avx512 --disable-sse --disable-sse2 --disable-mmx"
+  ASM_OPTIONS="--enable-runtime-cpu-detect --disable-avx512"
   ;;
 esac
 

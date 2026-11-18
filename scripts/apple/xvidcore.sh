@@ -5,7 +5,7 @@ cd "${BASEDIR}"/src/"${LIB_NAME}"/"${LIB_NAME}"/build/generic || return 1
 # SET BUILD OPTIONS
 ASM_OPTIONS=""
 case ${ARCH} in
-i386 | x86-64*)
+i386)
   ASM_OPTIONS="--disable-assembly"
   ;;
 esac
