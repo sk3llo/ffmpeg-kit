@@ -46,4 +46,6 @@ make -j$(get_cpu_count) build_sw || return 1
 make install_sw install_ssldirs || return 1
 
 # MANUALLY COPY PKG-CONFIG FILES
-cp ./*.pc "${INSTALL_PKG_CONFIG_DIR}" || return 1
+# ./*.pc are OpenSSL's uninstalled files: they point into src/openssl, which
+# holds whichever architecture was built last.
+cp "${LIB_INSTALL_PREFIX}"/lib/pkgconfig/*.pc "${INSTALL_PKG_CONFIG_DIR}" || return 1
