@@ -5,8 +5,6 @@ ASM_OPTIONS=""
 DEBUG_OPTIONS=""
 case ${ARCH} in
 i386 | x86-64*)
-  ASM_OPTIONS="--disable-asm"
-
   if ! [ -x "$(command -v nasm)" ]; then
     echo -e "\n(*) nasm command not found\n"
     return 1
