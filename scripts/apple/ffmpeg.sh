@@ -196,13 +196,9 @@ for library in {0..61}; do
       CONFIGURE_POSTFIX+=" --enable-libaom"
       ;;
     libass)
-      if [ "$ARCH" = "x86-64" ] && [ "${FFMPEG_KIT_BUILD_TYPE}" = "macos" ]; then
-        echo "INFO: Skipping libass for x86_64 architecture."
-      else
-        FFMPEG_CFLAGS+=" $(pkg-config --cflags libass 2>>"${BASEDIR}"/build.log)"
-        FFMPEG_LDFLAGS+=" $(pkg-config --libs --static libass 2>>"${BASEDIR}"/build.log)"
-        CONFIGURE_POSTFIX+=" --enable-libass"
-      fi
+      FFMPEG_CFLAGS+=" $(pkg-config --cflags libass 2>>"${BASEDIR}"/build.log)"
+      FFMPEG_LDFLAGS+=" $(pkg-config --libs --static libass 2>>"${BASEDIR}"/build.log)"
+      CONFIGURE_POSTFIX+=" --enable-libass"
       ;;
     libilbc)
       FFMPEG_CFLAGS+=" $(pkg-config --cflags libilbc 2>>"${BASEDIR}"/build.log)"
@@ -235,13 +231,9 @@ for library in {0..61}; do
       CONFIGURE_POSTFIX+=" --enable-libwebp"
       ;;
     libxml2)
-      if [ "$ARCH" = "x86-64" ] && [  "${FFMPEG_KIT_BUILD_TYPE}" = "macos" ]; then
-        echo "INFO: Skipping libxml2 for x86_64 architecture."
-      else
-        FFMPEG_CFLAGS+=" $(pkg-config --cflags libxml-2.0 2>>"${BASEDIR}"/build.log)"
-        FFMPEG_LDFLAGS+=" $(pkg-config --libs --static libxml-2.0 2>>"${BASEDIR}"/build.log)"
-        CONFIGURE_POSTFIX+=" --enable-libxml2"
-      fi
+      FFMPEG_CFLAGS+=" $(pkg-config --cflags libxml-2.0 2>>"${BASEDIR}"/build.log)"
+      FFMPEG_LDFLAGS+=" $(pkg-config --libs --static libxml-2.0 2>>"${BASEDIR}"/build.log)"
+      CONFIGURE_POSTFIX+=" --enable-libxml2"
       ;;
     opencore-amr)
       FFMPEG_CFLAGS+=" $(pkg-config --cflags opencore-amrnb 2>>"${BASEDIR}"/build.log)"
@@ -303,13 +295,9 @@ for library in {0..61}; do
       CONFIGURE_POSTFIX+=" --enable-libspeex"
       ;;
     srt)
-      if [ "$ARCH" = "x86-64" ] && [  "${FFMPEG_KIT_BUILD_TYPE}" = "macos" ]; then
-        echo "INFO: Skipping srt for x86_64 architecture."
-      else
       FFMPEG_CFLAGS+=" $(pkg-config --cflags srt 2>>"${BASEDIR}"/build.log)"
       FFMPEG_LDFLAGS+=" $(pkg-config --libs --static srt 2>>"${BASEDIR}"/build.log)"
       CONFIGURE_POSTFIX+=" --enable-libsrt"
-      fi
       ;;
     tesseract)
       FFMPEG_CFLAGS+=" $(pkg-config --cflags tesseract 2>>"${BASEDIR}"/build.log)"
@@ -319,13 +307,9 @@ for library in {0..61}; do
       CONFIGURE_POSTFIX+=" --enable-libtesseract"
       ;;
     twolame)
-      if [ "$ARCH" = "x86-64" ] && [  "${FFMPEG_KIT_BUILD_TYPE}" = "macos" ]; then
-        echo "INFO: Skipping twolame for x86_64 architecture."
-      else
-        FFMPEG_CFLAGS+=" $(pkg-config --cflags twolame 2>>"${BASEDIR}"/build.log)"
-        FFMPEG_LDFLAGS+=" $(pkg-config --libs --static twolame 2>>"${BASEDIR}"/build.log)"
-        CONFIGURE_POSTFIX+=" --enable-libtwolame"
-      fi
+      FFMPEG_CFLAGS+=" $(pkg-config --cflags twolame 2>>"${BASEDIR}"/build.log)"
+      FFMPEG_LDFLAGS+=" $(pkg-config --libs --static twolame 2>>"${BASEDIR}"/build.log)"
+      CONFIGURE_POSTFIX+=" --enable-libtwolame"
       ;;
     vo-amrwbenc)
       FFMPEG_CFLAGS+=" $(pkg-config --cflags vo-amrwbenc 2>>"${BASEDIR}"/build.log)"
