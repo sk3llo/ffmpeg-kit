@@ -108,6 +108,8 @@ android_flags() {
 # provide the corresponding -dev packages.
 # zlib is requested for every variant: FFmpeg silently drops the PNG/APNG
 # decoders without it (same trap as #105 on the other platforms).
+# audio lists iconv itself, as on the other platforms: none of its libraries
+# pull it in.
 linux_flags() {
   local gpl="--enable-gpl --enable-linux-libvidstab --enable-x264 --enable-linux-x265 --enable-linux-xvidcore"
   local tls="--enable-linux-gmp --enable-linux-gnutls"
@@ -119,7 +121,7 @@ linux_flags() {
     min-gpl)    echo "$gpl $zlib" ;;
     https)      echo "$tls $zlib" ;;
     https-gpl)  echo "$gpl $tls $zlib" ;;
-    audio)      echo "$audio $zlib" ;;
+    audio)      echo "$audio --enable-linux-libiconv $zlib" ;;
     video)      echo "$video $zlib" ;;
     full)       echo "$video $audio $tls --enable-linux-libxml2 $zlib" ;;
     full-gpl)   echo "$video $audio $tls --enable-linux-libxml2 $gpl $zlib" ;;
