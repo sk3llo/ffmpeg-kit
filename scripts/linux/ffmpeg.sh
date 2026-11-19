@@ -38,12 +38,12 @@ TARGET_ARCH=""
 ASM_OPTIONS=""
 case ${ARCH} in
 x86-64)
-  # Hyphenated, matching scripts/apple/ffmpeg.sh. The Linux build uses clang
-  # (see get_build_host in function-linux.sh), and clang rejects the underscored
-  # alias: "error: unknown target CPU 'x86_64'". FFmpeg's configure normalises
-  # x86-64 -> x86_64 for --arch, so the hyphen is safe for both flags.
+  # The two names differ on purpose. --cpu takes clang's spelling: the Linux
+  # build uses clang (get_build_host in function-linux.sh), which rejects
+  # "x86_64" as a target CPU. --arch takes FFmpeg's: its configure doesn't know
+  # x86-64, warns "unknown architecture" and compiles none of its x86 code.
   TARGET_CPU="x86-64"
-  TARGET_ARCH="x86-64"
+  TARGET_ARCH="x86_64"
   ASM_OPTIONS=" --disable-neon --enable-asm --enable-inline-asm"
   ;;
 esac
