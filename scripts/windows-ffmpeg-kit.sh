@@ -9,7 +9,7 @@
 # linking against the FFmpeg shared DLLs (import libs in <install>/lib). FFmpeg
 # *internal* headers come from src/ffmpeg (must match the built FFmpeg version).
 #
-# Direct gcc/g++ build (no cmake) — robust in a bare MSYS2 MINGW64 shell.
+# Direct gcc/g++ build (no cmake) — robust in a bare MSYS2 UCRT64 shell.
 set -u
 
 WRAP_BASE="${BASEDIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
@@ -32,7 +32,7 @@ rm -rf "${OBJ_DIR}"; mkdir -p "${OBJ_DIR}"
 # Include order: wrapper src; FFmpeg generated headers (config.h / config_components.h
 # in the out-of-tree build dir); FFmpeg public headers (install); FFmpeg internal
 # headers (src tree — version must match); MinGW headers (external lib headers).
-INCS="-I${WRAP_SRC} -I${FFMPEG_BUILD} -I${INSTALL}/include -I${SRC_FFMPEG} -I/mingw64/include"
+INCS="-I${WRAP_SRC} -I${FFMPEG_BUILD} -I${INSTALL}/include -I${SRC_FFMPEG} -I${MSYSTEM_PREFIX}/include"
 [ -f "${FFMPEG_BUILD}/config.h" ] || echo "WARNING: ${FFMPEG_BUILD}/config.h not found — fftools need FFmpeg's generated config.h."
 DEFS="-DWIN32 -D_WIN32_WINNT=0x0A00 -DFFMPEGKIT_EXPORTS -D__STDC_CONSTANT_MACROS -DFFMPEG_KIT_BUILD_DATE=$(date +%Y%m%d)"
 # Arch define consumed by ArchDetect::getArch() (windows/src/ArchDetect.cpp).

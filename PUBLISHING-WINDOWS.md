@@ -1,45 +1,49 @@
-# Windows build (MSYS2 / MinGW) — FFmpeg 8.1.1
+# Windows build (MSYS2 UCRT64)
 
 Windows isn't officially supported by ffmpeg-kit; this is a custom path. External
-libraries come from **MSYS2 packages** (not built from source). `windows.sh`
-builds **FFmpeg 8.1.1 shared DLLs** and then the **FFmpegKit wrapper**
+libraries come from **MSYS2 UCRT64 packages** (not built from source), so every
+DLL links the Universal C Runtime (UCRT), which Windows 10 and later include.
+`windows.sh` builds **FFmpeg's shared DLLs** and then the **FFmpegKit wrapper**
 (`libffmpegkit.dll` — the `FFmpegKitConfig`/session API the Flutter plugin calls)
 via `scripts/windows-ffmpeg-kit.sh`. Set `SKIP_FFMPEGKIT_WRAPPER=1` to build only
 FFmpeg.
 
+`windows.sh` stops outside a UCRT64 shell: MSYS2's MINGW64 (msvcrt) repo no
+longer carries chromaprint, rubberband, twolame and vo-amrwbenc.
+
 ## 1. Environment
-Install **MSYS2** (https://www.msys2.org/) and open the **“MSYS2 MinGW x64”** shell
+Install **MSYS2** (https://www.msys2.org/) and open the **“MSYS2 UCRT64”** shell
 (not the plain MSYS shell). Then:
 
 ```bash
 pacman -Syu                     # update, reopen shell if it asks
 pacman -S --needed \
   git make pkgconf \
-  mingw-w64-x86_64-toolchain \
-  mingw-w64-x86_64-nasm mingw-w64-x86_64-yasm
+  mingw-w64-ucrt-x86_64-toolchain mingw-w64-ucrt-x86_64-rapidjson \
+  mingw-w64-ucrt-x86_64-nasm mingw-w64-ucrt-x86_64-yasm
 ```
 
 ## 2. Dependency packages (for `--full` / `--full-gpl`)
 ```bash
 pacman -S --needed \
-  mingw-w64-x86_64-lame mingw-w64-x86_64-libvorbis mingw-w64-x86_64-opus \
-  mingw-w64-x86_64-libvpx mingw-w64-x86_64-libwebp mingw-w64-x86_64-libtheora \
-  mingw-w64-x86_64-libass mingw-w64-x86_64-freetype mingw-w64-x86_64-fribidi \
-  mingw-w64-x86_64-fontconfig mingw-w64-x86_64-harfbuzz mingw-w64-x86_64-libxml2 \
-  mingw-w64-x86_64-libsoxr mingw-w64-x86_64-speex mingw-w64-x86_64-snappy \
-  mingw-w64-x86_64-dav1d mingw-w64-x86_64-aom mingw-w64-x86_64-openjpeg2 \
-  mingw-w64-x86_64-zimg mingw-w64-x86_64-twolame mingw-w64-x86_64-opencore-amr \
-  mingw-w64-x86_64-vo-amrwbenc mingw-w64-x86_64-openh264 mingw-w64-x86_64-srt \
-  mingw-w64-x86_64-SDL2 mingw-w64-x86_64-chromaprint mingw-w64-x86_64-tesseract-ocr \
-  mingw-w64-x86_64-gmp mingw-w64-x86_64-gnutls mingw-w64-x86_64-kvazaar \
-  mingw-w64-x86_64-libilbc mingw-w64-x86_64-shine
+  mingw-w64-ucrt-x86_64-lame mingw-w64-ucrt-x86_64-libvorbis mingw-w64-ucrt-x86_64-opus \
+  mingw-w64-ucrt-x86_64-libvpx mingw-w64-ucrt-x86_64-libwebp mingw-w64-ucrt-x86_64-libtheora \
+  mingw-w64-ucrt-x86_64-libass mingw-w64-ucrt-x86_64-freetype mingw-w64-ucrt-x86_64-fribidi \
+  mingw-w64-ucrt-x86_64-fontconfig mingw-w64-ucrt-x86_64-harfbuzz mingw-w64-ucrt-x86_64-libxml2 \
+  mingw-w64-ucrt-x86_64-libsoxr mingw-w64-ucrt-x86_64-speex mingw-w64-ucrt-x86_64-snappy \
+  mingw-w64-ucrt-x86_64-dav1d mingw-w64-ucrt-x86_64-aom mingw-w64-ucrt-x86_64-openjpeg2 \
+  mingw-w64-ucrt-x86_64-zimg mingw-w64-ucrt-x86_64-twolame mingw-w64-ucrt-x86_64-opencore-amr \
+  mingw-w64-ucrt-x86_64-vo-amrwbenc mingw-w64-ucrt-x86_64-openh264 mingw-w64-ucrt-x86_64-srt \
+  mingw-w64-ucrt-x86_64-SDL2 mingw-w64-ucrt-x86_64-chromaprint mingw-w64-ucrt-x86_64-tesseract-ocr \
+  mingw-w64-ucrt-x86_64-gmp mingw-w64-ucrt-x86_64-gnutls mingw-w64-ucrt-x86_64-kvazaar \
+  mingw-w64-ucrt-x86_64-libilbc mingw-w64-ucrt-x86_64-shine
 # gmp/gnutls/kvazaar/libilbc/shine complete FFmpegKit's full-gpl signature so the
 # runtime reports `full-gpl` (not `custom`). gnutls is the TLS backend for full*
 # (it conflicts with --enable-schannel, which is used only for the min variant).
 # GPL-only (for --enable-gpl):
 pacman -S --needed \
-  mingw-w64-x86_64-x264 mingw-w64-x86_64-x265 mingw-w64-x86_64-xvidcore \
-  mingw-w64-x86_64-vid.stab mingw-w64-x86_64-rubberband
+  mingw-w64-ucrt-x86_64-x264 mingw-w64-ucrt-x86_64-x265 mingw-w64-ucrt-x86_64-xvidcore \
+  mingw-w64-ucrt-x86_64-vid.stab mingw-w64-ucrt-x86_64-rubberband
 ```
 If `configure` later complains a library is missing, `pacman -Ss <name>` to find
 the package and install it (or drop the matching `--enable-` from the variant set
@@ -75,7 +79,7 @@ The av* DLLs and `libffmpegkit.dll` link **shared** against the MSYS2 codec DLLs
 (libx264-165.dll, libx265-216.dll, libdav1d-7.dll, xvidcore.dll, …) plus the MinGW
 runtime. `create_windows_bundle` gathers that full dependency closure (objdump
 walk) into `prebuilt/bundle-windows/x86_64/bin/`, so the bundle is **self-contained**
-(runs without `/mingw64/bin` on `PATH`).
+(runs without `/ucrt64/bin` on `PATH`).
 
 ## 5. Package & publish
 The Flutter plugin's `windows/CMakeLists.txt` downloads

@@ -12,11 +12,11 @@
 # and the build-wide flags GPL_ENABLED (yes/no) and BUILD_FULL (1 when --full).
 #
 # DEPENDENCY MODEL: external libraries come from MSYS2 packages (pacman), NOT from
-# source. pkg-config (PKG_CONFIG_PATH=/mingw64/lib/pkgconfig, set by windows.sh)
+# source. pkg-config (PKG_CONFIG_PATH=${MSYSTEM_PREFIX}/lib/pkgconfig, set by windows.sh)
 # resolves them. Install the deps once with the pacman list in PUBLISHING-WINDOWS.md.
 #
-# This script builds FFmpeg 8.1.1 shared DLLs only. The FFmpegKit wrapper
-# (libffmpegkit) is built in a later step once FFmpeg compiles cleanly.
+# This script builds FFmpeg's shared DLLs, then the FFmpegKit wrapper (libffmpegkit)
+# unless SKIP_FFMPEGKIT_WRAPPER=1.
 
 set -e
 

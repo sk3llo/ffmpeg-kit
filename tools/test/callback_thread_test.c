@@ -14,7 +14,7 @@
  * Linux:
  *   clang -O2 -I<bundle>/include callback_thread_test.c -L<bundle>/lib -lavutil -ldl -o callback_thread_test
  *   LD_LIBRARY_PATH=<bundle>/lib ./callback_thread_test <bundle>/lib/libffmpegkit.so
- * Windows, in an MSYS2 MinGW shell, from the bundle's folder. The .exe stays out of
+ * Windows, in an MSYS2 UCRT64 shell, from the bundle's folder. The .exe stays out of
  * bin, which is what gets zipped; run from bin, it finds the DLLs there:
  *   gcc -O2 -Iinclude <this file> bin/avutil-*.dll -o /tmp/callback_thread_test.exe
  *   cd bin && /tmp/callback_thread_test.exe libffmpegkit.dll
