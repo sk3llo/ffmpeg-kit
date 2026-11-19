@@ -131,6 +131,20 @@ jobs:
           esac
           echo "bundle OK ($(wc -l < bundle.list) entries)"
 
+      # The wrapper's callback thread must deliver each log line at once, and the
+      # process must exit cleanly with lines still queued. The test loads
+      # libffmpegkit.so with dlopen(), as the plugin does; see its header. A crash
+      # at exit depends on timing, so it runs ten times.
+      - name: test the callback thread
+        run: |
+          K=prebuilt/bundle-linux/ffmpeg-kit
+          clang -O2 -I"$K/include" tools/test/callback_thread_test.c -L"$K/lib" -lavutil -ldl \
+            -Wl,-rpath-link,"$K/lib" -o callback_thread_test
+          for i in $(seq 1 10); do
+            LD_LIBRARY_PATH="$K/lib" ./callback_thread_test "$K/lib/libffmpegkit.so" \
+              || { echo "run $i failed"; exit 1; }
+          done
+
       - uses: actions/upload-artifact@v4
         with:
           name: ffmpeg-kit-linux-x86_64-${{ matrix.variant }}

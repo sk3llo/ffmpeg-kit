@@ -97,7 +97,9 @@ gh release upload 8.1.1-full-gpl ../../ffmpeg-kit-windows-x86_64-full-gpl-8.1.1.
 Before uploading, smoke-test the bundle: load `bin/libffmpegkit.dll` with
 `LoadLibraryA` from inside `bin/` and check `ffmpegkit_get_package_name()`
 reports the intended variant and a transcode succeeds (see `build/smoke/` if
-present). Other variants: build with `FFMPEGKIT_VARIANT=<variant>` (plus
+present). Then run `tools/test/callback_thread_test.c` on the bundle, as its
+header shows; it must exit 0. Linux CI runs it on every build; Windows has no CI.
+Other variants: build with `FFMPEGKIT_VARIANT=<variant>` (plus
 `--enable-gpl` for `*-gpl`, `--full` for `full*`) and substitute the variant
 name in the zip/tag.
 
