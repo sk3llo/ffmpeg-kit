@@ -294,7 +294,11 @@ for run_arch in {0..12}; do
     
     # Execute main build script
     echo -e "Starting build for ${FULL_ARCH}..." | tee -a "${BUILD_LOG}"
-    if ! . "${BASEDIR}/scripts/main-windows.sh" "${ENABLED_LIBRARIES[@]}" 2>&1 | tee -a "${BUILD_LOG}"; then
+    # `cmd | tee` reports tee's exit status: read main-windows.sh's from PIPESTATUS,
+    # or a failed build carries on and create_windows_bundle republishes the
+    # previous run's install tree.
+    . "${BASEDIR}/scripts/main-windows.sh" "${ENABLED_LIBRARIES[@]}" 2>&1 | tee -a "${BUILD_LOG}"
+    if [ "${PIPESTATUS[0]}" -ne 0 ]; then
         error_exit "Build failed for ${FULL_ARCH}"
     fi
 

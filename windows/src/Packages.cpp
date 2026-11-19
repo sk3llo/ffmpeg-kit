@@ -29,9 +29,11 @@ std::string ffmpegkit::Packages::getPackageName() {
     bool fribidi = contains_ext_lib("fribidi");
     bool gnutls = contains_ext_lib("gnutls");
     bool xvid = contains_ext_lib("xvid");
+    bool x264 = contains_ext_lib("x264");
 
     bool min = false;
     bool minGpl = false;
+    bool converterGpl = false;
     bool https = false;
     bool httpsGpl = false;
     bool audio = false;
@@ -58,6 +60,10 @@ std::string ffmpegkit::Packages::getPackageName() {
     } else {
         if (gnutls) {
             https = true;
+        } else if (x264) {
+            // converter-gpl (#166) is GPL through x264/x265 but carries no xvid, so it
+            // falls past the xvid branch above and has to be identified here.
+            converterGpl = true;
         } else {
             min = true;
         }
@@ -189,6 +195,21 @@ std::string ffmpegkit::Packages::getPackageName() {
             contains_ext_lib("x265") &&
             contains_ext_lib("xvid")) {
             return "min-gpl";
+        } else {
+            return "custom";
+        }
+    }
+
+    if (converterGpl) {
+        if (contains_ext_lib("dav1d") &&
+            contains_ext_lib("mp3lame") &&
+            contains_ext_lib("libvorbis") &&
+            contains_ext_lib("libvpx") &&
+            contains_ext_lib("libwebp") &&
+            contains_ext_lib("opus") &&
+            contains_ext_lib("x264") &&
+            contains_ext_lib("x265")) {
+            return "converter-gpl";
         } else {
             return "custom";
         }

@@ -8,10 +8,10 @@
 #
 #   platform : ios | macos | android | linux | windows
 #   variant  : any of: min min-gpl https https-gpl audio video full full-gpl
-#              (default: all of them)
+#              converter-gpl                      (default: all of them)
 #
 # Examples:
-#   ./build-all.sh ios                      # all 8 variants for iOS
+#   ./build-all.sh ios                      # all 9 variants for iOS
 #   ./build-all.sh android min full-gpl     # just those two, Android
 #   ./build-all.sh macos https              # https variant, macOS
 #
@@ -39,16 +39,20 @@ set -uo pipefail
 cd "$(dirname "$0")"
 BASEDIR="$(pwd)"
 
-ALL_VARIANTS="min min-gpl https https-gpl audio video full full-gpl"
+ALL_VARIANTS="min min-gpl https https-gpl audio video full full-gpl converter-gpl"
 : "${SUDO=sudo}"   # use '=' not ':=' so an explicit empty SUDO= (run without sudo) is honored
 : "${ANDROID_SDK_ROOT:=$HOME/Library/Android/sdk}"
 : "${ANDROID_NDK_ROOT:=$ANDROID_SDK_ROOT/ndk/29.0.14206865}"
 : "${ANDROID_DISABLE_ABIS:=}"
 : "${NO_GNUTLS_TOGGLE:=}"
 
-usage() { sed -n '2,40p' "$0" | sed 's/^# \{0,1\}//'; exit "${1:-0}"; }
+# Prints the header comment: line 2 through the first non-comment line, which is dropped.
+usage() { sed -n '2,/^[^#]/p' "$0" | sed '$d; s/^# \{0,1\}//'; exit "${1:-0}"; }
 
 # --- per-variant flag sets -------------------------------------------------
+# converter-gpl (#166): x264 and x265, so --enable-gpl on every platform, plus lame,
+# opus, libvorbis, libvpx, libwebp, dav1d and iconv. It has none of min-gpl's vid.stab
+# or Xvid, and no TLS library.
 # Apple (ios.sh and macos.sh share the same flags). $2 = platform (ios|macos),
 # used to pick the platform-specific built-in Apple framework tokens.
 # VideoToolbox + AVFoundation are free Apple SDK frameworks (no patent-encumbered
@@ -74,6 +78,7 @@ apple_flags() {
     video)      echo "--enable-dav1d --enable-fontconfig --enable-freetype --enable-fribidi --enable-kvazaar --enable-libass --enable-ios-libiconv --enable-libtheora --enable-libvpx --enable-libwebp --enable-snappy --enable-zimg" ;;
     full)       echo "--full" ;;
     full-gpl)   echo "--full --enable-gpl" ;;
+    converter-gpl) echo "--enable-gpl --enable-dav1d --enable-lame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-opus --enable-x264 --enable-x265 --enable-ios-libiconv $vt $zl" ;;
     *) return 1 ;;
   esac
 }
@@ -94,6 +99,7 @@ android_flags() {
     video)      base="--enable-dav1d --enable-fontconfig --enable-freetype --enable-fribidi --enable-kvazaar --enable-libass --enable-libiconv --enable-libtheora --enable-libvpx --enable-libwebp --enable-snappy --enable-zimg" ;;
     full)       base="--full" ;;
     full-gpl)   base="--full --enable-gpl" ;;
+    converter-gpl) base="--enable-gpl --enable-dav1d --enable-lame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-opus --enable-x264 --enable-x265 --enable-libiconv --enable-android-zlib" ;;
     *) return 1 ;;
   esac
   echo "${base} --enable-android-media-codec ${ANDROID_DISABLE_ABIS}"
@@ -125,16 +131,22 @@ linux_flags() {
     video)      echo "$video $zlib" ;;
     full)       echo "$video $audio $tls --enable-linux-libxml2 $zlib" ;;
     full-gpl)   echo "$video $audio $tls --enable-linux-libxml2 $gpl $zlib" ;;
+    converter-gpl) echo "--enable-gpl --enable-x264 --enable-linux-x265 --enable-linux-lame --enable-linux-libvorbis --enable-linux-opus --enable-dav1d --enable-linux-libvpx --enable-linux-libwebp --enable-linux-libiconv $zlib" ;;
     *) return 1 ;;
   esac
 }
 
-# Windows (windows.sh) — only min / full / full-gpl are exercised here.
+# Windows (windows.sh). scripts/main-windows.sh derives the FFmpeg enable list
+# from FFMPEGKIT_VARIANT alone and never reads the --enable-<lib> tokens that
+# windows.sh parses into ENABLED_LIBRARIES, so per-library flags are inert here.
+# The variant name therefore travels in the environment (see run_variant); the
+# only flag that still carries meaning is --enable-gpl, which records the licence.
 windows_flags() {
   case "$1" in
     min)      echo "" ;;
     full)     echo "--full" ;;
     full-gpl) echo "--full --enable-gpl" ;;
+    converter-gpl) echo "--enable-gpl" ;;
     *) return 2 ;;  # 2 = unsupported on this platform
   esac
 }
@@ -225,9 +237,15 @@ run_variant() {
       ./linux.sh $flags ;;
     windows)
       flags="$(windows_flags "$variant")"; rc=$?
-      [ "$rc" = "2" ] && { echo "  SKIP $variant (windows: only min/full/full-gpl are scripted here)"; return 0; }
-      echo ">>> [windows/$variant] $SUDO ./windows.sh $flags"
-      $SUDO ./windows.sh $flags ;;
+      [ "$rc" = "2" ] && { echo "  SKIP $variant (windows: only min/full/full-gpl/converter-gpl are scripted here)"; return 0; }
+      # main-windows.sh reads FFMPEGKIT_VARIANT, not the --enable-<lib> flags, so
+      # the variant has to travel in the environment. -E keeps it across sudo.
+      echo ">>> [windows/$variant] FFMPEGKIT_VARIANT=$variant ${SUDO:+$SUDO -E }./windows.sh $flags"
+      if [ -n "$SUDO" ]; then
+        FFMPEGKIT_VARIANT="$variant" "$SUDO" -E ./windows.sh $flags
+      else
+        FFMPEGKIT_VARIANT="$variant" ./windows.sh $flags
+      fi ;;
     *) echo "Unknown platform: $platform"; usage 1 ;;
   esac
 }

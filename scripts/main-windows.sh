@@ -39,7 +39,7 @@ echo "Building FFmpeg for ${FULL_ARCH:-$ARCH} (host=${HOST})..."
 # Variant-aware enable list. The enabled external-library set determines the
 # variant FFmpegKit's Packages::getPackageName() reports (windows/src/Packages.cpp).
 # Select with FFMPEGKIT_VARIANT (min|min-gpl|https|https-gpl|audio|video|full|
-# full-gpl); if unset it is derived from --full / --enable-gpl (back-compat:
+# full-gpl|converter-gpl); if unset it is derived from --full / --enable-gpl (back-compat:
 # nothing=min, --full=full, --full --enable-gpl=full-gpl). All libs below are
 # MSYS2 packages (see PUBLISHING-WINDOWS.md). NOTE: FFmpeg rejects --enable-gnutls
 # together with --enable-schannel, so gnutls-bearing variants (https*, full*) use
@@ -60,8 +60,20 @@ _SCHANNEL=" --enable-schannel"
 
 VARIANT="${FFMPEGKIT_VARIANT:-}"
 if [ -z "${VARIANT}" ]; then
+  # Only three shapes can be derived from the command line. GPL without --full
+  # matches both min-gpl and converter-gpl, and the output directory carries no
+  # variant (get_bundle_directory always returns "bundle-windows"), so a wrong
+  # guess would be packaged under the requested variant's name. build-all.sh
+  # always exports FFMPEGKIT_VARIANT.
   if [ -n "${BUILD_FULL}" ] && [ "${GPL_ENABLED}" == "yes" ]; then VARIANT="full-gpl"
   elif [ -n "${BUILD_FULL}" ]; then VARIANT="full"
+  elif [ "${GPL_ENABLED}" == "yes" ]; then
+    echo "ERROR: cannot derive the FFmpegKit variant from --enable-gpl alone." >&2
+    echo "       It is ambiguous between min-gpl and converter-gpl." >&2
+    echo "       Set FFMPEGKIT_VARIANT explicitly, e.g." >&2
+    echo "         FFMPEGKIT_VARIANT=converter-gpl ./windows.sh --enable-gpl" >&2
+    echo "       or use ./build-all.sh windows <variant>, which exports it for you." >&2
+    exit 1
   else VARIANT="min"; fi
 fi
 echo "FFmpegKit variant: ${VARIANT}"
@@ -75,6 +87,11 @@ case "${VARIANT}" in
   video)      FF_ENABLES+="${_SCHANNEL}${_VIDEO}" ;;
   full)       FF_ENABLES+="${_TLS}${_AUDIO}${_VIDEO}${_FULLEXTRA}" ;;
   full-gpl)   FF_ENABLES+="${_TLS}${_AUDIO}${_VIDEO}${_FULLEXTRA}${_GPL}" ;;
+  # converter-gpl (#166): spelled out, because the groups above would pull in Xvid,
+  # vid.stab, Rubber Band and the whole audio and video sets. --enable-version3
+  # makes it GPL-3.0-or-later, as the other platforms' builds are. SChannel is the
+  # TLS backend, as for min-gpl.
+  converter-gpl) FF_ENABLES+="${_SCHANNEL} --enable-gpl --enable-version3 --enable-libx264 --enable-libx265 --enable-libmp3lame --enable-libvorbis --enable-libopus --enable-libvpx --enable-libwebp --enable-libdav1d" ;;
   *) echo "ERROR: unknown FFMPEGKIT_VARIANT '${VARIANT}'." >&2; exit 1 ;;
 esac
 
