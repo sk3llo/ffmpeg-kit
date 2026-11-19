@@ -43,6 +43,8 @@ extern "C" {
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <cstdlib>
+#include <thread>
 
 extern "C" {
     void set_report_callback(void (*callback)(int, float, float, int64_t, double, double, double));
@@ -85,6 +87,8 @@ static std::mutex callbackMutex;
 static std::condition_variable callbackMonitor;
 class CallbackData;
 static std::list<CallbackData*> callbackDataList;
+/** Callback threads started and not yet returned. */
+static std::atomic<int> callbackThreadCount{0};
 
 /** Fields that control the handling of SIGNALs */
 volatile int handleSIGQUIT = 1;
@@ -120,6 +124,10 @@ static pthread_t callbackThread;
 
 void* ffmpegKitInitialize();
 
+// The library's only static initializer that may call ffmpegKitInitialize(): it has
+// to run after the statics above exist. Run from another file's initializer, the
+// callback thread starts on unconstructed objects, which are then constructed under
+// it and destroyed before stopCallbackThreadAtExit runs.
 const void* _ffmpegKitConfigInitializer{ffmpegKitInitialize()};
 
 enum CallbackType {
@@ -688,6 +696,7 @@ void *callbackThreadFunction(void *pointer) {
         std::cout << "Async callback block stopped." << std::endl;
     }
 
+    callbackThreadCount.fetch_sub(1);
     return NULL;
 }
 
@@ -771,6 +780,25 @@ int executeFFprobe(const long sessionId, const std::shared_ptr<std::list<std::st
     return returnCode;
 }
 
+/**
+ * Stops the callback thread at exit. Exit destroys the static objects above while
+ * the thread may still use them: it then pops a freed callbackDataList and the
+ * exiting process crashes. The wait is bounded because the thread may be inside
+ * an application's callback.
+ */
+static void stopCallbackThreadAtExit() {
+    ffmpegkit::FFmpegKitConfig::disableRedirection();
+    if (pthread_equal(pthread_self(), callbackThread)) {
+        return;
+    }
+    // Notify on every pass: the thread reads redirectionEnabled outside callbackMutex,
+    // so one notify can land before it starts waiting and leave it asleep for 100 ms.
+    for (int i = 0; i < 1000 && callbackThreadCount.load() > 0; i++) {
+        callbackNotify();
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
+}
+
 void* ffmpegKitInitialize() {
     std::call_once(ffmpegKitInitializerFlag, [](){
         std::cout << "Loading ffmpeg-kit." << std::endl;
@@ -794,6 +822,10 @@ void* ffmpegKitInitialize() {
 
         ffmpegkit::FFmpegKitConfig::enableRedirection();
 
+        // Registered after the statics above are constructed, so exit runs it
+        // before their destructors.
+        std::atexit(stopCallbackThreadAtExit);
+
         std::cout << "Loaded ffmpeg-kit-" << ffmpegkit::Packages::getPackageName() << "-" << ffmpegkit::ArchDetect::getArch() << "-" << ffmpegkit::FFmpegKitConfig::getVersion() << "-" << ffmpegkit::FFmpegKitConfig::getBuildDate() << "." << std::endl;
     });
 
@@ -812,10 +844,11 @@ void ffmpegkit::FFmpegKitConfig::enableRedirection() {
 
     lock.unlock();
 
+    callbackThreadCount.fetch_add(1);
     int rc = pthread_create(&callbackThread, NULL, callbackThreadFunction, NULL);
     if (rc != 0) {
+        callbackThreadCount.fetch_sub(1);
         std::cout << "Failed to create async callback block: %d" << rc << std::endl;
-        lock.unlock();
         return;
     }
 
