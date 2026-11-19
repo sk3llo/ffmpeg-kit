@@ -72,8 +72,10 @@ static NSMutableArray *supportedExternalLibraries;
     Boolean fribidi = [enabledLibraryArray containsObject:@"fribidi"];
     Boolean gnutls = [enabledLibraryArray containsObject:@"gnutls"];
     Boolean xvid = [enabledLibraryArray containsObject:@"xvid"];
+    Boolean x264 = [enabledLibraryArray containsObject:@"x264"];
 
     Boolean minGpl = false;
+    Boolean converterGpl = false;
     Boolean https = false;
     Boolean httpsGpl = false;
     Boolean audio = false;
@@ -100,6 +102,10 @@ static NSMutableArray *supportedExternalLibraries;
     } else {
         if (gnutls) {
             https = true;
+        } else if (x264) {
+            // converter-gpl (#166) is GPL through x264/x265 but carries no xvid, so it
+            // falls past the xvid branch above and has to be identified here.
+            converterGpl = true;
         }
     }
 
@@ -229,6 +235,21 @@ static NSMutableArray *supportedExternalLibraries;
             [enabledLibraryArray containsObject:@"x265"] &&
             [enabledLibraryArray containsObject:@"xvid"]) {
             return @"min-gpl";
+        } else {
+            return @"custom";
+        }
+    }
+
+    if (converterGpl) {
+        if ([enabledLibraryArray containsObject:@"dav1d"] &&
+            [enabledLibraryArray containsObject:@"mp3lame"] &&
+            [enabledLibraryArray containsObject:@"libvorbis"] &&
+            [enabledLibraryArray containsObject:@"libvpx"] &&
+            [enabledLibraryArray containsObject:@"libwebp"] &&
+            [enabledLibraryArray containsObject:@"opus"] &&
+            [enabledLibraryArray containsObject:@"x264"] &&
+            [enabledLibraryArray containsObject:@"x265"]) {
+            return @"converter-gpl";
         } else {
             return @"custom";
         }

@@ -78,6 +78,11 @@ min
 export ANDROID_SDK_ROOT=/Users/me/Library/Android/sdk && export ANDROID_NDK_ROOT=/Users/me/Library/Android/sdk/ndk/29.0.13113456 && sudo -E ./android.sh --enable-android-media-codec
 ```
 
+converter-gpl
+```
+export ANDROID_SDK_ROOT=/Users/me/Library/Android/sdk && export ANDROID_NDK_ROOT=/Users/me/Library/Android/sdk/ndk/29.0.13113456 && sudo -E ./android.sh --enable-gpl --enable-dav1d --enable-lame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-opus --enable-x264 --enable-x265 --enable-libiconv --enable-android-zlib --enable-android-media-codec
+```
+
 
 
 
@@ -126,6 +131,11 @@ min
 sudo ./ios.sh
 ```
 
+converter-gpl
+```
+sudo ./ios.sh --enable-gpl --enable-dav1d --enable-lame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-opus --enable-x264 --enable-x265 --enable-ios-libiconv --enable-ios-videotoolbox --enable-ios-avfoundation --enable-ios-zlib
+```
+
 
 
 
@@ -169,6 +179,11 @@ sudo ./macos.sh --enable-gpl --enable-libvidstab --enable-x264 --enable-x265 --e
 min (No Videotoolbox support)
 ```
 sudo ./macos.sh
+```
+
+converter-gpl
+```
+sudo ./macos.sh --enable-gpl --enable-dav1d --enable-lame --enable-libvorbis --enable-libvpx --enable-libwebp --enable-opus --enable-x264 --enable-x265 --enable-ios-libiconv --enable-macos-videotoolbox --enable-macos-avfoundation --enable-macos-zlib
 ```
 
 

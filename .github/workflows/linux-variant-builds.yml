@@ -24,9 +24,9 @@ on:
   workflow_dispatch:
     inputs:
       variants:
-        description: 'Space-separated variants (default: all 8)'
+        description: 'Space-separated variants (default: all 9)'
         required: false
-        default: 'min min-gpl https https-gpl audio video full full-gpl'
+        default: 'min min-gpl https https-gpl audio video full full-gpl converter-gpl'
       version:
         description: 'FFmpegKit version used in artifact names'
         required: false

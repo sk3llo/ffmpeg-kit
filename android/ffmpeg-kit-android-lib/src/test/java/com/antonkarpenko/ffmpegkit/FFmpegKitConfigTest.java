@@ -152,6 +152,7 @@ public class FFmpegKitConfigTest {
         Assert.assertEquals("audio", listToPackageName(Collections.singletonList("speex")));
         Assert.assertEquals("https", listToPackageName(Collections.singletonList("gnutls")));
         Assert.assertEquals("https-gpl", listToPackageName(Arrays.asList("gnutls", "xvidcore")));
+        Assert.assertEquals("converter-gpl", listToPackageName(Arrays.asList("x264", "x265")));
     }
 
     @Test
@@ -192,6 +193,7 @@ public class FFmpegKitConfigTest {
         boolean fribidi = externalLibraryList.contains("fribidi");
         boolean gnutls = externalLibraryList.contains("gnutls");
         boolean xvidcore = externalLibraryList.contains("xvidcore");
+        boolean x264 = externalLibraryList.contains("x264");
 
         if (speex && fribidi) {
             if (xvidcore) {
@@ -212,6 +214,8 @@ public class FFmpegKitConfigTest {
         } else {
             if (gnutls) {
                 return "https";
+            } else if (x264) {
+                return "converter-gpl";
             } else {
                 return "min";
             }
