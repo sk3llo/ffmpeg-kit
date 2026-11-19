@@ -47,8 +47,13 @@ check_windows_build_tools() {
         error_exit "MSYS2 not found. Please install MSYS2 from https://www.msys2.org/"
     fi
     
+    # The bundles link the UCRT; MSYS2's MINGW64 (msvcrt) repo lacks libraries the variants need.
+    if [ "${MSYSTEM}" != "UCRT64" ]; then
+        error_exit "Run windows.sh in an MSYS2 UCRT64 shell (MSYSTEM is '${MSYSTEM}')."
+    fi
+
     # Check for required MSYS2 packages
-    for pkg in mingw-w64-x86_64-toolchain git make pkg-config; do
+    for pkg in ${MINGW_PACKAGE_PREFIX}-toolchain git make pkg-config; do
         if ! pacman -Qs $pkg &> /dev/null; then
             echo "WARNING: MSYS2 package $pkg is not installed. Run 'pacman -S $pkg' to install."
         fi
@@ -111,8 +116,8 @@ fi
 export BUILD_VERSION
 
 # Set Windows-specific environment variables
-export PATH="/mingw64/bin:${PATH}"
-export PKG_CONFIG_PATH="/mingw64/lib/pkgconfig:${PKG_CONFIG_PATH}"
+export PATH="${MSYSTEM_PREFIX}/bin:${PATH}"
+export PKG_CONFIG_PATH="${MSYSTEM_PREFIX}/lib/pkgconfig:${PKG_CONFIG_PATH}"
 
 # --- 4. PROCESS BUILD OPTIONS ---
 while [ ! $# -eq 0 ]; do

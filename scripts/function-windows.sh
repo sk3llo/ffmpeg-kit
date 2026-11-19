@@ -156,7 +156,7 @@ create_windows_bundle() {
     cp -r "${arch_dir}/lib"     "${dest}/" 2>>"${BASEDIR}"/build.log || true   # import libs + pkgconfig
     cp -r "${arch_dir}/include" "${dest}/" 2>>"${BASEDIR}"/build.log || true   # headers
     # Pull in the shared codec + MinGW runtime DLLs the av* DLLs import, so the
-    # bundle runs without /mingw64/bin on PATH.
+    # bundle runs without the MSYS2 environment's bin folder on PATH.
     gather_windows_dll_closure "${dest}/bin"
     built=$((built+1))
   done
