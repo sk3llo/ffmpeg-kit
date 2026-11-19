@@ -63,12 +63,14 @@ apple_flags() {
   # zlib is added to min/min-gpl/audio because FFmpeg's PNG/APNG decoders depend
   # on it; without zlib configure silently drops them (#105). The other variants
   # already get zlib transitively (gnutls/libwebp) or via --full.
+  # audio lists iconv itself: none of its libraries pull it in, and FFmpeg needs
+  # it for -sub_charenc and MPEG-TS DVB text.
   case "$1" in
     min)        echo "$vt $zl" ;;
     min-gpl)    echo "--enable-gpl --enable-libvidstab --enable-x264 --enable-x265 --enable-xvidcore $vt $zl" ;;
     https)      echo "--enable-gmp --enable-gnutls" ;;
     https-gpl)  echo "--enable-gpl --enable-gmp --enable-gnutls --enable-libvidstab --enable-x264 --enable-x265 --enable-xvidcore" ;;
-    audio)      echo "--enable-twolame --enable-lame --enable-libilbc --enable-libvorbis --enable-opencore-amr --enable-opus --enable-shine --enable-soxr --enable-speex --enable-vo-amrwbenc $zl" ;;
+    audio)      echo "--enable-twolame --enable-lame --enable-libilbc --enable-libvorbis --enable-opencore-amr --enable-opus --enable-shine --enable-soxr --enable-speex --enable-vo-amrwbenc --enable-ios-libiconv $zl" ;;
     video)      echo "--enable-dav1d --enable-fontconfig --enable-freetype --enable-fribidi --enable-kvazaar --enable-libass --enable-ios-libiconv --enable-libtheora --enable-libvpx --enable-libwebp --enable-snappy --enable-zimg" ;;
     full)       echo "--full" ;;
     full-gpl)   echo "--full --enable-gpl" ;;
@@ -81,12 +83,14 @@ android_flags() {
   local base
   # --enable-android-zlib on min/min-gpl/audio: required for the PNG/APNG
   # decoders (#105); other variants get zlib transitively.
+  # --enable-libiconv on audio: none of its libraries pull it in, and FFmpeg
+  # needs it for -sub_charenc and MPEG-TS DVB text.
   case "$1" in
     min)        base="--enable-android-zlib" ;;
     min-gpl)    base="--enable-gpl --enable-libvidstab --enable-x264 --enable-x265 --enable-xvidcore --enable-android-zlib" ;;
     https)      base="--enable-gmp --enable-gnutls" ;;
     https-gpl)  base="--enable-gpl --enable-gmp --enable-gnutls --enable-libvidstab --enable-x264 --enable-x265 --enable-xvidcore" ;;
-    audio)      base="--enable-twolame --enable-lame --enable-libilbc --enable-libvorbis --enable-opencore-amr --enable-opus --enable-shine --enable-soxr --enable-speex --enable-vo-amrwbenc --enable-android-zlib" ;;
+    audio)      base="--enable-twolame --enable-lame --enable-libilbc --enable-libvorbis --enable-opencore-amr --enable-opus --enable-shine --enable-soxr --enable-speex --enable-vo-amrwbenc --enable-libiconv --enable-android-zlib" ;;
     video)      base="--enable-dav1d --enable-fontconfig --enable-freetype --enable-fribidi --enable-kvazaar --enable-libass --enable-libiconv --enable-libtheora --enable-libvpx --enable-libwebp --enable-snappy --enable-zimg" ;;
     full)       base="--enable-dav1d --enable-fontconfig --enable-freetype --enable-fribidi --enable-gmp --enable-gnutls --enable-kvazaar --enable-lame --enable-libass --enable-libiconv --enable-libilbc --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libxml2 --enable-opencore-amr --enable-opus --enable-shine --enable-snappy --enable-soxr --enable-speex --enable-twolame --enable-vo-amrwbenc --enable-zimg" ;;
     full-gpl)   base="--full --enable-gpl" ;;
