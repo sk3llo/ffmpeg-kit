@@ -21,10 +21,6 @@
 #include "FFmpegKitConfig.h"
 #include "FFprobeKit.h"
 
-extern void* ffmpegKitInitialize();
-
-const void* _ffprobeKitInitializer{ffmpegKitInitialize()};
-
 static std::list<std::string> defaultGetMediaInformationCommandArguments(const std::string& path) {
     return std::list<std::string>{"-v", "error", "-hide_banner", "-print_format", "json", "-show_format", "-show_streams", "-show_chapters", "-i", path};
 }

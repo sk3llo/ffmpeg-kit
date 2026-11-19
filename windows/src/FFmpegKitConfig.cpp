@@ -120,6 +120,9 @@ static std::thread* callbackThreadPtr = nullptr;
 
 void* ffmpegKitInitialize();
 
+// The library's only static initializer that may call ffmpegKitInitialize(): it has
+// to run after the statics above exist. Run from another file's initializer, the
+// callback thread starts on unconstructed objects, which are then constructed under it.
 const void* _ffmpegKitConfigInitializer{ffmpegKitInitialize()};
 
 enum CallbackType {
