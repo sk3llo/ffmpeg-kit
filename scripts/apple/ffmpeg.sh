@@ -469,8 +469,10 @@ else
 fi
 
 # SET DEBUG OPTIONS
+# Release builds install unstripped, so dsymutil can read the libraries; they are stripped
+# after their dSYMs are written (create_dsym_and_strip, below).
 if [[ -z ${FFMPEG_KIT_DEBUG} ]]; then
-  DEBUG_OPTIONS="--disable-debug"
+  DEBUG_OPTIONS="--disable-debug --disable-stripping"
 else
   DEBUG_OPTIONS="--enable-debug --disable-stripping"
 fi
@@ -480,7 +482,8 @@ ARCH_CFLAGS=$(get_arch_specific_cflags)
 APP_CFLAGS=$(get_app_specific_cflags ${LIB_NAME})
 COMMON_CFLAGS=$(get_common_cflags)
 if [[ -z ${FFMPEG_KIT_DEBUG} ]]; then
-  OPTIMIZATION_CFLAGS="$(get_size_optimization_cflags ${LIB_NAME})"
+  # Line tables are what a symbolicated crash report needs; they don't change the code.
+  OPTIMIZATION_CFLAGS="$(get_size_optimization_cflags ${LIB_NAME}) -gline-tables-only"
 else
   OPTIMIZATION_CFLAGS="${FFMPEG_KIT_DEBUG}"
 fi
@@ -677,6 +680,16 @@ ${SED_INLINE} "s|\$(LD_PATH)lib%|-F ${FFMPEG_LIBRARY_PATH}/framework|g" ${BASEDI
 # BUILD FRAMEWORKS AS DYNAMIC LIBRARIES
 build_ffmpeg
 install_ffmpeg
+
+if [[ -z ${FFMPEG_KIT_DEBUG} ]]; then
+  for FFMPEG_LIB_FILE in "${FFMPEG_LIBRARY_PATH}"/lib/lib*.dylib; do
+    [[ -L "${FFMPEG_LIB_FILE}" ]] && continue
+    create_dsym_and_strip "${FFMPEG_LIB_FILE}" "${FFMPEG_LIBRARY_PATH}/dsym" || {
+      echo -e "failed\n\nSee build.log for details\n"
+      exit 1
+    }
+  done
+fi
 
 # MANUALLY ADD REQUIRED HEADERS
 mkdir -p "${FFMPEG_LIBRARY_PATH}"/include/libavutil/x86 1>>"${BASEDIR}"/build.log 2>&1

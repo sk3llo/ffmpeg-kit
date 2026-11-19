@@ -187,6 +187,53 @@ is_apple_architecture_variant_supported() {
 #
 # DEPENDS TARGET_ARCH_LIST VARIABLE
 #
+#
+# Writes <dSYM directory>/<name>.dSYM for an unstripped library, then strips the library as
+# FFmpeg's own install does (strip -x). Call it before the library's object files are
+# cleaned: dsymutil reads the debug info from them, not from the library.
+#
+# 1. library path
+# 2. dSYM directory
+#
+create_dsym_and_strip() {
+  local LIBRARY="$1"
+  local DSYM="$2/$(basename "$1" | cut -d. -f1).dSYM"
+  mkdir -p "$2" && rm -rf "${DSYM}" || return 1
+  xcrun dsymutil "${LIBRARY}" -o "${DSYM}" 1>>"${BASEDIR}"/build.log 2>&1 || return 1
+  xcrun strip -x "${LIBRARY}" 1>>"${BASEDIR}"/build.log 2>&1
+}
+
+#
+# Merges per-architecture dSYMs into one whose DWARF file carries the framework binary's
+# name, for the universal library lipo builds from the same architectures.
+#
+# 1. output dSYM
+# 2. framework binary name
+# 3... per-architecture dSYMs
+#
+create_universal_dsym() {
+  local OUTPUT="$1" NAME="$2" DSYM DWARF_FILES=()
+  shift 2
+  for DSYM in "$@"; do
+    DWARF_FILES+=("$(find "${DSYM}/Contents/Resources/DWARF" -type f | head -1)")
+  done
+  rm -rf "${OUTPUT}" && mkdir -p "${OUTPUT}/Contents/Resources/DWARF" || return 1
+  cp "$1/Contents/Info.plist" "${OUTPUT}/Contents/Info.plist" || return 1
+  xcrun lipo -create "${DWARF_FILES[@]}" -output "${OUTPUT}/Contents/Resources/DWARF/${NAME}" 1>>"${BASEDIR}"/build.log 2>&1
+}
+
+#
+# Puts a framework's dSYM next to it, replacing an older one. Debug builds have none.
+#
+# 1. universal dSYM
+# 2. destination (<framework path>.dSYM)
+#
+copy_framework_dsym() {
+  rm -rf "$2" || return 1
+  [[ -d "$1" ]] || return 0
+  cp -R "$1" "$2" 1>>"${BASEDIR}"/build.log 2>&1
+}
+
 create_ffmpeg_universal_library() {
   local ARCHITECTURE_VARIANT="$1"
   local TARGET_ARCHITECTURES=("$(get_apple_architectures_for_variant "${ARCHITECTURE_VARIANT}")")
@@ -216,11 +263,13 @@ create_ffmpeg_universal_library() {
     local FFMPEG_LIB_UNIVERSAL_LIBRARY_PATH="${FFMPEG_UNIVERSAL_LIBRARY_DIRECTORY}/lib/${FFMPEG_LIB}.dylib"
 
     LIPO_COMMAND="${LIPO} -create"
+    local ARCH_DSYMS=()
 
     for ARCH in "${TARGET_ARCH_LIST[@]}"; do
       if [[ " ${TARGET_ARCHITECTURES[*]} " == *" ${ARCH} "* ]]; then
         local FULL_LIBRARY_PATH="${BASEDIR}/prebuilt/$(get_build_directory)/${LIBRARY_NAME}/lib/${FFMPEG_LIB}.$(get_ffmpeg_library_version ${FFMPEG_LIB}).dylib"
         LIPO_COMMAND+=" ${FULL_LIBRARY_PATH}"
+        ARCH_DSYMS+=("${BASEDIR}/prebuilt/$(get_build_directory)/${LIBRARY_NAME}/dsym/${FFMPEG_LIB}.dSYM")
       fi
     done
 
@@ -229,6 +278,11 @@ create_ffmpeg_universal_library() {
     ${LIPO_COMMAND} 1>>"${BASEDIR}"/build.log 2>&1
 
     [[ $? -ne 0 ]] && exit_universal_library "${FFMPEG_LIB}"
+
+    if [[ -z ${FFMPEG_KIT_DEBUG} ]]; then
+      create_universal_dsym "${FFMPEG_UNIVERSAL_LIBRARY_DIRECTORY}/dsym/${FFMPEG_LIB}.framework.dSYM" "${FFMPEG_LIB}" "${ARCH_DSYMS[@]}" ||
+        exit_universal_library "${FFMPEG_LIB}"
+    fi
 
   done
 
@@ -305,11 +359,13 @@ create_ffmpeg_kit_universal_library() {
   local FFMPEG_KIT_UNIVERSAL_LIBRARY_PATH="${FFMPEG_KIT_UNIVERSAL_LIBRARY_DIRECTORY}/lib/libffmpegkit.dylib"
 
   LIPO_COMMAND="${LIPO} -create"
+  local ARCH_DSYMS=()
 
   for ARCH in "${TARGET_ARCH_LIST[@]}"; do
     if [[ " ${TARGET_ARCHITECTURES[*]} " == *" ${ARCH} "* ]]; then
       local FULL_LIBRARY_PATH="${BASEDIR}/prebuilt/$(get_build_directory)/${LIBRARY_NAME}/lib/libffmpegkit.dylib"
       LIPO_COMMAND+=" ${FULL_LIBRARY_PATH}"
+      ARCH_DSYMS+=("${BASEDIR}/prebuilt/$(get_build_directory)/${LIBRARY_NAME}/dsym/libffmpegkit.dSYM")
     fi
   done
 
@@ -318,6 +374,11 @@ create_ffmpeg_kit_universal_library() {
   ${LIPO_COMMAND} 1>>"${BASEDIR}"/build.log 2>&1
 
   [[ $? -ne 0 ]] && exit_universal_library "${LIBRARY_NAME}"
+
+  if [[ -z ${FFMPEG_KIT_DEBUG} ]]; then
+    create_universal_dsym "${FFMPEG_KIT_UNIVERSAL_LIBRARY_DIRECTORY}/dsym/ffmpegkit.framework.dSYM" "ffmpegkit" "${ARCH_DSYMS[@]}" ||
+      exit_universal_library "${LIBRARY_NAME}"
+  fi
 
   # COPY UNIVERSAL LIBRARY LICENSES
   if [[ ${GPL_ENABLED} == "yes" ]]; then
@@ -356,6 +417,8 @@ create_ffmpeg_framework() {
     # INITIALIZE FRAMEWORK DIRECTORY
     local FFMPEG_LIB_FRAMEWORK_PATH="${BASEDIR}/prebuilt/$(get_framework_directory "${ARCHITECTURE_VARIANT}")/${FFMPEG_LIB}.framework"
     initialize_folder "${FFMPEG_LIB_FRAMEWORK_PATH}"
+    copy_framework_dsym "${FFMPEG_UNIVERSAL_LIBRARY_PATH}/dsym/${FFMPEG_LIB}.framework.dSYM" "${FFMPEG_LIB_FRAMEWORK_PATH}.dSYM" ||
+      exit_framework "${FFMPEG_LIB}"
 
     if [[ ${ARCHITECTURE_VARIANT} -eq ${ARCH_VAR_MAC_CATALYST} ]] || [[ ${ARCHITECTURE_VARIANT} -eq ${ARCH_VAR_MACOS} ]]; then
 
@@ -462,6 +525,8 @@ create_ffmpeg_kit_framework() {
   # INITIALIZE FRAMEWORK DIRECTORY
   local FFMPEG_KIT_FRAMEWORK_PATH="${BASEDIR}/prebuilt/$(get_framework_directory "${ARCHITECTURE_VARIANT}")/ffmpegkit.framework"
   initialize_folder "${FFMPEG_KIT_FRAMEWORK_PATH}"
+  copy_framework_dsym "${FFMPEG_KIT_UNIVERSAL_LIBRARY_DIRECTORY}/dsym/ffmpegkit.framework.dSYM" "${FFMPEG_KIT_FRAMEWORK_PATH}.dSYM" ||
+    exit_framework "ffmpegkit"
 
   if [[ ${ARCHITECTURE_VARIANT} -eq ${ARCH_VAR_MAC_CATALYST} ]] || [[ ${ARCHITECTURE_VARIANT} -eq ${ARCH_VAR_MACOS} ]]; then
 

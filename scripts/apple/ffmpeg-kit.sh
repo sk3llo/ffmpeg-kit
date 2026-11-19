@@ -115,8 +115,16 @@ fi
 make -j$(get_cpu_count) 1>>"${BASEDIR}"/build.log 2>&1
 
 make install 1>>"${BASEDIR}"/build.log 2>&1
+rc=$?
 
-if [ $? -eq 0 ]; then
+if [ $rc -eq 0 ] && [[ -z ${FFMPEG_KIT_DEBUG} ]]; then
+  for FFMPEG_KIT_LIB_FILE in "${FFMPEG_KIT_LIBRARY_PATH}"/lib/libffmpegkit*.dylib; do
+    [[ -L "${FFMPEG_KIT_LIB_FILE}" ]] && continue
+    create_dsym_and_strip "${FFMPEG_KIT_LIB_FILE}" "${FFMPEG_KIT_LIBRARY_PATH}/dsym" || rc=1
+  done
+fi
+
+if [ $rc -eq 0 ]; then
   echo "ok"
 else
   echo -e "failed\n\nSee build.log for details\n"
