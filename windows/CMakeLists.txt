@@ -24,19 +24,36 @@ set(FFMPEGKIT_SOURCES
     src/StreamInformation.cpp
     src/ffmpegkit_exception.cpp
     src/ffmpegkit_c_api.cpp
-    src/fftools_cmdutils.c
-    src/fftools_ffmpeg.c
-    src/fftools_ffmpeg_demux.c
-    src/fftools_ffmpeg_filter.c
-    src/fftools_ffmpeg_hw.c
-    src/fftools_ffmpeg_mux.c
-    src/fftools_ffmpeg_mux_init.c
-    src/fftools_ffmpeg_opt.c
-    src/fftools_ffprobe.c
-    src/fftools_objpool.c
-    src/fftools_opt_common.c
-    src/fftools_sync_queue.c
-    src/fftools_thread_queue.c
+    src/ffmpeg_context.c
+    src/fftools/cmdutils.c
+    src/fftools/ffmpeg.c
+    src/fftools/ffmpeg_dec.c
+    src/fftools/ffmpeg_demux.c
+    src/fftools/ffmpeg_enc.c
+    src/fftools/ffmpeg_filter.c
+    src/fftools/ffmpeg_hw.c
+    src/fftools/ffmpeg_mux.c
+    src/fftools/ffmpeg_mux_init.c
+    src/fftools/ffmpeg_opt.c
+    src/fftools/ffmpeg_sched.c
+    src/fftools/ffprobe.c
+    src/fftools/opt_common.c
+    src/fftools/sync_queue.c
+    src/fftools/thread_queue.c
+    src/fftools/graph/graphprint.c
+    src/fftools/resources/graph_resources.c
+    src/fftools/resources/resman.c
+    src/fftools/textformat/avtextformat.c
+    src/fftools/textformat/tf_compact.c
+    src/fftools/textformat/tf_default.c
+    src/fftools/textformat/tf_flat.c
+    src/fftools/textformat/tf_ini.c
+    src/fftools/textformat/tf_json.c
+    src/fftools/textformat/tf_mermaid.c
+    src/fftools/textformat/tf_xml.c
+    src/fftools/textformat/tw_avio.c
+    src/fftools/textformat/tw_buffer.c
+    src/fftools/textformat/tw_stdout.c
 )
 
 set(FFMPEGKIT_HEADERS
@@ -74,7 +91,6 @@ set(FFMPEGKIT_HEADERS
     src/fftools_objpool.h
     src/fftools_opt_common.h
     src/fftools_sync_queue.h
-    src/fftools_thread_queue.h
     src/ffmpegkit_c_api.h
 )
 

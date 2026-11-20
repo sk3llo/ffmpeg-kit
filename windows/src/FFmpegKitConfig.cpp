@@ -34,7 +34,7 @@
 extern "C" {
     #include "libavutil/ffversion.h"
     #include "libavutil/bprint.h"
-    #include "fftools_cmdutils.h"
+    #include "fftools/cmdutils.h"
 }
 #include "ArchDetect.h"
 #include "FFmpegKit.h"
@@ -359,6 +359,17 @@ extern "C" {
 
 void cancelSession(long sessionId) {
     std::atomic_store(&sessionMap[sessionId % SESSION_MAP_SIZE], (short)2);
+}
+
+/**
+ * Adds a cancel request for every running session. Idle slots, and sessions that
+ * start after this call, are left alone.
+ */
+void cancelAllSessions(void) {
+    for (int i = 0; i < SESSION_MAP_SIZE; i++) {
+        short running = 1;
+        sessionMap[i].compare_exchange_strong(running, (short)2);
+    }
 }
 
 int cancelRequested(long sessionId) {
