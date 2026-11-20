@@ -26,7 +26,7 @@
 #include "libavcodec/jni.h"
 #include "libavutil/bprint.h"
 #include "libavutil/file.h"
-#include "fftools_ffmpeg.h"
+#include "fftools/ffmpeg.h"
 #include "ffmpegkit.h"
 #include "ffprobekit.h"
 

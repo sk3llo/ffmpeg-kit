@@ -18,7 +18,7 @@
  */
 
 #include "cpu-features.h"
-#include "fftools_ffmpeg.h"
+#include "fftools/ffmpeg.h"
 #include "ffmpegkit_abidetect.h"
 
 /** Full name of the Java class that owns native functions in this file. */

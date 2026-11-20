@@ -21,19 +21,36 @@ libffmpegkit_la_SOURCES = \
     Statistics.m \
     StreamInformation.m \
     ffmpegkit_exception.m \
-    fftools_cmdutils.c \
-    fftools_ffmpeg.c \
-    fftools_ffmpeg_demux.c \
-    fftools_ffmpeg_filter.c \
-    fftools_ffmpeg_hw.c \
-    fftools_ffmpeg_mux.c \
-    fftools_ffmpeg_mux_init.c \
-    fftools_ffmpeg_opt.c \
-    fftools_ffprobe.c \
-    fftools_objpool.c \
-    fftools_opt_common.c \
-    fftools_sync_queue.c \
-    fftools_thread_queue.c
+    ffmpeg_context.c \
+    fftools/cmdutils.c \
+    fftools/ffmpeg.c \
+    fftools/ffmpeg_dec.c \
+    fftools/ffmpeg_demux.c \
+    fftools/ffmpeg_enc.c \
+    fftools/ffmpeg_filter.c \
+    fftools/ffmpeg_hw.c \
+    fftools/ffmpeg_mux.c \
+    fftools/ffmpeg_mux_init.c \
+    fftools/ffmpeg_opt.c \
+    fftools/ffmpeg_sched.c \
+    fftools/ffprobe.c \
+    fftools/opt_common.c \
+    fftools/sync_queue.c \
+    fftools/thread_queue.c \
+    fftools/graph/graphprint.c \
+    fftools/resources/graph_resources.c \
+    fftools/resources/resman.c \
+    fftools/textformat/avtextformat.c \
+    fftools/textformat/tf_compact.c \
+    fftools/textformat/tf_default.c \
+    fftools/textformat/tf_flat.c \
+    fftools/textformat/tf_ini.c \
+    fftools/textformat/tf_json.c \
+    fftools/textformat/tf_mermaid.c \
+    fftools/textformat/tf_xml.c \
+    fftools/textformat/tw_avio.c \
+    fftools/textformat/tw_buffer.c \
+    fftools/textformat/tw_stdout.c
 
 include_HEADERS = \
     AbstractSession.h \
@@ -62,15 +79,24 @@ include_HEADERS = \
     Statistics.h \
     StatisticsCallback.h \
     StreamInformation.h \
-    ffmpegkit_exception.h \
-    fftools_cmdutils.h \
-    fftools_ffmpeg.h \
-    fftools_ffmpeg_mux.h \
-    fftools_fopen_utf8.h \
-    fftools_objpool.h \
-    fftools_opt_common.h \
-    fftools_sync_queue.h \
-    fftools_thread_queue.h
+    ffmpegkit_exception.h
+
+nobase_include_HEADERS = \
+    fftools/cmdutils.h \
+    fftools/ffmpeg.h \
+    fftools/ffmpeg_mux.h \
+    fftools/ffmpeg_sched.h \
+    fftools/ffmpeg_utils.h \
+    fftools/fopen_utf8.h \
+    fftools/graph/graphprint.h \
+    fftools/opt_common.h \
+    fftools/resources/resman.h \
+    fftools/sync_queue.h \
+    fftools/thread_queue.h \
+    fftools/textformat/avtextformat.h \
+    fftools/textformat/avtextwriters.h \
+    fftools/textformat/tf_internal.h \
+    fftools/textformat/tf_mermaid.h
 
 libffmpegkit_la_CFLAGS = $(CFLAGS)
 libffmpegkit_la_OBJCFLAGS = $(CFLAGS)
