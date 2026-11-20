@@ -22,7 +22,7 @@
 #import <sys/stat.h>
 #import "libavutil/ffversion.h"
 #import "libavutil/bprint.h"
-#import "fftools_ffmpeg.h"
+#import "fftools/ffmpeg.h"
 #import "ArchDetect.h"
 #import "AtomicLong.h"
 #import "FFmpegKit.h"
