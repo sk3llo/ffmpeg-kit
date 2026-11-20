@@ -5,7 +5,8 @@
 # installed, ONCE PER ARCH. Inherits from windows.sh / main-windows.sh:
 #   BASEDIR, ARCH, CROSS_PREFIX, BUILD_DIR, FFMPEG_PREFIX(=BUILD_DIR/install)
 #
-# Compiles windows/src/*.cpp + the vendored fftools_*.c into libffmpegkit.dll,
+# Compiles windows/src/*.cpp and the C sources under windows/src (ffmpeg_context.c and the
+# vendored fftools/) into libffmpegkit.dll,
 # linking against the FFmpeg shared DLLs (import libs in <install>/lib). FFmpeg
 # *internal* headers come from src/ffmpeg (must match the built FFmpeg version).
 #
@@ -54,13 +55,16 @@ for f in "${WRAP_SRC}"/*.cpp; do
   objs+=("${o}")
 done
 
-# C fftools (FFmpeg command-line tools, vendored)
-for f in "${WRAP_SRC}"/fftools_*.c; do
-  o="${OBJ_DIR}/$(basename "${f}").o"
+# C sources: ffmpeg_context.c and the vendored fftools/, whose subfolders hold files too. Object
+# names follow the path, so two files with one name in different folders can't collide.
+while IFS= read -r f; do
+  rel=${f#"${WRAP_SRC}"/}
+  o="${OBJ_DIR}/${rel//\//_}.o"
   if ! "${CC_BIN}" -std=c11 ${COMMON} -Wno-deprecated-declarations -c "${f}" -o "${o}"; then
     echo "ERROR compiling ${f}"; fail=1; fi
   objs+=("${o}")
-done
+done < <(find "${WRAP_SRC}" -name '*.c' | sort)
+[ "${#objs[@]}" -gt 0 ] || { echo "ERROR: no sources compiled."; exit 1; }
 
 if [ "${fail}" -ne 0 ]; then echo "ERROR: wrapper compilation failed."; exit 1; fi
 
@@ -74,7 +78,11 @@ mkdir -p "${INSTALL}/bin" "${INSTALL}/lib"
   -Wl,--default-image-base-low \
   || { echo "ERROR: wrapper link failed."; exit 1; }
 
-# Install public headers next to the FFmpeg ones.
-cp "${WRAP_SRC}"/*.h "${INSTALL}/include/" 2>/dev/null || true
+# Install public headers next to the FFmpeg ones. stdbit.h (FFmpeg's compat copy) and
+# ffmpeg_context.h are internal: an installed stdbit.h would shadow the compiler's own.
+for h in "${WRAP_SRC}"/*.h; do
+  case "$(basename "${h}")" in stdbit.h|ffmpeg_context.h) continue ;; esac
+  cp "${h}" "${INSTALL}/include/"
+done
 
 echo "libffmpegkit installed: ${INSTALL}/bin/libffmpegkit.dll"
