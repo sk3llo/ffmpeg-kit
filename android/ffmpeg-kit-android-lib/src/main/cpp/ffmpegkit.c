@@ -413,6 +413,17 @@ void cancelSession(long id) {
 }
 
 /**
+ * Adds a cancel request for every running session. Idle slots, and sessions that
+ * start after this call, are left alone.
+ */
+void cancelAllSessions(void) {
+    for (int i = 0; i < SESSION_MAP_SIZE; i++) {
+        short running = 1;
+        atomic_compare_exchange_strong(&sessionMap[i], &running, 2);
+    }
+}
+
+/**
  * Checks whether a cancel request for the given session id exists in the session map.
  *
  * @param id session id
