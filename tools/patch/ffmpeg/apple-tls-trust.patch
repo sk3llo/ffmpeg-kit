@@ -1,9 +1,9 @@
 diff --git a/libavformat/tls_apple.h b/libavformat/tls_apple.h
 new file mode 100644
-index 0000000..4e41956
+index 0000000..e8785af
 --- /dev/null
 +++ b/libavformat/tls_apple.h
-@@ -0,0 +1,127 @@
+@@ -0,0 +1,129 @@
 +/*
 + * Peer certificate checks against Apple's trust store, for the OpenSSL and
 + * GnuTLS TLS backends
@@ -41,6 +41,8 @@ index 0000000..4e41956
 +#include "libavutil/attributes.h"
 +#include "libavutil/error.h"
 +#include "libavutil/log.h"
++#include "libavutil/macros.h"
++#include "libavutil/mem.h"
 +#include "tls.h"
 +
 +/*
