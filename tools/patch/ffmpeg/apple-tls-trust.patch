@@ -1,0 +1,264 @@
+diff --git a/libavformat/tls_apple.h b/libavformat/tls_apple.h
+new file mode 100644
+index 0000000..4e41956
+--- /dev/null
++++ b/libavformat/tls_apple.h
+@@ -0,0 +1,127 @@
++/*
++ * Peer certificate checks against Apple's trust store, for the OpenSSL and
++ * GnuTLS TLS backends
++ *
++ * This file is part of FFmpeg.
++ *
++ * FFmpeg is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2.1 of the License, or (at your option) any later version.
++ *
++ * FFmpeg is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with FFmpeg; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
++ */
++
++#ifndef AVFORMAT_TLS_APPLE_H
++#define AVFORMAT_TLS_APPLE_H
++
++#ifdef __APPLE__
++
++#include <stdbool.h>
++#include <stddef.h>
++
++#include <CoreFoundation/CoreFoundation.h>
++#include <Security/SecCertificate.h>
++#include <Security/SecPolicy.h>
++#include <Security/SecTrust.h>
++
++#include "libavutil/attributes.h"
++#include "libavutil/error.h"
++#include "libavutil/log.h"
++#include "tls.h"
++
++/*
++ * On iOS neither OpenSSL nor GnuTLS can find the system's root certificates
++ * (there is no API to list them), and on macOS OpenSSL can't either. So a
++ * client that verifies its peer without a ca_file hands the chain to the
++ * system's trust store instead, which also applies user- and MDM-installed
++ * roots and Apple's distrust decisions. A ca_file keeps the library's own
++ * checks.
++ */
++static av_unused int ff_tls_apple_trust_applies(const TLSShared *s)
++{
++    return s->verify && !s->ca_file && !s->listen && !s->is_dtls;
++}
++
++/**
++ * Check a peer's certificate chain, DER-encoded with the leaf first, for the
++ * TLS server name host, against the system's trust store.
++ *
++ * @return 0 if the chain is trusted for host, AVERROR(EIO) otherwise (logged)
++ */
++static av_unused int ff_tls_apple_verify(void *log_ctx, const void *const *der,
++                                         const size_t *der_size, int nb_certs,
++                                         const char *host)
++{
++    CFMutableArrayRef certs = NULL;
++    CFStringRef cf_host = NULL;
++    SecPolicyRef policy = NULL;
++    SecTrustRef trust = NULL;
++    CFErrorRef error = NULL;
++    int ret = AVERROR(EIO);
++
++    if (nb_certs <= 0) {
++        av_log(log_ctx, AV_LOG_ERROR, "Peer sent no certificate\n");
++        return ret;
++    }
++    certs = CFArrayCreateMutable(kCFAllocatorDefault, nb_certs, &kCFTypeArrayCallBacks);
++    if (!certs)
++        goto fail;
++    for (int i = 0; i < nb_certs; i++) {
++        CFDataRef data = CFDataCreate(kCFAllocatorDefault, (const UInt8 *)der[i], der_size[i]);
++        SecCertificateRef cert = data ? SecCertificateCreateWithData(kCFAllocatorDefault, data) : NULL;
++        if (data)
++            CFRelease(data);
++        if (!cert) {
++            av_log(log_ctx, AV_LOG_ERROR, "Unable to read the peer certificate chain\n");
++            goto end;
++        }
++        CFArrayAppendValue(certs, cert);
++        CFRelease(cert);
++    }
++    cf_host = CFStringCreateWithCString(kCFAllocatorDefault, host, kCFStringEncodingUTF8);
++    if (!cf_host)
++        goto fail;
++    policy = SecPolicyCreateSSL(true, cf_host);
++    if (!policy || SecTrustCreateWithCertificates(certs, policy, &trust) != errSecSuccess)
++        goto fail;
++
++    if (SecTrustEvaluateWithError(trust, &error)) {
++        ret = 0;
++    } else {
++        char reason[512] = "no reason given";
++        CFStringRef desc = error ? CFErrorCopyDescription(error) : NULL;
++        if (desc) {
++            CFStringGetCString(desc, reason, sizeof(reason), kCFStringEncodingUTF8);
++            CFRelease(desc);
++        }
++        av_log(log_ctx, AV_LOG_ERROR, "Peer certificate failed verification: %s\n", reason);
++    }
++    goto end;
++
++fail:
++    av_log(log_ctx, AV_LOG_ERROR, "Unable to check the peer certificate against the system trust store\n");
++end:
++    if (error)
++        CFRelease(error);
++    if (trust)
++        CFRelease(trust);
++    if (policy)
++        CFRelease(policy);
++    if (cf_host)
++        CFRelease(cf_host);
++    if (certs)
++        CFRelease(certs);
++    return ret;
++}
++
++#endif /* __APPLE__ */
++
++#endif /* AVFORMAT_TLS_APPLE_H */
+diff --git a/libavformat/tls_gnutls.c b/libavformat/tls_gnutls.c
+index c40c2cd..2b4989c 100644
+--- a/libavformat/tls_gnutls.c
++++ b/libavformat/tls_gnutls.c
+@@ -32,6 +32,7 @@
+ #include "os_support.h"
+ #include "url.h"
+ #include "tls.h"
++#include "tls_apple.h"
+ #include "libavutil/intreadwrite.h"
+ #include "libavutil/mem.h"
+ #include "libavutil/opt.h"
+@@ -530,6 +531,31 @@ end:
+     return ret;
+ }
+ 
++#ifdef __APPLE__
++static int gnutls_apple_verify_peer(URLContext *h)
++{
++    TLSContext *c = h->priv_data;
++    unsigned int nb = 0;
++    const gnutls_datum_t *peers = gnutls_certificate_get_peers(c->session, &nb);
++    const void **der = av_calloc(FFMAX(nb, 1), sizeof(*der));
++    size_t *der_size = av_calloc(FFMAX(nb, 1), sizeof(*der_size));
++    int ret = AVERROR(ENOMEM);
++
++    if (der && der_size) {
++        if (!peers)
++            nb = 0;
++        for (unsigned int i = 0; i < nb; i++) {
++            der[i]      = peers[i].data;
++            der_size[i] = peers[i].size;
++        }
++        ret = ff_tls_apple_verify(h, der, der_size, nb, c->tls_shared.host);
++    }
++    av_free(der);
++    av_free(der_size);
++    return ret;
++}
++#endif
++
+ static int tls_open(URLContext *h, const char *uri, int flags, AVDictionary **options)
+ {
+     TLSContext *c = h->priv_data;
+@@ -658,6 +684,13 @@ static int tls_open(URLContext *h, const char *uri, int flags, AVDictionary **op
+         unsigned int status, cert_list_size;
+         gnutls_x509_crt_t cert;
+         const gnutls_datum_t *cert_list;
++#ifdef __APPLE__
++        if (ff_tls_apple_trust_applies(s)) {
++            if ((ret = gnutls_apple_verify_peer(h)) < 0)
++                goto fail;
++            status = 0;
++        } else
++#endif
+         if ((ret = gnutls_certificate_verify_peers2(c->session, &status)) < 0) {
+             av_log(h, AV_LOG_ERROR, "Unable to verify peer certificate: %s\n",
+                                     gnutls_strerror(ret));
+diff --git a/libavformat/tls_openssl.c b/libavformat/tls_openssl.c
+index 0075288..d09f70c 100644
+--- a/libavformat/tls_openssl.c
++++ b/libavformat/tls_openssl.c
+@@ -28,6 +28,7 @@
+ #include "libavutil/random_seed.h"
+ #include "url.h"
+ #include "tls.h"
++#include "tls_apple.h"
+ #include "libavutil/opt.h"
+ 
+ #include <openssl/bio.h>
+@@ -786,6 +787,36 @@ fail:
+     return ret;
+ }
+ 
++#ifdef __APPLE__
++static int openssl_apple_verify_peer(URLContext *h)
++{
++    TLSContext *c = h->priv_data;
++    STACK_OF(X509) *chain = SSL_get_peer_cert_chain(c->ssl);
++    int nb = chain ? sk_X509_num(chain) : 0;
++    unsigned char **der = av_calloc(FFMAX(nb, 1), sizeof(*der));
++    size_t *der_size = av_calloc(FFMAX(nb, 1), sizeof(*der_size));
++    int ret = AVERROR(ENOMEM);
++
++    if (!der || !der_size)
++        goto end;
++    for (int i = 0; i < nb; i++) {
++        int len = i2d_X509(sk_X509_value(chain, i), &der[i]);
++        if (len <= 0) {
++            ret = AVERROR(EIO);
++            goto end;
++        }
++        der_size[i] = len;
++    }
++    ret = ff_tls_apple_verify(h, (const void *const *)der, der_size, nb, c->tls_shared.host);
++end:
++    for (int i = 0; der && i < nb; i++)
++        OPENSSL_free(der[i]);
++    av_free(der);
++    av_free(der_size);
++    return ret;
++}
++#endif
++
+ static int tls_open(URLContext *h, const char *uri, int flags, AVDictionary **options)
+ {
+     TLSContext *c = h->priv_data;
+@@ -823,7 +854,12 @@ static int tls_open(URLContext *h, const char *uri, int flags, AVDictionary **op
+     ret = openssl_init_ca_key_cert(h);
+     if (ret < 0) goto fail;
+ 
++#ifdef __APPLE__
++    /* openssl_apple_verify_peer() checks the peer after the handshake instead. */
++    if (s->verify && !ff_tls_apple_trust_applies(s))
++#else
+     if (s->verify)
++#endif
+         SSL_CTX_set_verify(c->ctx, SSL_VERIFY_PEER|SSL_VERIFY_FAIL_IF_NO_PEER_CERT, NULL);
+ 
+     if (s->is_dtls && s->use_srtp) {
+@@ -929,6 +965,10 @@ static int tls_open(URLContext *h, const char *uri, int flags, AVDictionary **op
+             goto fail;
+         }
+         c->do_shutdown = 1;
++#ifdef __APPLE__
++        if (ff_tls_apple_trust_applies(s) && (ret = openssl_apple_verify_peer(h)) < 0)
++            goto fail;
++#endif
+     }
+ 
+     return 0;

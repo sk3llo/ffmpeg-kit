@@ -498,6 +498,9 @@ fi
 LINKED_LIBRARIES=$(get_common_linked_libraries)
 COMMON_LDFLAGS=$(get_common_ldflags)
 
+# tools/patch/ffmpeg/apple-tls-trust.patch checks TLS peers with the system trust store
+FFMPEG_LDFLAGS+=" -framework CoreFoundation -framework Security"
+
 # UPDATE BUILD FLAGS
 export CFLAGS="${ARCH_CFLAGS} ${APP_CFLAGS} ${COMMON_CFLAGS} ${OPTIMIZATION_CFLAGS} ${MIN_VERSION_CFLAGS}${FFMPEG_CFLAGS} ${COMMON_INCLUDES}"
 export CXXFLAGS=$(get_cxxflags "${LIB_NAME}")
@@ -534,6 +537,11 @@ fi
 
 # 3. Use thread local log levels
 ${SED_INLINE} 's/static int av_log_level/__thread int av_log_level/g' "${BASEDIR}"/src/${LIB_NAME}/libavutil/log.c 1>>"${BASEDIR}"/build.log 2>&1 || return 1
+
+# 4. Check TLS peer certificates against Apple's trust store (OpenSSL and GnuTLS backends)
+git checkout libavformat/tls_openssl.c libavformat/tls_gnutls.c 1>>"${BASEDIR}"/build.log 2>&1
+rm -f libavformat/tls_apple.h
+git apply "${BASEDIR}"/tools/patch/ffmpeg/apple-tls-trust.patch 1>>"${BASEDIR}"/build.log 2>&1 || return 1
 
 ###################################################################
 
