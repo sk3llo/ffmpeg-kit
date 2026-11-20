@@ -101,6 +101,10 @@ esac
 mkdir -p "${BUILD_DIR}/ffmpeg-build"
 cd "${BUILD_DIR}/ffmpeg-build"
 
+# Thread-local log level, as the other platforms build it: each session, and the scheduler
+# threads ffmpeg_context.c copies its state to, keeps its own -loglevel.
+sed -i 's/static atomic_int av_log_level/__thread atomic_int av_log_level/' "${FFMPEG_SRC}/libavutil/log.c"
+
 "${FFMPEG_SRC}/configure" \
   --prefix="${FFMPEG_PREFIX}" \
   --arch="${ARCH}" \

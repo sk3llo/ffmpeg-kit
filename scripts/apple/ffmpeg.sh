@@ -536,7 +536,7 @@ else
 fi
 
 # 3. Use thread local log levels
-${SED_INLINE} 's/static int av_log_level/__thread int av_log_level/g' "${BASEDIR}"/src/${LIB_NAME}/libavutil/log.c 1>>"${BASEDIR}"/build.log 2>&1 || return 1
+${SED_INLINE} 's/static atomic_int av_log_level/__thread atomic_int av_log_level/g' "${BASEDIR}"/src/${LIB_NAME}/libavutil/log.c 1>>"${BASEDIR}"/build.log 2>&1 || return 1
 
 # 4. Check TLS peer certificates against Apple's trust store (OpenSSL and GnuTLS backends)
 git checkout libavformat/tls_openssl.c libavformat/tls_gnutls.c 1>>"${BASEDIR}"/build.log 2>&1
