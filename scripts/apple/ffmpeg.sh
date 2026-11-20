@@ -393,7 +393,7 @@ for library in {0..61}; do
         CONFIGURE_POSTFIX+=" --enable-opencl"
         ;;
       *-opengl)
-        CONFIGURE_POSTFIX+=" --enable-opengl"
+        # FFmpeg 9.0 removed the OpenGL output device and its configure option.
         ;;
       *-videotoolbox)
         CONFIGURE_POSTFIX+=" --enable-videotoolbox"
@@ -428,8 +428,6 @@ for library in {0..61}; do
       CONFIGURE_POSTFIX+=" --disable-iconv"
     elif [[ ${library} -eq ${LIBRARY_APPLE_OPENCL} ]]; then
       CONFIGURE_POSTFIX+=" --disable-opencl"
-    elif [[ ${library} -eq ${LIBRARY_APPLE_OPENGL} ]]; then
-      CONFIGURE_POSTFIX+=" --disable-opengl"
     elif [[ ${library} -eq ${LIBRARY_APPLE_VIDEOTOOLBOX} ]]; then
       CONFIGURE_POSTFIX+=" --disable-videotoolbox"
     elif [[ ${library} -eq ${LIBRARY_SYSTEM_ZLIB} ]]; then

@@ -37,7 +37,7 @@ When compilation ends, libraries are created under the prebuilt folder.\n"
   echo -e "  --enable-macos-libiconv\tbuild with built-in libiconv [no]"
   echo -e "  --enable-macos-coreimage\tbuild with built-in Apple CoreImage support [no]"
   echo -e "  --enable-macos-opencl\t\tbuild with built-in OpenCL [no]"
-  echo -e "  --enable-macos-opengl\t\tbuild with built-in OpenGL [no]"
+  echo -e "  --enable-macos-opengl\t\tno effect: FFmpeg 9.0 removed its OpenGL output device [no]"
 
   display_help_common_libraries
   display_help_gpl_libraries
