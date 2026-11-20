@@ -35,6 +35,10 @@ echo -n -e "\n${LIB_NAME}: "
 make distclean 2>/dev/null 1>/dev/null
 
 rm -f "${BASEDIR}"/linux/src/libffmpegkit* 1>>"${BASEDIR}"/build.log 2>&1
+# fftools/ keeps its objects in its own folders, which the line above misses: a leftover from
+# another architecture or variant would otherwise be linked in place of a fresh one.
+rm -rf "${BASEDIR}"/linux/src/fftools/.libs "${BASEDIR}"/linux/src/fftools/*/.libs 1>>"${BASEDIR}"/build.log 2>&1
+rm -f "${BASEDIR}"/linux/src/fftools/libffmpegkit_la-* "${BASEDIR}"/linux/src/fftools/*/libffmpegkit_la-* 1>>"${BASEDIR}"/build.log 2>&1
 
 # ALWAYS REGENERATE BUILD FILES - NECESSARY TO APPLY THE WORKAROUNDS
 autoreconf_library "${LIB_NAME}" 1>>"${BASEDIR}"/build.log 2>&1 || return 1

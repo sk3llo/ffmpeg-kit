@@ -101,4 +101,4 @@ nobase_include_HEADERS = \
 libffmpegkit_la_CFLAGS = $(CFLAGS)
 libffmpegkit_la_OBJCFLAGS = $(CFLAGS)
 libffmpegkit_la_CXXFLAGS = $(CXXFLAGS)
-libffmpegkit_la_LDFLAGS = $(LDFLAGS)
+libffmpegkit_la_LDFLAGS = $(LDFLAGS) -no-undefined
