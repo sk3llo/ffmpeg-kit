@@ -12,6 +12,8 @@ export HOGWEED_LIBS="-L${LIB_INSTALL_BASE}/nettle/lib -lhogweed -L${LIB_INSTALL_
 export GMP_CFLAGS="-I${LIB_INSTALL_BASE}/gmp/include"
 export GMP_LIBS="-L${LIB_INSTALL_BASE}/gmp/lib -lgmp"
 
+build_libtasn1_for_gnutls "${SDK_PATH}" || return 1
+
 # ALWAYS CLEAN THE PREVIOUS BUILD
 make distclean 2>/dev/null 1>/dev/null
 
@@ -19,7 +21,6 @@ make distclean 2>/dev/null 1>/dev/null
   --prefix="${LIB_INSTALL_PREFIX}" \
   --with-pic \
   --with-sysroot="${SDK_PATH}" \
-  --with-included-libtasn1 \
   --with-included-unistring \
   --without-idn \
   --without-p11-kit \
@@ -44,7 +45,7 @@ make install || return 1
 
 # CREATE PACKAGE CONFIG MANUALLY
 if [[ ${FFMPEG_KIT_BUILD_TYPE} == "macos" ]]; then
-  create_gnutls_package_config "3.8.13" "-framework Security" || return 1
+  create_gnutls_package_config "3.8.14" "-framework Security" || return 1
 else
-  create_gnutls_package_config "3.8.13" || return 1
+  create_gnutls_package_config "3.8.14" || return 1
 fi

@@ -1325,7 +1325,7 @@ Version: ${GNUTLS_VERSION}
 Requires: nettle, hogweed
 Cflags: -I\${includedir}
 Libs: -L\${libdir} -lgnutls ${EXTRA_LIBS}
-Libs.private: -lgmp
+Libs.private: -ltasn1 -lgmp
 EOF
 }
 

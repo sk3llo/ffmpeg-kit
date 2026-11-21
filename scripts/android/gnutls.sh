@@ -12,6 +12,8 @@ export HOGWEED_LIBS="-L${LIB_INSTALL_BASE}/nettle/lib -lhogweed -L${LIB_INSTALL_
 export GMP_CFLAGS="-I${LIB_INSTALL_BASE}/gmp/include"
 export GMP_LIBS="-L${LIB_INSTALL_BASE}/gmp/lib -lgmp"
 
+build_libtasn1_for_gnutls "${ANDROID_SYSROOT}" || return 1
+
 # SET BUILD OPTIONS
 ASM_OPTIONS=""
 case ${ARCH} in
@@ -30,7 +32,6 @@ make distclean 2>/dev/null 1>/dev/null
   --prefix="${LIB_INSTALL_PREFIX}" \
   --with-pic \
   --with-sysroot="${ANDROID_SYSROOT}" \
-  --with-included-libtasn1 \
   --with-included-unistring \
   --without-idn \
   --without-p11-kit \
@@ -54,4 +55,4 @@ make -j$(get_cpu_count) || return 1
 make install || return 1
 
 # CREATE PACKAGE CONFIG MANUALLY
-create_gnutls_package_config "3.8.13" || return 1
+create_gnutls_package_config "3.8.14" || return 1

@@ -2147,6 +2147,40 @@ download() {
 }
 
 #
+# GnuTLS 3.8.14 stopped shipping its own copy of libtasn1. This builds GNU Libtasn1 (src/libtasn1,
+# pinned in source.sh) into the gnutls prefix, as a static library beside libgnutls.a, and points
+# GnuTLS's configure at it. gnutls.pc must then list -ltasn1. Run from a gnutls build script.
+#
+# 1. sysroot
+#
+build_libtasn1_for_gnutls() {
+  local RC
+
+  RC=$(download_library_source "libtasn1")
+  [[ ${RC} -eq 0 ]] || return 1
+
+  (
+    cd "${BASEDIR}"/src/libtasn1 || exit 1
+    make distclean 2>/dev/null 1>/dev/null
+    ./configure \
+      --prefix="${LIB_INSTALL_PREFIX}" \
+      --with-pic \
+      --with-sysroot="$1" \
+      --enable-static \
+      --disable-shared \
+      --disable-fast-install \
+      --disable-doc \
+      --disable-valgrind-tests \
+      --host="${HOST}" &&
+      make -C lib -j"$(get_cpu_count)" &&
+      make -C lib install
+  ) || return 1
+
+  export LIBTASN1_CFLAGS="-I${LIB_INSTALL_PREFIX}/include"
+  export LIBTASN1_LIBS="-L${LIB_INSTALL_PREFIX}/lib -ltasn1"
+}
+
+#
 # 1. library name
 #
 download_library_source() {

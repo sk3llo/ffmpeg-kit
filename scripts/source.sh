@@ -65,8 +65,8 @@ get_library_source() {
     SOURCE_TYPE="TAG"
     ;;
   gnutls)
-    SOURCE_REPO_URL="https://www.gnupg.org/ftp/gcrypt/gnutls/v3.8/gnutls-3.8.13.tar.xz"
-    SOURCE_ID="ffed8ec1bf09c2426d4f14aae377de4753b53e537d685e604e99a8b16ca9c97e"
+    SOURCE_REPO_URL="https://www.gnupg.org/ftp/gcrypt/gnutls/v3.8/gnutls-3.8.14.tar.xz"
+    SOURCE_ID="7e2d258071f5db9620aa7ff34259331d004f7beafa3eb18560cfaf60acfbf02a"
     SOURCE_TYPE="TARBALL"
     ;;
   harfbuzz)
@@ -133,6 +133,11 @@ get_library_source() {
     SOURCE_REPO_URL="https://github.com/arthenica/libsndfile"
     SOURCE_ID="1.2.0"
     SOURCE_TYPE="TAG"
+    ;;
+  libtasn1)
+    SOURCE_REPO_URL="https://ftp.gnu.org/gnu/libtasn1/libtasn1-4.21.0.tar.gz"
+    SOURCE_ID="1d8a444a223cc5464240777346e125de51d8e6abf0b8bac742ac84609167dc87"
+    SOURCE_TYPE="TARBALL"
     ;;
   libtheora)
     SOURCE_REPO_URL="https://github.com/arthenica/theora"
