@@ -105,6 +105,8 @@ cd "${BUILD_DIR}/ffmpeg-build"
 # threads ffmpeg_context.c copies its state to, keeps its own -loglevel.
 sed -i 's/static atomic_int av_log_level/__thread atomic_int av_log_level/' "${FFMPEG_SRC}/libavutil/log.c"
 
+# This build relies on configure's autodetection, unlike the other platforms' (--disable-autodetect).
+# FFmpeg 9.1 autodetects libcurl, and MSYS2's would add curl, OpenSSL and 13 more DLLs to every bundle.
 "${FFMPEG_SRC}/configure" \
   --prefix="${FFMPEG_PREFIX}" \
   --arch="${ARCH}" \
@@ -131,6 +133,7 @@ sed -i 's/static atomic_int av_log_level/__thread atomic_int av_log_level/' "${F
   --disable-manpages \
   --disable-podpages \
   --disable-txtpages \
+  --disable-libcurl \
   ${FF_ENABLES}
 
 make -j"$(nproc)"
