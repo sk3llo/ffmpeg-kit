@@ -46,7 +46,7 @@ get_library_source() {
     ;;
   freetype)
     SOURCE_REPO_URL="https://github.com/arthenica/freetype2"
-    SOURCE_ID="VER-2-14-3"
+    SOURCE_ID="VER-2-15-0"
     SOURCE_TYPE="TAG"
     ;;
   fribidi)

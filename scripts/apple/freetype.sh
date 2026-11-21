@@ -18,6 +18,10 @@ fi
 overwrite_file "${FFMPEG_KIT_TMPDIR}"/source/config/config.guess "${BASEDIR}"/src/"${LIB_NAME}"/builds/unix/config.guess || return 1
 overwrite_file "${FFMPEG_KIT_TMPDIR}"/source/config/config.sub "${BASEDIR}"/src/"${LIB_NAME}"/builds/unix/config.sub || return 1
 
+# FreeType 2.15 builds its HVF driver whenever the SDK has hvf/Scaler.h, and the driver needs
+# /usr/lib/libhvf.dylib (macOS 15.4, iOS 18.4 and later). freetype2.pc here doesn't list -lhvf,
+# so every link against libfreetype.a fails; the cache variable keeps the driver out.
+ac_cv_header_hvf_Scaler_h=no \
 ./configure \
   --prefix="${LIB_INSTALL_PREFIX}" \
   --with-pic \
@@ -41,4 +45,4 @@ make -j$(get_cpu_count) || return 1
 make install || return 1
 
 # CREATE PACKAGE CONFIG MANUALLY
-create_freetype_package_config "25.0.19" || return 1
+create_freetype_package_config "26.7.20" || return 1
