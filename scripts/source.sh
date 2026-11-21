@@ -70,8 +70,8 @@ get_library_source() {
     SOURCE_TYPE="TARBALL"
     ;;
   harfbuzz)
-    SOURCE_REPO_URL="https://github.com/arthenica/harfbuzz"
-    SOURCE_ID="14.6.0"
+    SOURCE_REPO_URL="https://github.com/harfbuzz/harfbuzz"
+    SOURCE_ID="15.2.0"
     SOURCE_TYPE="TAG"
     ;;
   jpeg)
