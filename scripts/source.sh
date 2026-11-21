@@ -56,7 +56,7 @@ get_library_source() {
     ;;
   giflib)
     SOURCE_REPO_URL="https://github.com/arthenica/giflib"
-    SOURCE_ID="5.2.2"
+    SOURCE_ID="6.1.3"
     SOURCE_TYPE="TAG"
     ;;
   gmp)
